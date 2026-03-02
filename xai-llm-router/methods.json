@@ -267,6 +267,14 @@
           "source": "ArXiv",
           "url": "https://arxiv.org/html/2512.09730v1", 
           "note": "Introduces the Interpreto toolkits which also implements Input\u00d7Gradient."
+        }, 
+        {
+          "used_in": "PnPXAI: A Universal XAI Framework",
+          "type": "paper",
+          "year": 2025,
+          "source": "arXiv",
+          "url": "https://arxiv.org/abs/2505.10515",
+          "note": "Describes PnPXAI toolkit, which implements several explainers, including Input\u00d7Gradient."
         }
       ],
       "typical_cost": "low", 
@@ -305,6 +313,14 @@
           "source": "ArXiv",
           "url": "https://arxiv.org/html/2512.09730v1", 
           "note": "Introduces the Interpreto toolkits which also implements Input\u00d7Gradient."
+        }, 
+        {
+          "used_in": "PnPXAI: A Universal XAI Framework",
+          "type": "paper",
+          "year": 2025,
+          "source": "arXiv",
+          "url": "https://arxiv.org/abs/2505.10515",
+          "note": "Describes PnPXAI toolkit, which implements several explainers, including Input\u00d7Gradient."
         }
       ],
       "typical_cost": "low", 
@@ -439,7 +455,7 @@
       "typical_cost": "high"
     },
     {
-      "name": "Feature Ablation (Captum)",
+      "name": "Feature Ablation",
       "task_input": ["classification"],
       "plugin_id": "captum_featureablation_classifier", 
       "access_arch": {"access": ["black_box"], "arch": ["all"]},
@@ -466,7 +482,7 @@
       "typical_cost": "high"
     },
     {
-      "name": "Feature Ablation (Captum)",
+      "name": "Feature Ablation",
       "task_input": ["generation"],
       "access_arch": {"access": ["black_box"], "arch": ["all"]},
       "target_scope": "local",
@@ -677,6 +693,14 @@
           "source": "ArXiv",
           "url": "https://arxiv.org/html/2512.09730v1", 
           "note": "Introduces the Interpreto toolkits which also implements Kernel SHAP."
+        }, 
+        {
+          "used_in": "PnPXAI: A Universal XAI Framework",
+          "type": "paper",
+          "year": 2025,
+          "source": "arXiv",
+          "url": "https://arxiv.org/abs/2505.10515",
+          "note": "Describes PnPXAI toolkit, which implements several explainers, including Kernel SHAP."
         }
       ],
       "typical_cost": "high"
@@ -758,6 +782,14 @@
           "source": "ArXiv",
           "url": "https://arxiv.org/html/2512.09730v1", 
           "note": "Introduces the Interpreto toolkits which also implements Kernel SHAP."
+        }, 
+         {
+          "used_in": "PnPXAI: A Universal XAI Framework",
+          "type": "paper",
+          "year": 2025,
+          "source": "arXiv",
+          "url": "https://arxiv.org/abs/2505.10515",
+          "note": "Describes PnPXAI toolkit, which implements several explainers, including SmoothGrad."
         }
       ],
       "typical_cost": "missing"
@@ -807,87 +839,6 @@
           "source": "ArXiv",
           "url": "http://arxiv.org/abs/1909.09223",
           "note": "Introduces the  InterpretML toolkit which implements the LIME method."
-        }
-      ],
-      "typical_cost": "high"
-    },
-    {
-      "name": "Partial Dependence Plot",
-      "task_input": ["classification"],
-      "access_arch": {"access": ["black_box"], "arch": ["all"]},
-      "target_scope": "global",
-      "description": {
-        "overview": "Partial Dependence Plots (PDP) estimate the marginal effect of one or more features on the predicted outcome by averaging model outputs over a dataset.",
-        "main_functionalities": [
-          "Compute average model predictions for varying feature values",
-          "Visualize global feature–prediction relationships"
-        ]
-      },
-      "strengths": [
-        "Provides a global view of feature effects",
-        "Easy to interpret trends of feature influence"
-      ],
-      "limitations": [
-        "Assumes feature independence; can mislead if features correlate",
-        "Only captures marginal (average) effects, not interactions"
-      ],
-      "research_applications": [
-        {
-          "used_in": "Greedy Function Approximation: A Gradient Boosting Machine (Friedman)",
-          "type": "paper",
-          "year": 2001,
-          "source": "Annals of Statistics",
-          "url": "https://projecteuclid.org/euclid.aos/1013203451",
-          "note": "Introduces partial dependence plots."
-        }, 
-        {
-          "used_in": "InterpretML: {A} Unified Framework for Machine Learning Interpretability",
-          "type": "paper",
-          "year": 2019,
-          "source": "ArXiv",
-          "url": "http://arxiv.org/abs/1909.09223",
-          "note": "Introduces the  InterpretML toolkit which implements the LIME method."
-        }
-      ],
-      "typical_cost": "medium"
-    },
-    {
-      "name": "Morris Sensitivity Analysis",
-      "task_input": ["classification"],
-      "access_arch": {"access": ["black_box"], "arch": ["all"]},
-      "target_scope": "global",
-      "accessibility":"non experts",
-      "description": {
-        "overview": "Morris Sensitivity analysis is a global sensitivity method that samples feature space along trajectories and computes elementary effects. It estimates each feature’s influence on the output variance.",
-        "main_functionalities": [
-          "Compute Morris 'elementary effects' by varying one feature at a time",
-          "Estimate global sensitivity indices for features"
-        ]
-      },
-      "strengths": [
-        "Model-agnostic global feature importance",
-        "Requires fewer samples than full factorial designs"
-      ],
-      "limitations": [
-        "Computationally expensive in high dimensions",
-        "Results depend on trajectory design and sampling"
-      ],
-      "research_applications": [
-        {
-          "used_in": "Factorial Sampling Plans for Preliminary Computational Experiments (Morris)",
-          "type": "paper",
-          "year": 1991,
-          "source": "Technometrics",
-          "url": "https://doi.org/10.1080/00401706.1991.10484804",
-          "note": "Introduces Morris sensitivity method."
-        }, 
-        {
-          "used_in": "InterpretML: {A} Unified Framework for Machine Learning Interpretability",
-          "type": "paper",
-          "year": 2019,
-          "source": "ArXiv",
-          "url": "http://arxiv.org/abs/1909.09223",
-          "note": "Introduces the  InterpretML toolkit which implements the Morris Sensitivity analysis method."
         }
       ],
       "typical_cost": "high"
@@ -1134,10 +1085,16 @@
           "type": "paper",
           "year": 2025,
           "source": "arXiv",
-
-
           "url": "https://arxiv.org/abs/2506.02138",
           "note": "Adaptation of LRP to Transformer models, accounting for positional encodings."
+        },
+         {
+          "used_in": "PnPXAI: A Universal XAI Framework",
+          "type": "paper",
+          "year": 2025,
+          "source": "arXiv",
+          "url": "https://arxiv.org/abs/2505.10515",
+          "note": "Describes PnPXAI toolkit, which implements several explainers, including LRP."
         }
       ],
       "typical_cost": "medium"
@@ -1182,61 +1139,10 @@
           "year": 2025,
           "source": "arXiv",
           "url": "missing",
-          "note": "Introduces the PnPXAI which implements the Attention Rollout method."
+          "note": "Describes PnPXAI toolkit, which implements several explainers, including Attention Rollout."
         }
       ],
       "typical_cost": "low"
-    },
-    {
-      "name": "PnPXAI Kernel SHAP",
-      "task_input": ["classification"],
-      "access_arch": {"access": ["black_box"], "arch": ["all"]},
-      "target_scope": "all",
-      "description": {
-        "overview": "Kernel SHAP (in PnPXAI) is a model-agnostic Shapley-value estimator, using a weighted linear regression on perturbations. It provides local explanations similarly to general Kernel SHAP.",
-        "main_functionalities": [
-          "Compute local Shapley explanations for model predictions"
-        ]
-      },
-      "strengths": [],
-      "limitations": [],
-      "research_applications": [
-        {
-          "used_in": "PnPXAI: A Universal XAI Framework",
-          "type": "paper",
-          "year": 2025,
-          "source": "arXiv",
-          "url": "https://arxiv.org/abs/2505.10515",
-          "note": "Describes PnPXAI framework, including Kernel SHAP."
-        }
-      ],
-      "typical_cost": "high"
-    },
-    {
-      "name": "FAT Forensics CounterfactualExplainer",
-      "task_input": ["classification"],
-      "access_arch": {"access": ["black_box"], "arch": ["all"]},
-      "target_scope": "local",
-      "description": {
-        "overview": "CounterfactualExplainer generates counterfactual instances that change a black-box model’s prediction. These are minimal edits to the input to flip the predicted class.",
-        "main_functionalities": [
-          "Generate counterfactual examples for a given prediction",
-          "Report the differences needed to alter the model decision"
-        ]
-      },
-      "strengths": [],
-      "limitations": [],
-      "research_applications": [
-        {
-          "used_in": "FAT Forensics: Fairness, Accountability and Transparency Toolbox",
-          "type": "paper",
-          "year": 2019,
-          "source": "arXiv",
-          "url": "https://arxiv.org/abs/1909.05167",
-          "note": "Describes the FAT Forensics toolbox including counterfactual modules."
-        }
-      ],
-      "typical_cost": "high"
     },
      {
       "name": "LIT Counterfactual Generator",
@@ -1603,6 +1509,14 @@
       "source": "ACL Demo",
       "url": "https://aclanthology.org/2023.acl-demo.40/",
       "note": "Presents Inseq for attribution in generative language models which implements the Integrated Gradients method for sequence to sequence."
+    }, 
+    {
+          "used_in": "PnPXAI: A Universal XAI Framework",
+          "type": "paper",
+          "year": 2025,
+          "source": "arXiv",
+          "url": "https://arxiv.org/abs/2505.10515",
+          "note": "Describes PnPXAI toolkit, which implements several explainers, including Integrated Gradients."
     }
   ],
   "typical_cost": "medium-high"
@@ -1654,6 +1568,14 @@
       "source": "ACL Demo",
       "url": "https://aclanthology.org/2023.acl-demo.40/",
       "note": "Demonstrates attribution methods for encoder–decoder models."
+    }, 
+    {
+      "used_in": "PnPXAI: A Universal XAI Framework",
+      "type": "paper",
+      "year": 2025,
+      "source": "arXiv",
+      "url": "https://arxiv.org/abs/2505.10515",
+      "note": "Describes PnPXAI toolkit, which implements several explainers, including Integrated Gradients."
     }
   ],
   "typical_cost": "high"
