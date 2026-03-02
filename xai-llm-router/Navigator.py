@@ -13,7 +13,6 @@ import numpy as np
 import plotly.express as px
 
 from text_to_score import rank_methods
-# from toolkits.captum_classifier import CaptumClassifierAttribution
 from toolkits.captum_classifier import (
     CaptumIGClassifierAttribution,
     CaptumSaliencyClassifierAttribution,

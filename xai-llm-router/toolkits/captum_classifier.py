@@ -20,6 +20,15 @@ from captum.attr import (
 from transformers import AutoConfig, AutoModelForSequenceClassification, AutoTokenizer
 
 
+class _EmbeddingForwardWrapper(torch.nn.Module):
+    """Wraps a model so Captum can register hooks on it (required for DeepLift)."""
+    def __init__(self, model):
+        super().__init__()
+        self.model = model
+
+    def forward(self, inputs_embeds: torch.Tensor, attention_mask: torch.Tensor) -> torch.Tensor:
+        return self.model(inputs_embeds=inputs_embeds, attention_mask=attention_mask).logits
+
 # ---------- Minimal UI schema (same style as before) ----------
 @dataclass
 class FieldSpec:
@@ -331,11 +340,14 @@ class _CaptumClassifierBase(ToolkitPlugin):
             baseline_embeds = torch.zeros_like(input_embeds)
             baseline_kind = "zeros"
 
-        forward_fn = lambda emb, am: self._forward_from_embeds(model, emb, am)
+        #forward_fn = lambda emb, am: self._forward_from_embeds(model, emb, am)
+        wrapped_model = _EmbeddingForwardWrapper(model)
+        forward_fn = wrapped_model
+
 
         # ---- choose explainer ----
         if algorithm == "IntegratedGradients":
-            explainer = IntegratedGradients(forward_fn)
+            explainer = IntegratedGradients(wrapped_model)
             attributions = explainer.attribute(
                 inputs=input_embeds,
                 baselines=baseline_embeds,
@@ -345,7 +357,7 @@ class _CaptumClassifierBase(ToolkitPlugin):
             )
 
         elif algorithm == "Saliency":
-            explainer = Saliency(forward_fn)
+            explainer = Saliency(wrapped_model)
             attributions = explainer.attribute(
                 inputs=input_embeds,
                 additional_forward_args=(attention_mask,),
@@ -353,7 +365,7 @@ class _CaptumClassifierBase(ToolkitPlugin):
             )
 
         elif algorithm == "DeepLift":
-            explainer = DeepLift(forward_fn)
+            explainer = DeepLift(wrapped_model)
             attributions = explainer.attribute(
                 inputs=input_embeds,
                 baselines=baseline_embeds,
@@ -362,7 +374,7 @@ class _CaptumClassifierBase(ToolkitPlugin):
             )
 
         elif algorithm == "InputXGradient":
-            explainer = InputXGradient(forward_fn)
+            explainer = InputXGradient(wrapped_model)
             attributions = explainer.attribute(
                 inputs=input_embeds,
                 additional_forward_args=(attention_mask,),
@@ -370,7 +382,7 @@ class _CaptumClassifierBase(ToolkitPlugin):
             )
 
         elif algorithm == "GradientShap":
-            explainer = GradientShap(forward_fn)
+            explainer = GradientShap(wrapped_model)
             attributions = explainer.attribute(
                 inputs=input_embeds,
                 baselines=baseline_embeds,
@@ -381,7 +393,7 @@ class _CaptumClassifierBase(ToolkitPlugin):
             )
 
         elif algorithm == "Occlusion":
-            explainer = Occlusion(forward_fn)
+            explainer = Occlusion(wrapped_model)
             attributions = explainer.attribute(
                 inputs=input_embeds,
                 baselines=baseline_embeds,
@@ -392,7 +404,7 @@ class _CaptumClassifierBase(ToolkitPlugin):
             )
 
         elif algorithm == "FeatureAblation":
-            explainer = FeatureAblation(forward_fn)
+            explainer = FeatureAblation(wrapped_model)
             attributions = explainer.attribute(
                 inputs=input_embeds,
                 baselines=baseline_embeds,
@@ -404,7 +416,7 @@ class _CaptumClassifierBase(ToolkitPlugin):
             base_name = algorithm[len("NoiseTunnel(") : -1].strip()
 
             if base_name == "Saliency":
-                base = Saliency(forward_fn)
+                base = Saliency(wrapped_model)
                 nt = NoiseTunnel(base)
                 attributions = nt.attribute(
                     inputs=input_embeds,
@@ -415,7 +427,7 @@ class _CaptumClassifierBase(ToolkitPlugin):
                     stdevs=nt_stdev,
                 )
             elif base_name == "IntegratedGradients":
-                base = IntegratedGradients(forward_fn)
+                base = IntegratedGradients(wrapped_model)
                 nt = NoiseTunnel(base)
                 attributions = nt.attribute(
                     inputs=input_embeds,
@@ -428,7 +440,7 @@ class _CaptumClassifierBase(ToolkitPlugin):
                     stdevs=nt_stdev,
                 )
             elif base_name == "InputXGradient":
-                base = InputXGradient(forward_fn)
+                base = InputXGradient(wrapped_model)
                 nt = NoiseTunnel(base)
                 attributions = nt.attribute(
                     inputs=input_embeds,
