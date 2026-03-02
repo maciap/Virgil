@@ -1150,15 +1150,16 @@
       "access_arch": {"access": ["black_box"], "arch": ["all"]},
       "target_scope": "local",
       "description": {
-        "overview": "The tool supports counterfactual generation techniques to provide behavioral analysis through systematic input manipulation. The idea is to create modified versions of the original input by substituting, removing, or adding tokens and then observing how the model's predictions change in response to these perturbations, making it particularly suitable for practitioners who want to understand model decision boundaries without requiring access to internal model components.  It is particularly suitable for practitioners with limited or no prior experience in explainable AI.",
+        "overview": "The tool supports counterfactual generation techniques to provide behavioral analysis through systematic input manipulation. The idea is to create modified versions of the original input by substituting, removing, or adding tokens and then observing how the model's predictions change in response to these perturbations.  In particular, new inputs can be generated either manually through edits, or with a range of automatic counterfactual generators, such as backtranslation, nearest-neighbor retrieval, word substitutions, or adversarial attacks like HotFlip.",
         "main_functionalities": [
-          "Generate counterfactual examples for a given prediction",
-          "Report the differences needed to alter the model decision"
+          "Generate counterfactual examples for a given input",
+          "Show the differences needed to alter the predictions of the model"
         ]
       },
       "strengths": ["Explanations are intuitive",
     "The method is model agnostic"],
-      "limitations": ["Scalability issues may arise"],
+      "limitations": ["The unit (or subset of input) that can be targeted to generate a counterfactual is not obvious", 
+    "Different approaches to counterfactual generation can be more or less effective"],
       "research_applications": [
         {
           "used_in": "The Language Interpretability Tool: Extensible, Interactive Visualizations and Analysis for {NLP} Models",
@@ -1166,10 +1167,35 @@
           "year": 2020,
           "source": "Proceedings of the 2020 Conference on Empirical Methods in Natural Language Processing: System Demonstrations (EMNLP)",
           "url": "https://doi.org/10.18653/v1/2020.emnlp-demos.15",
-          "note": "Introduces the LIT toolkit which implements Integrated Gradients."
+          "note": "Introduces the LIT toolkit with its counterfactual generator."
+        }, 
+        {
+          "used_in": "Paraphrasing with Bilingual Parallel Corpora",
+          "type": "paper",
+          "year": 2005,
+          "source": "Proceedings of the 43rd Annual Meeting of the Association for Computational Linguistics (ACL’05)",
+          "url": "https://dl.acm.org/doi/10.3115/1219840.1219914",
+          "note": "Discusses backtranslation which LIT can leverage to generate counterfactual inputs."
+        }, 
+        {
+          "used_in": "Near-optimal Hashing Algorithms for Approximate Nearest Neighbor in High Dimensions",
+          "type": "paper",
+          "year": 2006,
+          "source": "47th annual IEEE symposium on foundations of computer science (FOCS’06)",
+          "url": "https://ieeexplore.ieee.org/document/4031381/",
+          "note": "Discusses nearest-neighbor retrieval which LIT can leverage to generate counterfactual inputs."
+        }, 
+        {
+          "used_in": "HotFlip: White-Box Adversarial Examples for Text Classification",
+          "type": "paper",
+          "year": 2018,
+          "source": "Proceedings of the 56th Annual Meeting of the Association for Computational Linguistics (Volume 2: Short Papers)",
+          "url": "https://aclanthology.org/P18-2006.pdf",
+          "note": "Discusses HotFlip which LIT can leverage to generate counterfactual inputs."
         }
       ],
-      "typical_cost": "high"
+      "typical_cost": "high", 
+      "implementation": "https://github.com/PAIR-code/lit"
     },
     {
       "name": "Activation Patching",
