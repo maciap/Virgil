@@ -97,7 +97,7 @@ print(os.getcwd())
 
 import matplotlib as mpl
 mpl.rcParams["axes.prop_cycle"] = mpl.cycler(color=["#4ade80"])
-mpl.rcParams["axes.facecolor"] = "#1a1a1a"      # dark background to match app
+mpl.rcParams["axes.facecolor"] = "#1a1a1a"     
 mpl.rcParams["figure.facecolor"] = "#1a1a1a"
 mpl.rcParams["axes.edgecolor"] = "#374151"
 mpl.rcParams["xtick.color"] = "#9ca3af"
@@ -107,7 +107,6 @@ mpl.rcParams["axes.labelcolor"] = "#f9fafb"
 mpl.rcParams["axes.titlecolor"] = "#f9fafb"
 mpl.rcParams["grid.color"] = "#374151"
 mpl.rcParams["grid.alpha"] = 0.4
-
 
 
 
@@ -319,7 +318,7 @@ def render_compare_view(anchor_item: Dict[str, Any], other_items: List[Dict[str,
 # Streamlit UI
 # -------------------------
 
-st.set_page_config(page_title="LLM Explainability Navigator 🧭", layout="wide")
+st.set_page_config(page_title="Language Model Explainability Navigator 🧭", layout="wide")
 
 # ---- Session state (important fixes) ----
 if "selected_item" not in st.session_state:
@@ -457,12 +456,12 @@ st.markdown(
       color: var(--text-color);
       opacity: 0.85;
       margin-bottom: 0.3rem;
-  ">Your LLM Explainability Navigator 🧭</div>
+  ">Your Language Model Explainability Navigator 🧭</div>
   <div style="
       font-size: 1.05rem;
       color: var(--text-color);
       opacity: 0.6;
-  ">Discover the tools for explaining LLMs that fit your needs.</div>
+  ">Discover the tools for explaining transformer-based language models that fit your needs.</div>
 </div>
 """,
     unsafe_allow_html=True,

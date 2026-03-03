@@ -1008,12 +1008,10 @@
       "strengths": [
         "Efficient: uses existing attention weights (no backprop required)",
         "Intuitive:  at the implementation level, the method boilds down to multiplying attention matrices across layers.",
-        "Provides intuitive visualization of attention dependencies", 
-        "Considers residual connections"
-      ],
-      "limitations": [
+        "Provides intuitive visualization of attention dependencies"
+        ],
+       "limitations": [
         "Inherits the lack of faithfulness of attention-based explanations (attention may not reflect true importance)",
-        "Not causal",
         "Ignores MLPs"
       ],
       "research_applications": [
@@ -1034,8 +1032,80 @@
           "note": "Describes PnPXAI toolkit, which implements several explainers, including Attention Rollout."
         }
       ],
-      "typical_cost": "low"
+      "typical_cost": "low", 
+      "implementation": "https://github.com/samiraabnar/attention_flow"
     },
+    {
+  "name": "Attention Flow",
+  "plugin_id": "attention_flow",
+  "task_input": ["classification", "generation"],
+  "access_arch": {"access": ["white_box"], "arch": ["all"]},
+  "target_scope": "local",
+  "accessibility": "non experts",
+  "description": { 
+    "overview": "Leveraging flow-network ideas from graph theory, Attention Flow represents tokens across transformer layers as nodes connected by attention-weighted edges and estimates token-to-token influence by computing maximum flow through this layered network.",
+    "main_functionalities": [
+      "Estimate input token contribution to a target token via flow-based propagation"
+    ]
+  },
+  "strengths": [
+    "Theoretically grounded in graph theory",
+    "Accounts for multiple possible attention paths across layers",
+    "Does not require gradients or model re-evaluation"
+  ],
+  "limitations": [
+    "Inherits the lack of faithfulness of attention-based explanations (attention may not reflect true importance)",
+    "Ignores MLPs",
+    "More computationally expensive than the alternative Attention Rollout method"
+  ],
+  "research_applications": [
+    {
+      "used_in": "Quantifying Attention Flow in Transformers",
+      "type": "paper",
+      "year": 2020,
+      "source": "arXiv",
+      "url": "https://arxiv.org/abs/2005.00928",
+      "note": "Introduces the Attention Flow method and compares it to Attention Rollout."
+    }
+  ],
+  "typical_cost": "low", 
+  "implementation": "https://github.com/samiraabnar/attention_flow"
+},
+ {
+  "name": "Aggregation of Layer-wise Token-to-token Interactions (ALTI)",
+  "task_input": ["classification"],
+  "access_arch": {"access": ["white_box"], "arch": ["all"]},
+  "target_scope": "local",
+  "accessibility": "non experts",
+  "description": { 
+   "overview": "ALTI quantifies how contextual information is mixed across transformer layers by modeling token-to-token interactions within each attention block and aggregating them to produce input attribution scores.",
+      "main_functionalities": [
+      "Quantifies token-to-token interaction within each layer",
+      "Computes token-level local attribution scores"
+    ]
+  },
+  "strengths": [
+    "Models the full attention block rather than relying on attention weights alone",
+    "It can provide more robust and faithful explanations than baselines such as Integrated Gradients and Attention Rollout"
+  ],
+  "limitations": [
+    "Inherits the lack of faithfulness of attention-based explanations (attention may not reflect true importance)",
+    "Ignores MLPs", 
+     "Ignores the classifier on top of the transformer and hence cannot provide explanations for each of the output classes"
+],
+  "research_applications": [
+    {
+      "used_in": "Measuring the Mixing of Contextual Information in the Transformer",
+      "type": "paper",
+      "year": 2022,
+      "source": "Proceedings of the 2022 Conference on Empirical Methods in Natural Language Processing",
+      "url": "https://aclanthology.org/2022.emnlp-main.595/",
+      "note": "Introduces ALTI."
+    }
+  ],
+  "typical_cost": "low", 
+  "implementation": "https://github.com/mt-upc/transformer-contributions"
+},
      {
       "name": "LIT Counterfactual Generator",
       "task_input": ["classification"],
@@ -1403,10 +1473,11 @@
       "name": "Information Flow Routes",
       "plugin_id": "meta_transparency_graph",
       "task_input": ["generation"],
-      "access_arch": {"access": ["white_box"], "arch": ["decoder", "encdec", "transformer_general"]},
+      "access_arch": {"access": ["white_box"], "arch": ["decoder", "encdec"]},
       "target_scope": "both",
+       "accessibility": "experts",
       "description": {
-        "overview": "Information Flow Routes identifies a sparse computational subgraph that explains a model prediction. It computes attributions for intermediate components and prunes low-contribution edges to reveal key information pathways【60†L23-L32】.",
+        "overview": "Information Flow Routes identifies a sparse computational subgraph that explains a model prediction. It computes attributions for intermediate components and prunes low-contribution edges to reveal key information pathways.",
         "main_functionalities": [
           "Compute component contributions in one forward pass",
           "Build a directed graph of important residual-stream pathways",
@@ -1442,6 +1513,39 @@
         }
       ],
       "typical_cost": "medium"
+    }, 
+     {
+      "name": "Automatic Circuit DisCovery (ACDC)",
+      "task_input": ["generation", "classification"],
+      "access_arch": {"access": ["white_box"], "arch": ["decoder"]},
+      "target_scope": "both",
+      "accessibility": "experts",
+      "description": {
+        "overview": "ACDC is a mechanistic interpretability method to automatize part of the workflow carried out to discover circuits responsible for a given task. In particular, researchers and practitioners are required to specify a metric describing the behavior of interest, a dataset of clean and corrupted inputs associated to the behavior of interest and the computational graph granularity ( (e.g. attention heads and MLP layers or individual neurons). Then, ACDC automatically uses patching to extract a subgraph (circuit) that is as concise as possibile while retaining the behavior of interest",
+        "main_functionalities": [
+       "Given a metric describing a behavior of interest, a clean and corrupted dataset and computational graph definition, ACDC uses patching to iteravely prune the computational graph and extract concise circuits that are responsibile for the behavior of interest"
+        ]
+      },
+      "strengths": [
+       "ACDC uses patching leads to strong causal explanations"
+      ],
+      "limitations": [
+      "Computationally expensive", 
+       "Only automatizes part of the circuit-discovery workflow (still requires defining a metric, a corrupted dataset and the level of granularity of the computational graph)",
+       "Extracted circuits are not necessarily generalizable across models"
+      ],
+      "research_applications": [
+        {
+          "used_in": "Towards Automated Circuit Discovery for Mechanistic Interpretability",
+          "type": "paper",
+          "year": 2023,
+          "source": "Advances in Neural Information Processing Systems 36: Annual Conference on Neural Information Processing Systems (NeurIPS 2023)",
+          "url": "https://proceedings.neurips.cc/paper_files/paper/2023/file/34e1dbe95d34d7ebaf99b9bcaeb5b2be-Paper-Conference.pdf",
+          "note": "Presents the ACDC method."
+        }
+      ],
+      "typical_cost": "high", 
+      "implementation": "https://github.com/ArthurConmy/Automatic-Circuit-Discovery"
     }, 
     {
       "name": "Discretized Integrated Gradients",
