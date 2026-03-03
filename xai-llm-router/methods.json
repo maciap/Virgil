@@ -375,14 +375,16 @@
       "target_scope": "local",
       "accessibility": "non experts",
       "description": {
-        "overview": "GradientSHAP combines integrated gradients with randomized baselines. It approximates Shapley values by averaging integrated gradients from multiple noisy baseline inputs.",
+        "overview": "GradientSHAP combines integrated gradients with randomized baselines. It approximates Shapley values (SHAP) by averaging integrated gradients from multiple noisy baseline inputs.",
         "main_functionalities": [
           "Sample multiple baselines and integrate gradients",
           "Approximate Shapley-value attributions via gradient estimates"
         ]
       },
-      "strengths": [],
-      "limitations": [],
+      "strengths": ["Can be viewed as an approximation of Integrated Gradients, bridging SHAP and Integrated Gradients", 
+    "Efficiently approximates SHAP"],
+      "limitations": ["The connection with SHAP relies on the assumption that input features are independent and that the explanation model is linear, so that explanations are modeled through the additive composition of feature effects", 
+    "Sensitive to sampling and choice of baseline"],
       "research_applications": [
         {
           "used_in": "A Unified Approach to Interpreting Model Predictions",
@@ -409,7 +411,8 @@
           "note": "Introduces the Interpreto toolkits which also implements Gradient SHAP."
         }
       ],
-      "typical_cost": "high"
+      "typical_cost": "high", 
+      "implementation": "https://github.com/meta-pytorch/captum"
     },
     {
       "name": "GradientSHAP",
@@ -417,15 +420,17 @@
       "access_arch": {"access": ["white_box"], "arch": ["all"]},
       "target_scope": "local",
       "accessibility": "non experts",
-      "description": {
-        "overview": "GradientSHAP combines integrated gradients with randomized baselines. It approximates Shapley values by averaging integrated gradients from multiple noisy baseline inputs.",
+            "description": {
+        "overview": "GradientSHAP combines integrated gradients with randomized baselines. It approximates Shapley values (SHAP) by averaging integrated gradients from multiple noisy baseline inputs.",
         "main_functionalities": [
           "Sample multiple baselines and integrate gradients",
           "Approximate Shapley-value attributions via gradient estimates"
         ]
       },
-      "strengths": [],
-      "limitations": [],
+      "strengths": ["Can be viewed as an approximation of Integrated Gradients, bridging SHAP and Integrated Gradients", 
+    "Efficiently approximates SHAP"],
+      "limitations": ["The connection with SHAP relies on the assumption that input features are independent and that the explanation model is linear, so that explanations are modeled through the additive composition of feature effects", 
+    "Sensitive to sampling and choice of baseline"],
       "research_applications": [
         {
           "used_in": "A Unified Approach to Interpreting Model Predictions",
@@ -452,8 +457,9 @@
           "note": "Introduces the Interpreto toolkits which also implements Gradient SHAP."
         }
       ],
-      "typical_cost": "high"
-    },
+      "typical_cost": "high", 
+      "implementation": "https://github.com/meta-pytorch/captum"
+    }, 
     {
       "name": "Feature Ablation",
       "task_input": ["classification"],
@@ -461,14 +467,17 @@
       "access_arch": {"access": ["black_box"], "arch": ["all"]},
       "target_scope": "local",
       "description": {
-        "overview": "Feature Ablation is a perturbation method that measures output change when input features (tokens) are removed or replaced with a baseline. It estimates importance by deletion impact.",
+        "overview": "Feature Ablation is a perturbation method that measures output change when input features (e.g., tokens) are removed or replaced with a baseline. It estimates importance by deletion impact.",
         "main_functionalities": [
-          "Remove or mask input tokens and observe output differences",
-          "Compute importance scores as change in prediction"
+          "Compute attribution scores"
         ]
-      },
-      "strengths": [],
-      "limitations": [],
+      }, 
+      "strengths": ["Very simple and intuitive", 
+    "Based on actual prediction differences (i.e., it does not rely on proxies like gradients to compute attributions)"],
+      "limitations": ["Ablating tokens can create out-of-distribution inputs.",
+                      "Ignores completely token interactions", 
+                     "Results depend on the design choices such as baseline", 
+                    "Can be computationally expensive"],
       "research_applications": [
         {
           "used_in": "Global Explanation of Neural Networks via Feature Ablation",
@@ -477,9 +486,26 @@
           "source": "ArXiv",
           "url": "https://arxiv.org/abs/1806.03824",
           "note": "Discusses feature ablation methods for model interpretability."
+        }, 
+        {
+          "used_in": "Using Captum to Explain Generative Language Models",
+          "type": "paper",
+          "year": 2023,
+          "source": "Proceedings of the 3rd Workshop for Natural Language Processing Open Source Software (NLP-OSS 2023)",
+          "url": "https://aclanthology.org/2023.nlposs-1.19.pdf",
+          "note": "Introduces attribution tools like Saliency in the popular Captum toolkit."
+        },
+        {
+          "used_in": "Captum Documentation (GitHub)",
+          "type": "docs",
+          "year": 2023,
+          "source": "Facebook AI Research",
+          "url": "https://captum.ai/api/layer_integrated_gradients.html",
+          "note": "Documents the layer-wise IG method in Captum."
         }
       ],
-      "typical_cost": "high"
+      "typical_cost": "high", 
+      "implementation":  "https://github.com/meta-pytorch/captum"
     },
     {
       "name": "Feature Ablation",
@@ -487,14 +513,17 @@
       "access_arch": {"access": ["black_box"], "arch": ["all"]},
       "target_scope": "local",
       "description": {
-        "overview": "Feature Ablation is a perturbation method that measures output change when input features (tokens) are removed or replaced with a baseline. It estimates importance by deletion impact.",
+        "overview": "Feature Ablation is a perturbation method that measures output change when input features (e.g., tokens) are removed or replaced with a baseline. It estimates importance by deletion impact.",
         "main_functionalities": [
-          "Remove or mask input tokens and observe output differences",
-          "Compute importance scores as change in prediction"
+          "Compute attribution scores"
         ]
-      },
-      "strengths": [],
-      "limitations": [],
+      }, 
+      "strengths": ["Very simple and intuitive", 
+    "Based on actual prediction differences (i.e., it does not rely on proxies like gradients to compute attributions)"],
+      "limitations": ["Ablating tokens can create out-of-distribution inputs.",
+      "Ignores completely token interactions", 
+                     "Results depend on the design choices such as baseline", 
+                    "Can be computationally expensive"],
       "research_applications": [
         {
           "used_in": "Global Explanation of Neural Networks via Feature Ablation",
@@ -503,9 +532,26 @@
           "source": "ArXiv",
           "url": "https://arxiv.org/abs/1806.03824",
           "note": "Discusses feature ablation methods for model interpretability."
+        }, 
+        {
+          "used_in": "Using Captum to Explain Generative Language Models",
+          "type": "paper",
+          "year": 2023,
+          "source": "Proceedings of the 3rd Workshop for Natural Language Processing Open Source Software (NLP-OSS 2023)",
+          "url": "https://aclanthology.org/2023.nlposs-1.19.pdf",
+          "note": "Introduces attribution tools like Saliency in the popular Captum toolkit."
+        },
+        {
+          "used_in": "Captum Documentation (GitHub)",
+          "type": "docs",
+          "year": 2023,
+          "source": "Facebook AI Research",
+          "url": "https://captum.ai/api/layer_integrated_gradients.html",
+          "note": "Documents the layer-wise IG method in Captum."
         }
       ],
-      "typical_cost": "high"
+      "typical_cost": "high", 
+      "implementation":  "https://github.com/meta-pytorch/captum"
     },
     {
       "name": "Occlusion",
@@ -522,14 +568,11 @@
         ]
       },
       "strengths": [
-        "Intuitive and human-friendly",
-         "Model-agnostic (no gradients needed)",
-        "Highlights contiguous spans that influence output"
+        "Intuitive and human-friendly"
       ],
       "limitations": [
-        "Requires many forward passes (computationally expensive)",
-        "Masked inputs (e.g., with UNK) can be unnatural",
-        "Local method only (does not summarize global behavior)"
+        "Ablating tokens can create out-of-distribution inputs.",
+        "Can be computationally expensive, requiring many forward passes"
       ],
       "research_applications": [
         {
@@ -549,7 +592,8 @@
           "note": "Introduces the Interpreto toolkits which also implements Kernel SHAP."
         }
       ],
-      "typical_cost": "high"
+      "typical_cost": "high", 
+      "implementation": "https://github.com/FOR-sight-ai/interpreto"
     },
     {
       "name": "Occlusion",
@@ -565,14 +609,11 @@
         ]
       },
       "strengths": [
-        "Intuitive and human-friendly",
-         "Model-agnostic (no gradients needed)",
-        "Highlights contiguous spans that influence output"
+        "Intuitive and human-friendly"
       ],
       "limitations": [
-        "Requires many forward passes (computationally expensive)",
-        "Masked inputs (e.g., with UNK) can be unnatural",
-        "Local method only (does not summarize global behavior)"
+        "Ablating tokens can create out-of-distribution inputs.",
+        "Can be computationally expensive, requiring many forward passes"
       ],
       "research_applications": [
         {
@@ -592,8 +633,9 @@
           "note": "Introduces the Interpreto toolkits which also implements Kernel SHAP."
         }
       ],
-      "typical_cost": "high"
-    },
+      "typical_cost": "high", 
+      "implementation": "https://github.com/FOR-sight-ai/interpreto"
+    }, 
     {
       "name": "SHAP",
       "task_input": ["classification"],
@@ -601,13 +643,17 @@
       "target_scope": "local",
       "accessibility": "non experts",
       "description": {
-        "overview": "SHAP is a model-agnostic method to estimate feature attributions by Shapley values.",
+       "overview": "SHAP explains a single prediction by estimating each token Shapley value: the average marginal contribution of that token across all coalitions, yielding additive attributions for the target output.",
         "main_functionalities": [
-          "Compute local Shapley-based attributions for a predictor"
+          "Compute local attributions"
         ]
       },
-      "strengths": [],
-      "limitations": [],
+      "strengths": ["Shapley values are grounded in game theory", 
+                    "Very popular across different domains"],
+      "limitations": ["Computationally expensive", 
+      "Masking/removing tokens can create out-of-distribution inputs", 
+       "Sensitive to the choice of background set; using more and more diverse background examples generally makes explanations more robust but increases cost"
+      ],
       "research_applications": [
         {
           "used_in": "A Unified Approach to Interpreting Model Predictions",
@@ -624,24 +670,39 @@
           "source": "Proceedings of the 17th Conference of the European Chapter of the Association for Computational Linguistics: System Demonstrations",
           "url": "https://dl.acm.org/doi/10.1145/2939672.2939778",
           "note": "Introduces the ferret toolkit which leverages feature attribution approaches like LIME to support the interpretation of individual model predictions."
+        }, 
+        {
+          "used_in": "Using Captum to Explain Generative Language Models",
+          "type": "paper",
+          "year": 2023,
+          "source": "Proceedings of the 3rd Workshop for Natural Language Processing Open Source Software (NLP-OSS 2023)",
+          "url": "https://aclanthology.org/2023.nlposs-1.19.pdf",
+          "note": "Introduces attribution tools like Saliency in the popular Captum toolkit."
         }
       ],
-      "typical_cost": "high"
+      "typical_cost": "high", 
+      "implementation": "https://github.com/meta-pytorch/captum"
     },
     {
       "name": "TokenSHAP",
       "task_input": ["generation"],
-      "access_arch": {"access": ["black_box"], "arch": ["all"]},
+      "access_arch": {"access": ["black_box"], "arch": ["decoder"]},
       "target_scope": "local",
       "accessibility": "non experts",
       "description": {
-        "overview": "TokenSHAP is an implementation of SHAP built for text generation via language models.",
+        "overview": "TokenSHAP adapts Shapley-value attribution to autoregressive language models by treating input tokens as players in a cooperative game and approximating their marginal contributions to generated token probabilities via Monte Carlo sampling..",
         "main_functionalities": [
           "Compute local Shapley-based attributions for a predictor"
         ]
       },
-      "strengths": [],
-      "limitations": [],
+      "strengths": [
+        "Theoretically grounded in game theory", 
+        "Tailored to autoregressive LLMs (explains next-token or sequence probabilities)"
+      ],
+      "limitations": ["Computationally expensive", 
+        "Results depend on masking/perturbation strategy, which may create out-of-distribution inputs",
+        "Shapley values approximation may be unstable if enough Monte Carlo samples are not drawn"
+],
       "research_applications": [
         {
           "used_in": "A Unified Approach to Interpreting Model Predictions",
@@ -654,13 +715,14 @@
         {
           "used_in": "TokenSHAP: Interpreting Large Language Models with Monte Carlo Shapley Value Estimation",
           "type": "paper",
-          "year": 2022, 
-          "source": "Proceedings of the 17th Conference of the European Chapter of the Association for Computational Linguistics: System Demonstrations",
+          "year": 2024, 
+          "source": "Proceedings of the 1st Workshop on NLP for Science (NLP4Science)",
           "url": "https://arxiv.org/pdf/2407.10114",
-          "note": "Introduces TokenSHAP, a Monte Carlo implementation of SHAP tailored for large language models."
+          "note": "Introduces TokenSHAP, a Monte Carlo implementation of SHAP tailored to autoregressive large language models."
         }
       ],
-      "typical_cost": "high"
+      "typical_cost": "high", 
+      "implementation": "https://github.com/GenAISHAP/TokenSHAP"
     },
     {
       "name": "Kernel SHAP",
@@ -669,14 +731,14 @@
       "target_scope": "all",
       "accessibility":"non experts",
       "description": {
-        "overview": "Kernel SHAP is a model-agnostic method to estimate feature attributions by approximating Shapley values with a weighted linear regression on perturbations.",
+        "overview": "Kernel SHAP is a method that relies on a weighted linear regression to compute attributions. Attributions correspond to both Shapley values from game theory and coefficients from a local linear regression.",
         "main_functionalities": [
-          "Compute local Shapley-based attributions for a predictor",
-          "Aggregate local explanations for a global summary (if needed)"
+          "Compute local Shapley-based attributions"
         ]
       },
-      "strengths": [],
-      "limitations": [],
+      "strengths": ["Theoretically grounded in game theory", "Widely used across many domains"], 
+      "limitations": ["Computationally expensive",   "Results depend on masking/perturbation strategy, which may create out-of-distribution inputs", "Can be sensitive to design choices such as the choice of background"
+],
       "research_applications": [
         {
           "used_in": "A Unified Approach to Interpreting Model Predictions",
@@ -703,7 +765,8 @@
           "note": "Describes PnPXAI toolkit, which implements several explainers, including Kernel SHAP."
         }
       ],
-      "typical_cost": "high"
+      "typical_cost": "high", 
+      "implementation": "https://github.com/FOR-sight-ai/interpreto"
     },
     {
       "name": "Sobol",
@@ -738,7 +801,8 @@
           "note": "Introduces the Interpreto toolkits which also implements Kernel SHAP."
         }
       ],
-      "typical_cost": "missing"
+      "typical_cost": "missing", 
+      "implementation": "https://github.com/FOR-sight-ai/interpreto"
     },
     {
       "name": "SmoothGrad",
@@ -801,18 +865,19 @@
       "target_scope": "local",
       "accessibility":"non experts", 
       "description": {
-        "overview": "LIME (Local Interpretable Model-agnostic Explanations) fits a simple surrogate model around a specific instance by sampling perturbations. The surrogate’s weights on features explain the local prediction.",
+        "overview": "LIME (Local Interpretable Model-agnostic Explanations) fits a simple surrogate model around a specific instance by sampling perturbations. The surrogate weights on features explain the local prediction.",
         "main_functionalities": [
-          "Generate local explanations by fitting an interpretable model (e.g., linear) around an instance",
-          "Learn feature weights from perturbed samples"
+          "Compute local attributions"
         ]
       },
       "strengths": [
-        "Provides interpretable local explanations via simple models",
-        "Model-agnostic and widely applicable"
+        "Simple and intuitive",
+        "Widely-used across different domains"
       ],
       "limitations": [
-        "Requires many perturbed samples (computationally heavy)",
+        "Can be computationally expensive",
+        "Highly sensitive to design choices (perturbation strategy, similarity kernel/width, number of samples, surrogate regularization), which can change explanations substantially",
+
         "Explanations sensitive to sampling and kernel choices"
       ],
       "research_applications": [
@@ -839,9 +904,18 @@
           "source": "ArXiv",
           "url": "http://arxiv.org/abs/1909.09223",
           "note": "Introduces the  InterpretML toolkit which implements the LIME method."
+        }, 
+          {
+          "used_in": "Using Captum to Explain Generative Language Models",
+          "type": "paper",
+          "year": 2023,
+          "source": "Proceedings of the 3rd Workshop for Natural Language Processing Open Source Software (NLP-OSS 2023)",
+          "url": "https://aclanthology.org/2023.nlposs-1.19.pdf",
+          "note": "Introduces attribution tools like Saliency in the popular Captum toolkit."
         }
       ],
-      "typical_cost": "high"
+      "typical_cost": "high", 
+      "implementation": "https://github.com/meta-pytorch/captum"
     },
     {
       "name": "Anchors",
@@ -1197,60 +1271,123 @@
       "typical_cost": "high", 
       "implementation": "https://github.com/PAIR-code/lit"
     },
-    {
-      "name": "Activation Patching",
-      "task_input": ["generation"],
-      "access_arch": {"access": ["white_box"], "arch": ["decoder"]},
+      {
+      "name": "Polyjuice",
+      "task_input": ["classification"],
+      "access_arch": {"access": ["black_box"], "arch": ["all"]},
       "target_scope": "local",
       "description": {
-        "overview": "Activation Patching compares two model runs by copying ('patching') certain internal activations from one run to another. The change in output reveals the causal effect of those activations.",
+        "overview": "Polyjuice is a transformer-based counterfactual generation framework. It uses a fine-tuned GPT-2 model with perturbation control codes to generate fluent and diverse textual variants of an input. These counterfactuals are evaluated on a target classifier to analyze prediction changes.",
         "main_functionalities": [
-          "Replace specified activations from a 'clean' run into a 'corrupted' run",
-          "Measure output differences to identify critical components"
+          "Generate counterfactual examples for a given input",
+          "Show the differences needed to alter the predictions of the model"
+        ]
+      },
+      "strengths": ["Generates fluent counterfactual inputs that tendo to be diverse and close to the actual inputs",
+     "The method is model agnostic", 
+     "Explanations are intuitive"],
+      "limitations": ["The unit (or subset of input) that can be targeted to generate a counterfactual is not obvious", 
+    "The control codes used to guide generation and fine-tuning may be subject to biases"],
+      "research_applications": [
+        {
+          "used_in": "Polyjuice: Generating Counterfactuals for Explaining, Evaluating, and Improving Models",
+          "type": "paper",
+          "year": 2021,
+          "source": "Proceedings of the 59th Annual Meeting of the Association for Computational Linguistics and the 11th International Joint Conference on Natural Language Processing (Volume 1: Long Papers)",
+          "url":  "https://aclanthology.org/2021.acl-long.523.pdf",
+          "note": "Introduces Polyjuice."
+        }
+      ],
+      "typical_cost": "high", 
+      "implementation": "https://github.com/tongshuangwu/polyjuice"
+    },
+    {
+      "name": "Activation Patching",
+      "task_input": ["generation", "classification"],
+      "access_arch": {"access": ["white_box"], "arch": ["encdec", "decoder"]},
+      "target_scope": "global", 
+      "accessibility": "experts",
+      "description": {
+        "overview": "Activation patching studies which components of a model are responsible for a behavior by replacing internal activations. In particular, activations from a “clean” run are copied into a “corrupted” run (or vice-versa)", 
+        "main_functionalities": [
+          "Identify computational paths that are important for a behavior of the model of interest",
+          "Identify critical components"
         ]
       },
       "strengths": [
-        "Causal: directly tests necessity of components",
-        "Allows pinpointing precise layers/neurons affecting a behavior"
+       "Allows to draw strong causal conclusions", 
+        "Allows localizing precise model components affecting a behavior"
       ],
       "limitations": [
-        "Computationally expensive (requires many runs)",
-        "Results depend on choice of baseline and interventions"
+        "Requires manual work, e.g., to creation of a dataset of corrupted inputs to collect activations from the “corrupted” run",
+        "Patching interventions are computationally expensive, requiring multiple passes", 
+        "Results are affected by design choices such as the creation of corrupted inputs or the chouce of the metric used to assess patching impact"
       ],
       "research_applications": [
+      {
+          "used_in": "How to use and interpret activation patching",
+          "type": "blog post",
+          "year": 2024,
+          "source": "LessWrong",
+          "url": "https://www.lesswrong.com/posts/FhryNAFknqKAdDcYy/how-to-use-and-interpret-activation-patching",
+          "note": "Exhaustively illustrates activation patching, also covering path patching."
+        }, 
         {
-          "used_in": "How to Use and Interpret Activation Patching",
+          "used_in": "Towards Best Practices of Activation Patching In Language Models: Metrics and Methods",
           "type": "paper",
           "year": 2024,
-          "source": "arXiv",
-          "url": "https://arxiv.org/abs/2404.15255",
-          "note": "Provides methodology and best practices for activation patching."
+          "source": "ArXiv",
+          "url": "https://arxiv.org/pdf/2309.16042",
+          "note": "Evaluates the impact of design choices in activation patching, providing recommendations for the best practices of activation patching going forwards."
         }
       ],
       "typical_cost": "high"
     },
     {
       "name": "Path Patching",
-      "task_input": ["generation"],
-      "access_arch": {"access": ["white_box"], "arch": ["decoder"]},
-      "target_scope": "local",
+      "task_input": ["generation", "classification"],
+      "access_arch": {"access": ["white_box"], "arch": ["encdec", "decoder"]},
+      "target_scope": "global",
+      "accessibility": "experts",
       "description": {
-        "overview": "Path Patching is a variant where patches are constrained to a single component's output, testing direct vs. indirect influence. It assesses whether two components have a direct causal connection.",
+        "overview": "Path patching is a causal intervention method where activations from a “clean” run are copied into a “corrupted” run (or vice-versa), but only along a specific computational path to test whether that precise path is responsible for a given behavior or prediction.",
         "main_functionalities": [
-          "Patch activations while limiting effect to one target component",
-          "Distinguish direct from mediated causal pathways"
+          "Identify computational paths that are important for a behavior of the model of interest",
+          "Localize important and unimportant computational subgraphs"
         ]
       },
-      "strengths": [],
-      "limitations": [],
+      "strengths": ["Allows to draw strong causal conclusions", 
+    "Computational paths are not always easy-to-interpret for humans", 
+  "Allows to study which transformer components affect each other directly, or via mediation by another component", 
+"More expressive than standard activation patching"],
+      "limitations": ["Requires manual work, e.g., to creation of a dataset of corrupted inputs to collect activations from the “corrupted” run", 
+                     "Patching interventions are computationally expensive, requiring multiple passes", 
+                      "Results are affected by design choices such as the creation of corrupted inputs or the chouce of the metric used to assess patching impact"
+],
       "research_applications": [
         {
-          "used_in": "How to Use and Interpret Activation Patching",
+          "used_in": "Interpretability in the wild: a circuit for indirect object identification in gpt-2 small",
           "type": "paper",
-          "year": 2024,
+          "year": 2022,
           "source": "arXiv",
           "url": "https://arxiv.org/abs/2404.15255",
           "note": "Introduces path-constrained activation patching."
+        }, 
+        {
+          "used_in": "Localizing Model Behavior with Path Patching",
+          "type": "paper",
+          "year": 2023,
+          "source": "arXiv",
+          "url": "https://arxiv.org/pdf/2304.05969",
+          "note": "Introduces path-constrained activation patching."
+        }, 
+        {
+          "used_in": "How to use and interpret activation patching",
+          "type": "blog post",
+          "year": 2024,
+          "source": "LessWrong",
+          "url": "https://www.lesswrong.com/posts/FhryNAFknqKAdDcYy/how-to-use-and-interpret-activation-patching",
+          "note": "Exhaustively illustrates activation patching, also covering path patching."
         }
       ],
       "typical_cost": "high"
@@ -1834,43 +1971,58 @@
   "target_scope": "local",
   "accessibility":"non experts",
   "description": {
-    "overview": "LIME approximates a local linear surrogate model around a prediction by perturbing input tokens and observing changes in generated outputs.",
-    "main_functionalities": [
-      "Perturbation-based token attribution",
-      "Model-agnostic explanation",
-      "Local surrogate modeling"
-    ]
-  },
-  "strengths": [
-    "Does not require gradient access",
-    "Model-agnostic",
-    "Intuitive local linear approximation"
-  ],
-  "limitations": [
-    "Sampling-based and potentially unstable",
-    "Computationally expensive for long sequences",
-    "Faithfulness depends on perturbation strategy"
-  ],
-   "research_applications": [
-    {
-      "used_in": "Why Should I Trust You? Explaining the Predictions of Any Classifier",
-      "type": "paper",
-      "year": 2016,
-      "source": "Proceedings of Knowledge Discovery in Databases (KDD)",
-      "url": "https://arxiv.org/abs/1602.04938",
-      "note": "Original LIME paper introducing local surrogate explanations."
-    },
-    {
-      "used_in": "Inseq: An Interpretability Toolkit for Sequence Generation Models",
-      "type": "paper",
-      "year": 2023,
-      "source": "ACL Demo",
-      "url": "https://aclanthology.org/2023.acl-demo.40/",
-      "note": "Demonstrates LIME-style attribution for generative language models."
-    }
-  ],
-  "typical_cost": "high"
-}, 
+        "overview": "LIME (Local Interpretable Model-agnostic Explanations) fits a simple surrogate model around a specific instance by sampling perturbations. The surrogate weights on features explain the local prediction.",
+        "main_functionalities": [
+          "Compute local attributions"
+        ]
+      },
+      "strengths": [
+        "Simple and intuitive",
+        "Widely-used across different domains"
+      ],
+      "limitations": [
+        "Can be computationally expensive",
+        "Highly sensitive to design choices (perturbation strategy, similarity kernel/width, number of samples, surrogate regularization), which can change explanations substantially",
+
+        "Explanations sensitive to sampling and kernel choices"
+      ],
+      "research_applications": [
+        {
+          "used_in": "Why Should I Trust You?: Explaining the Predictions of Any Classifier",
+          "type": "paper",
+          "year": 2016,
+          "source": "KDD",
+          "url": "https://dl.acm.org/doi/10.1145/2939672.2939778",
+          "note": "Introduces the LIME method."
+        }, 
+        {
+          "used_in": "ferret: a Framework for Benchmarking Explainers on Transformers",
+          "type": "paper",
+          "year": 2023,
+          "source": "Proceedings of the 17th Conference of the European Chapter of the Association for Computational Linguistics: System Demonstrations",
+          "url": "https://dl.acm.org/doi/10.1145/2939672.2939778",
+          "note": "Introduces the ferret toolkit which leverages feature attribution approaches like LIME to support the interpretation of individual model predictions."
+        }, 
+        {
+          "used_in": "InterpretML: {A} Unified Framework for Machine Learning Interpretability",
+          "type": "paper",
+          "year": 2019,
+          "source": "ArXiv",
+          "url": "http://arxiv.org/abs/1909.09223",
+          "note": "Introduces the  InterpretML toolkit which implements the LIME method."
+        }, 
+          {
+          "used_in": "Using Captum to Explain Generative Language Models",
+          "type": "paper",
+          "year": 2023,
+          "source": "Proceedings of the 3rd Workshop for Natural Language Processing Open Source Software (NLP-OSS 2023)",
+          "url": "https://aclanthology.org/2023.nlposs-1.19.pdf",
+          "note": "Introduces attribution tools like Saliency in the popular Captum toolkit."
+        }
+      ],
+      "typical_cost": "high", 
+      "implementation": "https://github.com/meta-pytorch/captum"
+    }, 
 {
   "name": "GradientSHAP",
   "plugin_id": "inseq_encdec_gradient_shap",
@@ -1970,25 +2122,58 @@
   "target_scope": "local",
   "accessibility":"non experts",
   "description": {
-    "overview": "LIME approximates a local linear surrogate model around a prediction by perturbing input tokens and observing changes in generated outputs.",
-    "main_functionalities": [
-      "Perturbation-based token attribution",
-      "Model-agnostic explanation",
-      "Local surrogate modeling"
-    ]
-  },
-  "strengths": [
-    "Does not require gradient access",
-    "Model-agnostic",
-    "Intuitive local linear approximation"
-  ],
-  "limitations": [
-    "Sampling-based and potentially unstable",
-    "Computationally expensive for long sequences",
-    "Faithfulness depends on perturbation strategy"
-  ],
-  "typical_cost": "high"
-   }, 
+        "overview": "LIME (Local Interpretable Model-agnostic Explanations) fits a simple surrogate model around a specific instance by sampling perturbations. The surrogate weights on features explain the local prediction.",
+        "main_functionalities": [
+          "Compute local attributions"
+        ]
+      },
+      "strengths": [
+        "Simple and intuitive",
+        "Widely-used across different domains"
+      ],
+      "limitations": [
+        "Can be computationally expensive",
+        "Highly sensitive to design choices (perturbation strategy, similarity kernel/width, number of samples, surrogate regularization), which can change explanations substantially",
+
+        "Explanations sensitive to sampling and kernel choices"
+      ],
+      "research_applications": [
+        {
+          "used_in": "Why Should I Trust You?: Explaining the Predictions of Any Classifier",
+          "type": "paper",
+          "year": 2016,
+          "source": "KDD",
+          "url": "https://dl.acm.org/doi/10.1145/2939672.2939778",
+          "note": "Introduces the LIME method."
+        }, 
+        {
+          "used_in": "ferret: a Framework for Benchmarking Explainers on Transformers",
+          "type": "paper",
+          "year": 2023,
+          "source": "Proceedings of the 17th Conference of the European Chapter of the Association for Computational Linguistics: System Demonstrations",
+          "url": "https://dl.acm.org/doi/10.1145/2939672.2939778",
+          "note": "Introduces the ferret toolkit which leverages feature attribution approaches like LIME to support the interpretation of individual model predictions."
+        }, 
+        {
+          "used_in": "InterpretML: {A} Unified Framework for Machine Learning Interpretability",
+          "type": "paper",
+          "year": 2019,
+          "source": "ArXiv",
+          "url": "http://arxiv.org/abs/1909.09223",
+          "note": "Introduces the  InterpretML toolkit which implements the LIME method."
+        }, 
+          {
+          "used_in": "Using Captum to Explain Generative Language Models",
+          "type": "paper",
+          "year": 2023,
+          "source": "Proceedings of the 3rd Workshop for Natural Language Processing Open Source Software (NLP-OSS 2023)",
+          "url": "https://aclanthology.org/2023.nlposs-1.19.pdf",
+          "note": "Introduces attribution tools like Saliency in the popular Captum toolkit."
+        }
+      ],
+      "typical_cost": "high", 
+      "implementation": "https://github.com/meta-pytorch/captum"
+    }, 
     {
   "name": "Linear CKA (layer similarity)",
   "plugin_id": "linear_cka_layers",
