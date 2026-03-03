@@ -634,14 +634,24 @@ def feasible(hard: Dict[str, str], m: Dict[str, Any]) -> Tuple[bool, str]:
     if hard["access"] != "NA":
         acc = m.get("access_arch", {}).get("access", "NA")
         accs = norm_list(acc)
-        if hard["access"] not in accs and "mixed" not in accs and "NA" not in accs:
+        if (
+            hard["access"] not in accs
+            and "all" not in accs                   # ← ADD THIS (defensive)
+            and "mixed" not in accs
+            and "NA" not in accs
+        ):
             return False, f"access mismatch (method {accs})"
 
     # Architecture
     if hard["arch"] != "NA":
         arch = m.get("access_arch", {}).get("arch", "NA")
         archs = norm_list(arch)
-        if hard["arch"] not in archs and "transformer_general" not in archs and "NA" not in archs:
+        if (
+            hard["arch"] not in archs
+            and "all" not in archs                  # ← ADD THIS
+            and "transformer_general" not in archs
+            and "NA" not in archs
+        ):
             return False, f"arch mismatch (method {archs})"
 
     # Scope
@@ -941,6 +951,20 @@ def _pretty_arch_label(item: Dict[str, Any]) -> str:
     if any(a in ("enc_dec", "enc-dec", "encoder_decoder", "encoder-decoder", "seq2seq") for a in archs_l):
         return "Encoder–Decoder"
     return ""
+
+
+def resolve_plugin_id(method: Dict, hard: Dict) -> str | None:
+    routing = method.get("plugin_routing", [])
+    task = hard.get("task", "NA")
+    arch = hard.get("arch", "NA")
+    
+    for route in routing:
+        task_match = route.get("task") in ("NA", "all", task) or task == "NA"
+        arch_match = route.get("arch") in ("NA", "all", arch) or arch == "NA"
+        if task_match and arch_match:
+            return route.get("plugin_id")
+    
+    return method.get("plugin_id")  # fallback
 
 
 def _chip(text: str):

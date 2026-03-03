@@ -80,7 +80,8 @@ from Navigator_utils import (
     _chip,
     render_selected_tool_card,
     _pretty_task_label, 
-    _pretty_arch_label
+    _pretty_arch_label, 
+    resolve_plugin_id
 )
 
 import html
@@ -92,6 +93,23 @@ _NODE_RE = re.compile(r"^(X0|A|M|I)(\d+)?_(\d+)$")  # X0_3 OR A6_3 etc.
 import os
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 print(os.getcwd())
+
+
+import matplotlib as mpl
+mpl.rcParams["axes.prop_cycle"] = mpl.cycler(color=["#4ade80"])
+mpl.rcParams["axes.facecolor"] = "#1a1a1a"      # dark background to match app
+mpl.rcParams["figure.facecolor"] = "#1a1a1a"
+mpl.rcParams["axes.edgecolor"] = "#374151"
+mpl.rcParams["xtick.color"] = "#9ca3af"
+mpl.rcParams["ytick.color"] = "#9ca3af"
+mpl.rcParams["text.color"] = "#f9fafb"
+mpl.rcParams["axes.labelcolor"] = "#f9fafb"
+mpl.rcParams["axes.titlecolor"] = "#f9fafb"
+mpl.rcParams["grid.color"] = "#374151"
+mpl.rcParams["grid.alpha"] = 0.4
+
+
+
 
 
 @st.cache_resource
@@ -417,25 +435,39 @@ div[data-testid="stMarkdownContainer"] span {
 </style>
 """, unsafe_allow_html=True)
 
+
 st.markdown(
     """
-<h1 style="
-    font-size: 2.6rem;
-    font-weight: 700;
-    margin-bottom: 0.3rem;
-">
-    Virgil: Your LLM Explainability Navigator 🧭
-</h1>
-<p style="
-    font-size: 1.1rem;
-    color: var(--text-color);
-    margin-top: 0;
-">
-    Discover the tools for explaining LLMs that fit your needs.
-</p>
+<div style="margin-bottom: 1.5rem;">
+  <div style="
+      font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+      font-size: 3.4rem;
+      font-weight: 800;
+      letter-spacing: -1.5px;
+      line-height: 1.2;
+      padding-bottom: 0.1em;
+      color: #4ade80;
+      margin-bottom: 0.4rem;
+  ">Virgil</div>
+  <div style="
+      font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+      font-size: 1.5rem;
+      font-weight: 600;
+      letter-spacing: -0.3px;
+      color: var(--text-color);
+      opacity: 0.85;
+      margin-bottom: 0.3rem;
+  ">Your LLM Explainability Navigator 🧭</div>
+  <div style="
+      font-size: 1.05rem;
+      color: var(--text-color);
+      opacity: 0.6;
+  ">Discover the tools for explaining LLMs that fit your needs.</div>
+</div>
 """,
     unsafe_allow_html=True,
 )
+
 
 try:
     methods = load_methods("methods.json")
@@ -526,7 +558,7 @@ if mode == "Pick with filters":
         recommended.append(
             {
                 "name": m.get("name", "NA"),
-                "plugin_id": m.get("plugin_id"),  # may be None (still selectable + comparable)
+                "plugin_id": resolve_plugin_id(m, hard),  
                 "implementation": m.get("implementation"),
                 "score": float(sc),
                 "matched": matched,
@@ -583,7 +615,7 @@ else:
             recommended.append(
                 {
                     "name": item["name"],
-                    "plugin_id": m.get("plugin_id"),  # may be None
+                    "plugin_id": resolve_plugin_id(m, hard),  # may be None
                     "implementation": m.get("implementation"), 
                     "score": float(item["final_score"]),
                     "matched": ["🧠 text match"] + matched,
@@ -630,21 +662,24 @@ with col_recs:
 
         with st.container(border=True):
             st.markdown(f"### {item['name']}")
-            tlabel = _pretty_task_label(item)
-            alabel = _pretty_arch_label(item)
+            #tlabel = _pretty_task_label(item)
+            #alabel = _pretty_arch_label(item)
 
             # Show Task + Arch ONLY for allowed values
-            if tlabel and tlabel.strip():
-                st.caption(f"🎯 Task: {tlabel}")
-            if alabel:
-                st.caption(f"🏗️ Architecture: {alabel}")
+            #if tlabel and tlabel.strip():
+            #    st.caption(f"🎯 Task: {tlabel}")
+            #if alabel:
+            #    st.caption(f"🏗️ Architecture: {alabel}")
 
-            st.write(f"**Preference score:** {item['score']:.2f}")
+            #st.write(f"**Preference score:** {item['score']:.2f}")
+            #if item.get("matched"):
+            #    st.caption("✅ Matches preferences: " + ", ".join(item["matched"]))
+            #if item.get("mismatched"):
+            #    st.caption("⚠️ Mismatches: " + "; ".join(item["mismatched"]))
+            acc = (item.get("meta", {}) or {}).get("accessibility", "") or item.get("accessibility", "")
+            if acc and acc not in ("NA", "missing"):
+                st.caption(f"🎓 Accessibility: {acc.title()}")
 
-            if item.get("matched"):
-                st.caption("✅ Matches preferences: " + ", ".join(item["matched"]))
-            if item.get("mismatched"):
-                st.caption("⚠️ Mismatches: " + "; ".join(item["mismatched"]))
 
             cA, cB = st.columns([1, 1], gap="medium")
 

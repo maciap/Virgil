@@ -1,16 +1,12 @@
 {
   "toolkits": [
-    {
+     {
       "name": "Integrated Gradients (IG)",
-      "task_input": ["classification", "generation"],
-      "access_arch": { "access": ["white_box"], "arch": ["all"] },
-      "plugin_routing": [
-        { "task": "classification", "arch": "all", "plugin_id": "captum_ig_classifier" },
-        { "task": "generation", "arch": "decoder", "plugin_id": "inseq_decoder_ig" },
-        { "task": "generation", "arch": "encdec", "plugin_id": "inseq_encdec_ig" }
-      ],
+      "plugin_id": "captum_ig_classifier",
+      "task_input": ["classification"],
+      "access_arch": {"access": ["white_box"], "arch": ["all"]},
       "target_scope": "local",
-      "accessibility": "non experts",
+      "accessibility": "non experts", 
       "description": {
         "overview": "Integrated Gradients (IG) attributes a model’s prediction to input tokens by integrating gradients along a path from a baseline to the actual input. It produces per-token attributions for the target output.",
         "main_functionalities": [
@@ -45,22 +41,6 @@
           "source": "Facebook AI Research",
           "url": "https://captum.ai/api/integrated_gradients.html",
           "note": "Details the Integrated Gradients implementation in Captum."
-        },
-        {
-          "used_in": "Inseq: An Interpretability Toolkit for Sequence Generation Models",
-          "type": "paper",
-          "year": 2023,
-          "source": "ACL Demo",
-          "url": "https://aclanthology.org/2023.acl-demo.40/",
-          "note": "Presents Inseq for attribution in generative language models."
-        },
-        {
-          "used_in": "PnPXAI: A Universal XAI Framework",
-          "type": "paper",
-          "year": 2025,
-          "source": "arXiv",
-          "url": "https://arxiv.org/abs/2505.10515",
-          "note": "Describes PnPXAI toolkit, which implements several explainers, including Integrated Gradients."
         }, 
         {
           "used_in": "ferret: a Framework for Benchmarking Explainers on Transformers",
@@ -68,15 +48,7 @@
           "year": 2023,
           "source": "Proceedings of the 17th Conference of the European Chapter of the Association for Computational Linguistics: System Demonstrations",
           "url": "https://dl.acm.org/doi/10.1145/2939672.2939778",
-          "note": "Introduces the ferret toolkit which leverages feature attribution approaches like Integrated Gradients to support explainability in text classification."
-        }, 
-        {
-          "used_in": "Using Captum to Explain Generative Language Models",
-          "type": "paper",
-          "year": 2023,
-          "source": "Proceedings of the 3rd Workshop for Natural Language Processing Open Source Software (NLP-OSS 2023)",
-          "url": "https://aclanthology.org/2023.nlposs-1.19.pdf",
-          "note": "Introduces attribution tools like Integrated Gradients in the popular Captum toolkit."
+          "note": "Introduces the ferret toolkit which leverages feature attribution approaches like Integrated Gradients to support the interpretation of individual model predictions."
         }, 
         {
           "used_in": "The Language Interpretability Tool: Extensible, Interactive Visualizations and Analysis for {NLP} Models",
@@ -85,20 +57,19 @@
           "source": "Proceedings of the 2020 Conference on Empirical Methods in Natural Language Processing: System Demonstrations (EMNLP)",
           "url": "https://doi.org/10.18653/v1/2020.emnlp-demos.15",
           "note": "Introduces the LIT toolkit which implements Integrated Gradients."
-        } 
+        }
       ],
       "typical_cost": "medium"
     },
-
     {
       "name": "Layer Integrated Gradients",
       "task_input": ["classification", "generation"],
-      "access_arch": { "access": ["white_box"], "arch": ["all"] },
+      "access_arch": {"access": ["white_box"], "arch": ["all"]},
       "target_scope": "local",
       "accessibility": "mid experts",
       "description": {
         "overview": "Layer Integrated Gradients is a variation of Integrated Gradients that computes importance scores for the inputs or outputs of a specific layer, rather than for the original input features. In contrast, Integrated Gradients assigns an importance score to each input feature by approximating the integral of the gradients of the model’s output with respect to those inputs along a path from chosen reference inputs to the actual inputs.",
-        "main_functionalities": [
+          "main_functionalities": [
           "Compute attributions for internal layer inputs or outputs",
           "Enable analysis of intermediate representations"
         ]
@@ -141,31 +112,28 @@
     },
     {
       "name": "Saliency",
-      "task_input": ["classification", "generation"],
-      "access_arch": { "access": ["white_box"], "arch": ["all"] },
-      "plugin_routing": [
-        { "task": "classification", "arch": "all", "plugin_id": "captum_saliency_classifier" },
-        { "task": "generation", "arch": "decoder", "plugin_id": "inseq_decoder_saliency" },
-        { "task": "generation", "arch": "encdec", "plugin_id": "inseq_encdec_saliency" }
-      ],
+      "plugin_id": "captum_saliency_classifier",
+      "task_input": ["classification"],
+      "access_arch": {"access": ["white_box"], "arch": ["all"]},
       "target_scope": "local",
-      "accessibility": "non experts",
+      "accessibility":"non experts",
       "description": {
-        "overview": "Saliency computes the gradient of the output with respect to each input embedding, producing token-level attribution scores.",
+        "overview": "Saliency computes the gradient of the output with respect to each input embedding, producing a token-level attribution scores.",
         "main_functionalities": [
           "Compute token importance as the magnitude of gradients of the output with respect to the input"
         ]
       },
       "strengths": [
-        "Very fast (single forward pass)",
+        "Very fast",
         "Easy to interpret as 'which tokens influence the output most'",
-        "Admits an intuitive interpretation as the first-order Taylor approximation of the model around the input. The gradients represent the coefficients of this local linear approximation, and their magnitude is used as a measure of how sensitive the prediction is to each input token.",
+        "Admits an intuitive interpretation as the first-order Taylor approximation of the model around the input. The gradients represent the coefficients of this local linear approximation, and their magnitude is used as a measure of how sensitive the prediction is to each input token.", 
         "Useful for quick debugging and visualization"
       ],
       "limitations": [
         "Often noisy or unstable, prone to highlight spurious importances",
         "Suffers from gradient saturation, which means that gradients approach zero and can be misleading in a neighbourhood of the inputs",
         "Does not satisfy desirable axioms like sensitivity and implementation invariance"
+
       ],
       "research_applications": [
         {
@@ -183,7 +151,7 @@
           "source": "Facebook AI Research",
           "url": "https://captum.ai/api/saliency.html",
           "note": "Describes Saliency in Captum."
-        },
+        }, 
         {
           "used_in": "Using Captum to Explain Generative Language Models",
           "type": "paper",
@@ -197,41 +165,92 @@
           "type": "paper",
           "year": 2023,
           "source": "ArXiv",
-          "url": "https://arxiv.org/html/2512.09730v1",
+          "url": "https://arxiv.org/html/2512.09730v1", 
           "note": "Introduces the Interpreto toolkit which also implements Saliency."
         }
       ],
-      "implementation": "https://github.com/meta-pytorch/captum",
+      "implementation": "https://github.com/meta-pytorch/captum", 
       "typical_cost": "low"
     },
-
     {
-      "name": "Input×Gradient",
-      "task_input": ["classification", "generation"],
-      "access_arch": { "access": ["white_box"], "arch": ["all"] },
-      "plugin_routing": [
-        { "task": "classification", "arch": "all", "plugin_id": "captum_inputxgradient_classifier" },
-        { "task": "generation", "arch": "decoder", "plugin_id": "inseq_decoder_input_x_gradient" },
-        { "task": "generation", "arch": "encdec", "plugin_id": "inseq_encdec_input_x_gradient" }
-      ],
+      "name": "Saliency",
+      "task_input": ["generation"],
+       "access_arch": {"access": ["white_box"], "arch": ["all"]},
       "target_scope": "local",
-      "accessibility": "non experts",
+      "accessibility":"non experts",
       "description": {
-        "overview": "Input×Gradient multiplies each input embedding by its gradient, yielding token-level attribution scores.",
+        "overview": "Saliency computes the gradient of the output with respect to each input embedding, producing a token-level attribution scores.",
         "main_functionalities": [
-          "Compute contributions by combining input values with gradients"
+          "Compute token importance as the magnitude of gradients of the output with respect to the input"
         ]
       },
       "strengths": [
-        "Very fast (single forward pass)",
-        "Capture both current token values and sensitivity of the output to those tokens",
-        "Very intuitive to interpret: it captures contribution rather than only sensitivity."
+        "Very fast",
+        "Easy to interpret as 'which tokens influence the output most'",
+        "Admits an intuitive interpretation in terms of the first-order Taylor approximation of the model around the input. The gradients represent the coefficients of this local linear approximation, and their magnitude is used as a measure of how sensitive the prediction is to each input token.", 
+        "Useful for quick debugging and visualization"
       ],
       "limitations": [
         "Often noisy or unstable, prone to highlight spurious importances",
         "Suffers from gradient saturation, which means that gradients approach zero and can be misleading in a neighbourhood of the inputs",
         "Does not satisfy desirable axioms like sensitivity and implementation invariance"
+
       ],
+      "research_applications": [
+        {
+          "used_in": "Deep Inside Convolutional Networks: Visualising Image Classification Models and Saliency Maps",
+          "type": "paper",
+          "year": 2014,
+          "source": "ICLR Workshop",
+          "url": "https://arxiv.org/pdf/1312.6034",
+          "note": "Introduces the basic saliency/gradient method."
+        },
+        {
+          "used_in": "Captum Documentation (GitHub)",
+          "type": "docs",
+          "year": 2023,
+          "source": "Facebook AI Research",
+          "url": "https://captum.ai/api/saliency.html",
+          "note": "Describes Saliency in Captum."
+        }, 
+        {
+          "used_in": "Using Captum to Explain Generative Language Models",
+          "type": "paper",
+          "year": 2023,
+          "source": "Proceedings of the 3rd Workshop for Natural Language Processing Open Source Software (NLP-OSS 2023)",
+          "url": "https://aclanthology.org/2023.nlposs-1.19.pdf",
+          "note": "Introduces attribution tools like Saliency in the popular Captum toolkit."
+        },
+        {
+          "used_in": "Interpreto: An Explainability Library for Transformers",
+          "type": "paper",
+          "year": 2023,
+          "source": "ArXiv",
+          "url": "https://arxiv.org/html/2512.09730v1", 
+          "note": "Introduces the Interpreto toolkits which also implements Saliency."
+        }
+      ],
+      "implementation": "https://github.com/meta-pytorch/captum", 
+      "typical_cost": "low"
+    },
+    {
+      "name": "Input\u00d7Gradient",
+      "task_input": ["classification"],
+      "plugin_id": "captum_inputxgradient_classifier", 
+      "access_arch": {"access": ["white_box"], "arch": ["all"]},
+      "target_scope": "local",
+      "accessibility":"non experts",
+      "description": {
+        "overview": "Input\u00d7Gradient multiplies each input embedding by its gradient, yielding token-level attribution scores.",
+        "main_functionalities": [
+          "Compute contributions by combining input values with gradients"
+        ]
+      },
+      "strengths": ["Very fast (single-pass computation)", "Capture both current token values and sensitivity of the output to those tokens",
+       "Very intuitive to interpret: it captures contribution rather than only sensitivity."],
+      "limitations": [   "Often noisy or unstable, prone to highlight spurious importances",
+        "Suffers from gradient saturation, which means that gradients approach zero and can be misleading in a neighbourhood of the inputs",
+        "Does not satisfy desirable axioms like sensitivity and implementation invariance"],
       "research_applications": [
         {
           "used_in": "Captum Documentation (GitHub)",
@@ -239,48 +258,89 @@
           "year": 2023,
           "source": "Facebook AI Research",
           "url": "https://captum.ai/api/input_x_gradient.html",
-          "note": "Details the Input×Gradient method in Captum."
-        },
+          "note": "Details the Input\u00d7Gradient method in Captum."
+        }, 
         {
           "used_in": "Interpreto: An Explainability Library for Transformers",
           "type": "paper",
           "year": 2023,
           "source": "ArXiv",
-          "url": "https://arxiv.org/html/2512.09730v1",
-          "note": "Introduces the Interpreto toolkits which also implements Input×Gradient."
-        },
+          "url": "https://arxiv.org/html/2512.09730v1", 
+          "note": "Introduces the Interpreto toolkits which also implements Input\u00d7Gradient."
+        }, 
         {
           "used_in": "PnPXAI: A Universal XAI Framework",
           "type": "paper",
           "year": 2025,
           "source": "arXiv",
           "url": "https://arxiv.org/abs/2505.10515",
-          "note": "Describes PnPXAI toolkit, which implements several explainers, including Input×Gradient."
+          "note": "Describes PnPXAI toolkit, which implements several explainers, including Input\u00d7Gradient."
         }
       ],
-      "typical_cost": "low",
+      "typical_cost": "low", 
       "implementation": "https://github.com/meta-pytorch/captum"
     },
-
+    {
+      "name": "Input\u00d7Gradient", 
+      "task_input": ["generation"],
+       "access_arch": {"access": ["white_box"], "arch": ["all"]},
+      "target_scope": "local",
+      "accessibility":"non experts",
+      "description": {
+        "overview": "Input\u00d7Gradient multiplies each input embedding by its gradient, yielding token-level attribution scores.",
+        "main_functionalities": [
+          "Compute contributions by combining input values with gradients"
+        ]
+      },
+      "strengths": ["Very fast (single-pass computation)", "Capture both current token values and sensitivity of the output to those tokens",
+       "Very intuitive to interpret: it captures contribution rather than only sensitivity."],
+      "limitations": [   "Often noisy or unstable, prone to highlight spurious importances",
+        "Suffers from gradient saturation, which means that gradients approach zero and can be misleading in a neighbourhood of the inputs",
+        "Does not satisfy desirable axioms like sensitivity and implementation invariance"],
+      "research_applications": [
+        {
+          "used_in": "Captum Documentation (GitHub)",
+          "type": "docs",
+          "year": 2023,
+          "source": "Facebook AI Research",
+          "url": "https://captum.ai/api/input_x_gradient.html",
+          "note": "Details the Input\u00d7Gradient method in Captum."
+        }, 
+        {
+          "used_in": "Interpreto: An Explainability Library for Transformers",
+          "type": "paper",
+          "year": 2023,
+          "source": "ArXiv",
+          "url": "https://arxiv.org/html/2512.09730v1", 
+          "note": "Introduces the Interpreto toolkits which also implements Input\u00d7Gradient."
+        }, 
+        {
+          "used_in": "PnPXAI: A Universal XAI Framework",
+          "type": "paper",
+          "year": 2025,
+          "source": "arXiv",
+          "url": "https://arxiv.org/abs/2505.10515",
+          "note": "Describes PnPXAI toolkit, which implements several explainers, including Input\u00d7Gradient."
+        }
+      ],
+      "typical_cost": "low", 
+      "implementation": "https://github.com/meta-pytorch/captum"
+    },
     {
       "name": "DeepLIFT",
-      "task_input": ["classification", "generation"],
-      "access_arch": { "access": ["white_box"], "arch": ["all"] },
-      "plugin_routing": [
-        { "task": "classification", "arch": "all", "plugin_id": "captum_deeplift_classifier" },
-        { "task": "generation", "arch": "decoder", "plugin_id": "inseq_decoder_deeplift" },
-        { "task": "generation", "arch": "encdec", "plugin_id": "inseq_encdec_deeplift" }
-      ],
+      "plugin_id": "captum_deeplift_classifier",
+      "task_input": ["classification"],
+      "access_arch": {"access": ["white_box"], "arch": ["encdec", "encoder", "decoder"]},
       "target_scope": "local",
       "description": {
-        "overview": "DeepLIFT attributes the change in a model’s output to differences in input features relative to a chosen baseline by backpropagating activation differences using specific propagation rules.",
+        "overview": "DeepLIFT attributes the change in a model’s output to differences in input features relative to a chosen baseline. Instead of propagating gradients, it backpropagates activation differences through the network using specific propagation rules to assign contribution scores to each input.",
         "main_functionalities": [
           "Compute token attributions relative to a reference baseline"
         ]
       },
       "strengths": [
         "Often faster than Integrated Gradients",
-        "Handles cases of zero gradients (saturation) more robustly than raw-gradient tools",
+        "Handles cases of zero gradients (saturation) more robustly than raw-gradient tools", 
         "It satisfies additivity, a desirable property similar to completeness for Integrated Gradients"
       ],
       "limitations": [
@@ -304,36 +364,27 @@
           "note": "Describes DeepLIFT in Captum."
         }
       ],
-      "typical_cost": "medium",
-      "implementation": "https://github.com/inseq-team/inseq"
+      "typical_cost": "medium", 
+      "implementation": "https://github.com/kundajelab/deeplift"
     },
-
     {
       "name": "GradientSHAP",
-      "task_input": ["classification", "generation"],
-      "access_arch": { "access": ["white_box"], "arch": ["all"] },
-      "plugin_routing": [
-        { "task": "classification", "arch": "all", "plugin_id": "captum_gradientshap_classifier" },
-        { "task": "generation", "arch": "decoder", "plugin_id": "inseq_decoder_gradient_shap" },
-        { "task": "generation", "arch": "encdec", "plugin_id": "inseq_encdec_gradient_shap" }
-      ],
+      "plugin_id": "captum_gradientshap_classifier", 
+      "task_input": ["classification"],
+      "access_arch": {"access": ["white_box"], "arch": ["all"]},
       "target_scope": "local",
       "accessibility": "non experts",
       "description": {
-        "overview": "GradientSHAP combines integrated gradients with randomized baselines to approximate Shapley-value attributions via gradient estimates.",
+        "overview": "GradientSHAP combines integrated gradients with randomized baselines. It approximates Shapley values (SHAP) by averaging integrated gradients from multiple noisy baseline inputs.",
         "main_functionalities": [
           "Sample multiple baselines and integrate gradients",
           "Approximate Shapley-value attributions via gradient estimates"
         ]
       },
-      "strengths": [
-        "Can be viewed as an approximation of Integrated Gradients, bridging SHAP and Integrated Gradients",
-        "Efficiently approximates SHAP"
-      ],
-      "limitations": [
-        "The connection with SHAP relies on assumptions (e.g., independence/linearity) that may not hold in practice",
-        "Sensitive to sampling and choice of baseline"
-      ],
+      "strengths": ["Can be viewed as an approximation of Integrated Gradients, bridging SHAP and Integrated Gradients", 
+    "Efficiently approximates SHAP"],
+      "limitations": ["The connection with SHAP relies on the assumption that input features are independent and that the explanation model is linear, so that explanations are modeled through the additive composition of feature effects", 
+    "Sensitive to sampling and choice of baseline"],
       "research_applications": [
         {
           "used_in": "A Unified Approach to Interpreting Model Predictions",
@@ -350,44 +401,83 @@
           "source": "Facebook AI Research",
           "url": "https://captum.ai/api/gradient_shap.html",
           "note": "Describes GradientSHAP in Captum."
-        },
-        {
+        }, 
+         {
           "used_in": "Interpreto: An Explainability Library for Transformers",
           "type": "paper",
           "year": 2023,
           "source": "ArXiv",
-          "url": "https://arxiv.org/html/2512.09730v1",
+          "url": "https://arxiv.org/html/2512.09730v1", 
           "note": "Introduces the Interpreto toolkits which also implements Gradient SHAP."
         }
       ],
-      "typical_cost": "high",
+      "typical_cost": "high", 
       "implementation": "https://github.com/meta-pytorch/captum"
     },
     {
-      "name": "Feature Ablation",
-      "task_input": ["classification", "generation"],
-      "access_arch": { "access": ["black_box"], "arch": ["all"] },
-      "plugin_routing": [
-        { "task": "classification", "arch": "all", "plugin_id": "captum_featureablation_classifier" },
-        { "task": "generation", "arch": "all", "plugin_id": "NA" }
+      "name": "GradientSHAP",
+      "task_input": ["generation"],
+      "access_arch": {"access": ["white_box"], "arch": ["all"]},
+      "target_scope": "local",
+      "accessibility": "non experts",
+            "description": {
+        "overview": "GradientSHAP combines integrated gradients with randomized baselines. It approximates Shapley values (SHAP) by averaging integrated gradients from multiple noisy baseline inputs.",
+        "main_functionalities": [
+          "Sample multiple baselines and integrate gradients",
+          "Approximate Shapley-value attributions via gradient estimates"
+        ]
+      },
+      "strengths": ["Can be viewed as an approximation of Integrated Gradients, bridging SHAP and Integrated Gradients", 
+    "Efficiently approximates SHAP"],
+      "limitations": ["The connection with SHAP relies on the assumption that input features are independent and that the explanation model is linear, so that explanations are modeled through the additive composition of feature effects", 
+    "Sensitive to sampling and choice of baseline"],
+      "research_applications": [
+        {
+          "used_in": "A Unified Approach to Interpreting Model Predictions",
+          "type": "paper",
+          "year": 2017,
+          "source": "NeurIPS",
+          "url": "https://proceedings.neurips.cc/paper/2017/file/8a20a8621978632d76c43dfd28b67767-Paper.pdf",
+          "note": "Introduces SHAP framework combining kernel and gradient methods."
+        },
+        {
+          "used_in": "Captum Documentation (GitHub)",
+          "type": "docs",
+          "year": 2023,
+          "source": "Facebook AI Research",
+          "url": "https://captum.ai/api/gradient_shap.html",
+          "note": "Describes GradientSHAP in Captum."
+        }, 
+         {
+          "used_in": "Interpreto: An Explainability Library for Transformers",
+          "type": "paper",
+          "year": 2023,
+          "source": "ArXiv",
+          "url": "https://arxiv.org/html/2512.09730v1", 
+          "note": "Introduces the Interpreto toolkits which also implements Gradient SHAP."
+        }
       ],
+      "typical_cost": "high", 
+      "implementation": "https://github.com/meta-pytorch/captum"
+    }, 
+    {
+      "name": "Feature Ablation",
+      "task_input": ["classification"],
+      "plugin_id": "captum_featureablation_classifier", 
+      "access_arch": {"access": ["black_box"], "arch": ["all"]},
       "target_scope": "local",
       "description": {
-        "overview": "Feature Ablation measures output change when input tokens/features are removed or replaced with a baseline, estimating importance by deletion impact.",
+        "overview": "Feature Ablation is a perturbation method that measures output change when input features (e.g., tokens) are removed or replaced with a baseline. It estimates importance by deletion impact.",
         "main_functionalities": [
           "Compute attribution scores"
         ]
-      },
-      "strengths": [
-        "Very simple and intuitive",
-        "Based on actual prediction differences (does not rely on gradients)"
-      ],
-      "limitations": [
-        "Ablating tokens can create out-of-distribution inputs.",
-        "Ignores completely token interactions",
-        "Results depend on design choices such as baseline",
-        "Can be computationally expensive"
-      ],
+      }, 
+      "strengths": ["Very simple and intuitive", 
+    "Based on actual prediction differences (i.e., it does not rely on proxies like gradients to compute attributions)"],
+      "limitations": ["Ablating tokens can create out-of-distribution inputs.",
+                      "Ignores completely token interactions", 
+                     "Results depend on the design choices such as baseline", 
+                    "Can be computationally expensive"],
       "research_applications": [
         {
           "used_in": "Global Explanation of Neural Networks via Feature Ablation",
@@ -396,7 +486,7 @@
           "source": "ArXiv",
           "url": "https://arxiv.org/abs/1806.03824",
           "note": "Discusses feature ablation methods for model interpretability."
-        },
+        }, 
         {
           "used_in": "Using Captum to Explain Generative Language Models",
           "type": "paper",
@@ -404,21 +494,72 @@
           "source": "Proceedings of the 3rd Workshop for Natural Language Processing Open Source Software (NLP-OSS 2023)",
           "url": "https://aclanthology.org/2023.nlposs-1.19.pdf",
           "note": "Introduces attribution tools like Saliency in the popular Captum toolkit."
+        },
+        {
+          "used_in": "Captum Documentation (GitHub)",
+          "type": "docs",
+          "year": 2023,
+          "source": "Facebook AI Research",
+          "url": "https://captum.ai/api/layer_integrated_gradients.html",
+          "note": "Documents the layer-wise IG method in Captum."
         }
       ],
-      "typical_cost": "high",
-      "implementation": "https://github.com/meta-pytorch/captum"
+      "typical_cost": "high", 
+      "implementation":  "https://github.com/meta-pytorch/captum"
+    },
+    {
+      "name": "Feature Ablation",
+      "task_input": ["generation"],
+      "access_arch": {"access": ["black_box"], "arch": ["all"]},
+      "target_scope": "local",
+      "description": {
+        "overview": "Feature Ablation is a perturbation method that measures output change when input features (e.g., tokens) are removed or replaced with a baseline. It estimates importance by deletion impact.",
+        "main_functionalities": [
+          "Compute attribution scores"
+        ]
+      }, 
+      "strengths": ["Very simple and intuitive", 
+    "Based on actual prediction differences (i.e., it does not rely on proxies like gradients to compute attributions)"],
+      "limitations": ["Ablating tokens can create out-of-distribution inputs.",
+      "Ignores completely token interactions", 
+                     "Results depend on the design choices such as baseline", 
+                    "Can be computationally expensive"],
+      "research_applications": [
+        {
+          "used_in": "Global Explanation of Neural Networks via Feature Ablation",
+          "type": "paper",
+          "year": 2019,
+          "source": "ArXiv",
+          "url": "https://arxiv.org/abs/1806.03824",
+          "note": "Discusses feature ablation methods for model interpretability."
+        }, 
+        {
+          "used_in": "Using Captum to Explain Generative Language Models",
+          "type": "paper",
+          "year": 2023,
+          "source": "Proceedings of the 3rd Workshop for Natural Language Processing Open Source Software (NLP-OSS 2023)",
+          "url": "https://aclanthology.org/2023.nlposs-1.19.pdf",
+          "note": "Introduces attribution tools like Saliency in the popular Captum toolkit."
+        },
+        {
+          "used_in": "Captum Documentation (GitHub)",
+          "type": "docs",
+          "year": 2023,
+          "source": "Facebook AI Research",
+          "url": "https://captum.ai/api/layer_integrated_gradients.html",
+          "note": "Documents the layer-wise IG method in Captum."
+        }
+      ],
+      "typical_cost": "high", 
+      "implementation":  "https://github.com/meta-pytorch/captum"
     },
     {
       "name": "Occlusion",
-      "task_input": ["classification", "generation"],
-      "access_arch": { "access": ["black_box"], "arch": ["all"] },
-      "plugin_routing": [
-        { "task": "classification", "arch": "all", "plugin_id": "captum_occlusion_classifier" },
-        { "task": "generation", "arch": "all", "plugin_id": "NA" }
-      ],
+      "plugin_id": "captum_occlusion_classifier", 
+      "task_input": ["classification"],
+      "access_arch": {"access": ["black_box"], "arch": ["all"]},
       "target_scope": "local",
-      "accessibility": "non experts",
+      "accessibility":"non experts",
       "description": {
         "overview": "Occlusion masks out contiguous input segments (e.g., spans of tokens) and measures the effect on model output. The difference indicates the importance of the occluded region.",
         "main_functionalities": [
@@ -427,7 +568,7 @@
         ]
       },
       "strengths": [
-        "Intuitive and human-friendly explanations"
+        "Intuitive and human-friendly"
       ],
       "limitations": [
         "Ablating tokens can create out-of-distribution inputs.",
@@ -442,7 +583,7 @@
           "url": "https://link.springer.com/chapter/10.1007/978-3-319-10590-1_53",
           "note": "Popularizes occlusion analysis for CNNs."
         }, 
-         {
+        {
           "used_in": "Interpreto: An Explainability Library for Transformers",
           "type": "paper",
           "year": 2023,
@@ -451,9 +592,50 @@
           "note": "Introduces the Interpreto toolkits which also implements Kernel SHAP."
         }
       ],
-      "typical_cost": "high",
+      "typical_cost": "high", 
       "implementation": "https://github.com/FOR-sight-ai/interpreto"
     },
+    {
+      "name": "Occlusion",
+      "task_input": ["generation"],
+      "access_arch": {"access": ["black_box"], "arch": ["all"]},
+      "target_scope": "local",
+      "accessibility":"non experts",
+      "description": {
+        "overview": "Occlusion masks out contiguous input segments (e.g., spans of tokens) and measures the effect on model output. The difference indicates the importance of the occluded region.",
+        "main_functionalities": [
+          "Systematically mask segments of input text",
+          "Measure output change to infer importance of segments"
+        ]
+      },
+      "strengths": [
+        "Intuitive and human-friendly"
+      ],
+      "limitations": [
+        "Ablating tokens can create out-of-distribution inputs.",
+        "Can be computationally expensive, requiring many forward passes"
+      ],
+      "research_applications": [
+        {
+          "used_in": "Visualizing and Understanding Convolutional Networks",
+          "type": "paper",
+          "year": 2014,
+          "source": "ECCV",
+          "url": "https://link.springer.com/chapter/10.1007/978-3-319-10590-1_53",
+          "note": "Popularizes occlusion analysis for CNNs."
+        }, 
+        {
+          "used_in": "Interpreto: An Explainability Library for Transformers",
+          "type": "paper",
+          "year": 2023,
+          "source": "ArXiv",
+          "url": "https://arxiv.org/html/2512.09730v1", 
+          "note": "Introduces the Interpreto toolkits which also implements Kernel SHAP."
+        }
+      ],
+      "typical_cost": "high", 
+      "implementation": "https://github.com/FOR-sight-ai/interpreto"
+    }, 
     {
       "name": "SHAP",
       "task_input": ["classification"],
@@ -501,7 +683,7 @@
       "typical_cost": "high", 
       "implementation": "https://github.com/meta-pytorch/captum"
     },
-     {
+    {
       "name": "TokenSHAP",
       "task_input": ["generation"],
       "access_arch": {"access": ["black_box"], "arch": ["decoder"]},
@@ -622,7 +804,7 @@
       "typical_cost": "missing", 
       "implementation": "https://github.com/FOR-sight-ai/interpreto"
     },
-   {
+    {
       "name": "SmoothGrad",
       "task_input": ["generation","classification"],
       "access_arch": {"access": ["black_box"], "arch": ["all"]},
@@ -676,7 +858,7 @@
       ],
       "typical_cost": "missing"
     },
-     {
+    {
       "name": "LIME",
       "task_input": ["classification"],
       "access_arch": {"access": ["black_box"], "arch": ["all"]},
@@ -735,7 +917,7 @@
       "typical_cost": "high", 
       "implementation": "https://github.com/meta-pytorch/captum"
     },
-     {
+    {
       "name": "Anchors",
       "plugin_id": "alibi_anchors_text",
       "task_input": ["classification"],
@@ -1444,43 +1626,198 @@
       "typical_cost": "medium"
     }, 
     {
-      "name": "Discretized Integrated Gradients",
-      "task_input": ["generation"],
-      "access_arch": { "access": ["white_box"], "arch": ["all"] },
-      "plugin_routing": [
-        { "task": "generation", "arch": "decoder", "plugin_id": "inseq_decoder_discretized_ig" },
-        { "task": "generation", "arch": "encdec", "plugin_id": "inseq_encdec_discretized_ig" }
-      ],
-      "target_scope": "local",
-      "accessibility": "non experts",
-      "description": {
-        "overview": "Discretized Integrated Gradients extends IG to better account for the discrete nature of language model embeddings.",
-        "main_functionalities": [
-          "Token-level attribution"
-        ]
-      },
-      "strengths": [
-        "Like IG, more stable than raw gradients",
-        "Satisfies completeness, sensitivity and implementation invariance",
-        "Tailored to natural language"
-      ],
-      "limitations": [
-        "Baseline choice influences results",
-        "Computational cost scales with integration steps"
-      ],
-      "research_applications": [
-        {
-          "used_in": "Discretized Integrated Gradients for Explaining Language Models",
-          "type": "paper",
-          "year": 2021,
-          "source": "EMNLP 2021",
-          "url": "https://aclanthology.org/2021.emnlp-main.805.pdf",
-          "note": "Introduces Discretized Integrated Gradients."
-        }
-      ],
-      "typical_cost": "medium-high"
+  "name": "Integrated Gradients (IG)",
+  "plugin_id": "inseq_decoder_ig",
+  "task_input": ["generation"],
+  "access_arch": {
+    "access": ["white_box"],
+    "arch": ["decoder"]
+  },
+  "accessibility":"non experts", 
+  "target_scope": "local",
+  "description": {
+    "overview": "Integrated Gradients (IG) attributes a decoder-only language model’s generated tokens to its input tokens by integrating gradients along a path from a baseline to the actual input. Implemented via Inseq, it produces token-level attribution scores explaining next-token predictions.",
+    "main_functionalities": [
+      "Compute token-level importance scores for generated tokens",
+      "Support configurable baselines and integration steps",
+      "Visualize attribution scores as interactive HTML heatmaps",
+      "Work with Hugging Face-compatible decoder-only models (e.g., GPT-style models)"
+    ]
+  },
+  "strengths": [
+    "Faithful gradient-based attribution satisfying sensitivity and implementation invariance",
+    "Prediction-specific explanations (local interpretability)",
+    "More stable than raw gradient saliency",
+    "Integrates seamlessly with generation workflows"
+  ],
+  "limitations": [
+    "Requires white-box access to model gradients",
+    "Choice of baseline can significantly affect results",
+    "Computationally expensive for long sequences or many integration steps",
+    "Attributions remain correlational, not strictly causal"
+  ],
+  "research_applications": [
+    {
+      "used_in": "Axiomatic Attribution for Deep Networks",
+      "type": "paper",
+      "year": 2017,
+      "source": "ICML",
+      "url": "https://arxiv.org/abs/1703.01365",
+      "note": "Introduces Integrated Gradients."
     },
     {
+      "used_in": "Inseq: An Interpretability Toolkit for Sequence Generation Models",
+      "type": "paper",
+      "year": 2023,
+      "source": "ACL Demo",
+      "url": "https://aclanthology.org/2023.acl-demo.40/",
+      "note": "Presents Inseq for attribution in generative language models which implements the Integrated Gradients method for sequence to sequence."
+    }, 
+    {
+          "used_in": "PnPXAI: A Universal XAI Framework",
+          "type": "paper",
+          "year": 2025,
+          "source": "arXiv",
+          "url": "https://arxiv.org/abs/2505.10515",
+          "note": "Describes PnPXAI toolkit, which implements several explainers, including Integrated Gradients."
+    }
+  ],
+  "typical_cost": "medium-high"
+},
+{
+  "name": "Integrated Gradients (IG)",
+  "plugin_id": "inseq_encdec_ig",
+  "task_input": ["generation"],
+  "access_arch": {
+    "access": ["mixed"],
+    "arch": ["encdec"]
+  },
+  "accessibility":"non experts", 
+  "target_scope": "local",
+  "description": {
+    "overview": "Integrated Gradients (IG) for encoder–decoder models attributes generated target tokens to both source input tokens and decoder states. Using Inseq, it provides fine-grained token-level explanations for sequence-to-sequence predictions such as translation or summarization.",
+    "main_functionalities": [
+      "Attribute decoder outputs to encoder inputs and decoder context",
+      "Support encoder–decoder architectures (e.g., T5, BART)",
+      "Provide token-level attribution matrices",
+      "Enable visualization of cross-sequence attribution patterns"
+    ]
+  },
+  "strengths": [
+    "Captures cross-attention contributions between source and target sequences",
+    "Faithful gradient-based attribution method",
+    "Applicable to diverse seq2seq tasks (translation, summarization, QA)",
+    "Interactive visualization support via Inseq"
+  ],
+  "limitations": [
+    "Higher computational cost due to encoder + decoder passes",
+    "Baseline choice affects attribution quality",
+    "Requires gradient access (white-box or partial white-box)",
+    "Interpretation can be harder due to bidirectional information flow"
+  ],
+  "research_applications": [
+    {
+      "used_in": "A Unified Framework for Gradient-based Attribution Methods",
+      "type": "paper",
+      "year": 2017,
+      "source": "ICML",
+      "url": "https://arxiv.org/abs/1703.01365",
+      "note": "Introduces Integrated Gradients."
+    },
+    {
+      "used_in": "Inseq: An Interpretability Toolkit for Sequence Generation Models",
+      "type": "paper",
+      "year": 2023,
+      "source": "ACL Demo",
+      "url": "https://aclanthology.org/2023.acl-demo.40/",
+      "note": "Demonstrates attribution methods for encoder–decoder models."
+    }, 
+    {
+      "used_in": "PnPXAI: A Universal XAI Framework",
+      "type": "paper",
+      "year": 2025,
+      "source": "arXiv",
+      "url": "https://arxiv.org/abs/2505.10515",
+      "note": "Describes PnPXAI toolkit, which implements several explainers, including Integrated Gradients."
+    }
+  ],
+  "typical_cost": "high"
+},
+{
+  "name": "Discretized Integrated Gradients",
+  "plugin_id": "inseq_decoder_discretized_ig",
+  "task_input": ["generation"],
+  "access_arch": {
+    "access": ["white_box"],
+    "arch": ["decoder"]
+  },
+  "accessibility":"non experts",
+  "target_scope": "local",
+  "description": {
+    "overview": "Discretized Integrated Gradients extends Integrated Gradients to account for the discrete nature of language model embeddings.",
+    "main_functionalities": [
+      "Token-level attribution"
+    ]
+  },
+  "strengths": [
+    "Like IG, more stable than raw gradients",
+    "Satisfies three desirable axioms: completeness, sensitivity and implementation invariance",
+    "Tailored to natural language"
+  ],
+  "limitations": [
+    "Baseline choice influences results",
+    "Computational cost scales with integration steps"
+  ],
+   "research_applications": [
+    {
+      "used_in": "Discretized Integrated Gradients for Explaining Language Models",
+      "type": "paper",
+      "year": 2021,
+      "source": "Proceedings of the 2021 Conference on Empirical Methods in Natural Language Processing",
+      "url": "https://aclanthology.org/2021.emnlp-main.805.pdf",
+      "note": "Introduces Integrated Gradients."
+    }
+  ],
+  "typical_cost": "medium-high"
+},
+{
+  "name": "Discretized Integrated Gradients",
+  "plugin_id": "inseq_encdec_discretized_ig",
+  "task_input": ["generation"],
+  "access_arch": {
+    "access": ["white_box"],
+    "arch": ["encdec"]
+  },
+  "accessibility":"non experts",
+  "target_scope": "local",
+  "description": {
+    "overview": "Discretized Integrated Gradients extends Integrated Gradients to account for the discrete nature of language model embeddings.",
+    "main_functionalities": [
+      "Token-level attribution"
+        ]
+  },
+ "strengths": [
+    "Like IG, more stable than raw gradients",
+    "Satisfies three desirable axioms: completeness, sensitivity and implementation invariance",
+    "Tailored to natural language"
+  ],
+  "limitations": [
+    "Baseline choice influences results",
+    "Computational cost scales with integration steps"
+  ],
+  "research_applications": [
+    {
+      "used_in": "Discretized Integrated Gradients for Explaining Language Models",
+      "type": "paper",
+      "year": 2021,
+      "source": "Proceedings of the 2021 Conference on Empirical Methods in Natural Language Processing",
+      "url": "https://aclanthology.org/2021.emnlp-main.805.pdf",
+      "note": "Introduces Integrated Gradients."
+    }
+  ],
+  "typical_cost": "medium-high"
+},
+{
   "name": "PCA",
   "plugin_id": "embedding_pca_layers",
   "task_input": ["generation", "classification"],
@@ -1535,7 +1872,338 @@
     }
     ] 
     }, 
-   {
+{
+  "name": "GradientSHAP",
+  "plugin_id": "inseq_decoder_gradient_shap",
+  "task_input": ["generation"],
+  "access_arch": {
+    "access": ["white_box"],
+    "arch": ["decoder"]
+  },
+  "accessibility":"non experts",
+  "target_scope": "local",
+  "description": {
+    "overview": "GradientSHAP combines Integrated Gradients with noise sampling to approximate Shapley values for decoder-only language models.",
+    "main_functionalities": [
+      "Monte Carlo sampling over noisy baselines",
+      "Approximate Shapley-style token attribution",
+      "Token-level importance visualization"
+    ]
+  },
+  "strengths": [
+    "Theoretically connected to Shapley values",
+    "More robust than single-baseline IG",
+    "Handles gradient saturation better than raw gradients"
+  ],
+  "limitations": [
+    "Higher variance due to sampling",
+    "Computationally expensive",
+    "Requires gradient access"
+  ],
+  "typical_cost": "high"
+},
+{
+  "name": "DeepLIFT",
+  "plugin_id": "inseq_decoder_deeplift",
+  "task_input": ["generation"],
+  "access_arch": {
+    "access": ["white_box"],
+    "arch": ["decoder"]
+  },
+  "target_scope": "local",
+   "description": {
+        "overview": "DeepLIFT attributes the change in a model’s output to differences in input features relative to a chosen baseline. Instead of propagating gradients, it backpropagates activation differences through the network using specific propagation rules to assign contribution scores to each input.",
+        "main_functionalities": [
+          "Compute token attributions relative to a reference baseline"
+        ]
+      },
+      "strengths": [
+        "Often faster than Integrated Gradients",
+        "Handles cases of zero gradients (saturation) more robustly than raw-gradient tools", 
+        "It satisfies additivity, a desirable property similar to completeness for Integrated Gradients"
+      ],
+      "limitations": [
+        "Baseline choice can affect attributions (like for Integrated Gradients)"
+      ],
+      "research_applications": [
+        {
+          "used_in": "Learning Important Features Through Propagating Activation Differences",
+          "type": "paper",
+          "year": 2017,
+          "source": "ICML",
+          "url": "https://proceedings.mlr.press/v70/shrikumar17a.html",
+          "note": "Introduces DeepLIFT method."
+        },
+        {
+          "used_in": "Captum Documentation (GitHub)",
+          "type": "docs",
+          "year": 2023,
+          "source": "Facebook AI Research",
+          "url": "https://captum.ai/api/deeplift.html",
+          "note": "Describes DeepLIFT in Captum."
+        }
+      ],
+      "typical_cost": "medium", 
+      "implementation": "https://github.com/inseq-team/inseq"
+    },
+{
+  "name": "Input × Gradient",
+  "plugin_id": "inseq_decoder_input_x_gradient",
+  "task_input": ["generation"],
+  "access_arch": {
+    "access": ["white_box"],
+    "arch": ["decoder"]
+  },
+  "target_scope": "local",
+  "description": {
+    "overview": "Input × Gradient multiplies input embeddings by their gradients to estimate token importance for decoder-only language models.",
+    "main_functionalities": [
+      "Single backward pass attribution",
+      "Token-level importance estimation",
+      "Fast computation"
+    ]
+  },
+  "strengths": [
+    "Very fast (single gradient pass)",
+    "Simple to interpret",
+    "Low computational overhead"
+  ],
+  "limitations": [
+    "Noisy and unstable",
+    "Sensitive to gradient saturation",
+    "Purely local linear approximation"
+  ],
+  "typical_cost": "low"
+}, 
+{
+  "name": "LIME",
+  "plugin_id": "inseq_decoder_lime",
+  "task_input": ["generation"],
+  "access_arch": {
+    "access": ["black_box"],
+    "arch": ["decoder"]
+  }, 
+  "target_scope": "local",
+  "accessibility":"non experts",
+  "description": {
+        "overview": "LIME (Local Interpretable Model-agnostic Explanations) fits a simple surrogate model around a specific instance by sampling perturbations. The surrogate weights on features explain the local prediction.",
+        "main_functionalities": [
+          "Compute local attributions"
+        ]
+      },
+      "strengths": [
+        "Simple and intuitive",
+        "Widely-used across different domains"
+      ],
+      "limitations": [
+        "Can be computationally expensive",
+        "Highly sensitive to design choices (perturbation strategy, similarity kernel/width, number of samples, surrogate regularization), which can change explanations substantially",
+        "Explanations sensitive to sampling and kernel choices"
+      ],
+      "research_applications": [
+        {
+          "used_in": "Why Should I Trust You?: Explaining the Predictions of Any Classifier",
+          "type": "paper",
+          "year": 2016,
+          "source": "KDD",
+          "url": "https://dl.acm.org/doi/10.1145/2939672.2939778",
+          "note": "Introduces the LIME method."
+        }, 
+        {
+          "used_in": "ferret: a Framework for Benchmarking Explainers on Transformers",
+          "type": "paper",
+          "year": 2023,
+          "source": "Proceedings of the 17th Conference of the European Chapter of the Association for Computational Linguistics: System Demonstrations",
+          "url": "https://dl.acm.org/doi/10.1145/2939672.2939778",
+          "note": "Introduces the ferret toolkit which leverages feature attribution approaches like LIME to support the interpretation of individual model predictions."
+        }, 
+        {
+          "used_in": "InterpretML: {A} Unified Framework for Machine Learning Interpretability",
+          "type": "paper",
+          "year": 2019,
+          "source": "ArXiv",
+          "url": "http://arxiv.org/abs/1909.09223",
+          "note": "Introduces the  InterpretML toolkit which implements the LIME method."
+        }, 
+          {
+          "used_in": "Using Captum to Explain Generative Language Models",
+          "type": "paper",
+          "year": 2023,
+          "source": "Proceedings of the 3rd Workshop for Natural Language Processing Open Source Software (NLP-OSS 2023)",
+          "url": "https://aclanthology.org/2023.nlposs-1.19.pdf",
+          "note": "Introduces attribution tools like Saliency in the popular Captum toolkit."
+        }
+      ],
+      "typical_cost": "high", 
+      "implementation": "https://github.com/meta-pytorch/captum"
+    }, 
+{
+  "name": "GradientSHAP",
+  "plugin_id": "inseq_encdec_gradient_shap",
+  "task_input": ["generation"],
+  "access_arch": {
+    "access": ["white_box"],
+    "arch": ["encdec"]
+  },
+  "accessibility":"non experts",
+  "target_scope": "local",
+  "description": {
+    "overview": "GradientSHAP combines Integrated Gradients with noise sampling to approximate Shapley values for encoder-decoder language models.",
+    "main_functionalities": [
+      "Monte Carlo sampling over noisy baselines",
+      "Approximate Shapley-style token attribution",
+      "Token-level importance visualization"
+    ]
+  },
+  "strengths": [
+    "Theoretically connected to Shapley values",
+    "More robust than single-baseline IG",
+    "Handles gradient saturation better than raw gradients"
+  ],
+  "limitations": [
+    "Higher variance due to sampling",
+    "Computationally expensive",
+    "Requires gradient access"
+  ],
+  "typical_cost": "high"
+},
+{
+  "name": "DeepLIFT",
+  "plugin_id": "inseq_encdec_deeplift",
+  "task_input": ["generation"],
+  "access_arch": {
+    "access": ["white_box"],
+    "arch": ["encdec"]
+  },
+  "target_scope": "local",
+  "description": {
+        "overview": "DeepLIFT attributes the change in a model’s output to differences in input features relative to a chosen baseline. Instead of propagating gradients, it backpropagates activation differences through the network using specific propagation rules to assign contribution scores to each input.",
+        "main_functionalities": [
+          "Compute token attributions relative to a reference baseline"
+        ]
+      },
+      "strengths": [
+        "Often faster than Integrated Gradients",
+        "Handles cases of zero gradients (saturation) more robustly than raw-gradient tools", 
+        "It satisfies additivity, a desirable property similar to completeness for Integrated Gradients"
+      ],
+      "limitations": [
+        "Baseline choice can affect attributions (like for Integrated Gradients)"
+      ],
+      "research_applications": [
+        {
+          "used_in": "Learning Important Features Through Propagating Activation Differences",
+          "type": "paper",
+          "year": 2017,
+          "source": "ICML",
+          "url": "https://proceedings.mlr.press/v70/shrikumar17a.html",
+          "note": "Introduces DeepLIFT method."
+        },
+        {
+          "used_in": "Captum Documentation (GitHub)",
+          "type": "docs",
+          "year": 2023,
+          "source": "Facebook AI Research",
+          "url": "https://captum.ai/api/deeplift.html",
+          "note": "Describes DeepLIFT in Captum."
+        }
+      ],
+      "typical_cost": "medium", 
+      "implementation": "https://github.com/inseq-team/inseq"
+    },
+{
+  "name": "Input × Gradient",
+  "plugin_id": "inseq_encdec_input_x_gradient",
+  "task_input": ["generation"],
+  "access_arch": {
+    "access": ["white_box"],
+    "arch": ["encdec"]
+  },
+  "target_scope": "local",
+  "description": {
+    "overview": "Input × Gradient multiplies input embeddings by their gradients to estimate token importance for encoder-decoder language models.",
+    "main_functionalities": [
+      "Single backward pass attribution",
+      "Token-level importance estimation",
+      "Fast computation"
+    ]
+  },
+  "strengths": [
+    "Very fast (single gradient pass)",
+    "Simple to interpret",
+    "Low computational overhead"
+  ],
+  "limitations": [
+    "Noisy and unstable",
+    "Sensitive to gradient saturation",
+    "Purely local linear approximation"
+  ],
+  "typical_cost": "low"
+}, 
+{
+  "name": "LIME",
+  "plugin_id": "inseq_encdec_lime",
+  "task_input": ["generation"],
+  "access_arch": {
+    "access": ["black_box"],
+    "arch": ["encdec"]
+  },
+  "target_scope": "local",
+  "accessibility":"non experts",
+  "description": {
+        "overview": "LIME (Local Interpretable Model-agnostic Explanations) fits a simple surrogate model around a specific instance by sampling perturbations. The surrogate weights on features explain the local prediction.",
+        "main_functionalities": [
+          "Compute local attributions"
+        ]
+      },
+      "strengths": [
+        "Simple and intuitive",
+        "Widely-used across different domains"
+      ],
+      "limitations": [
+        "Can be computationally expensive",
+        "Highly sensitive to design choices (perturbation strategy, similarity kernel/width, number of samples, surrogate regularization), which can change explanations substantially",
+
+        "Explanations sensitive to sampling and kernel choices"
+      ],
+      "research_applications": [
+        {
+          "used_in": "Why Should I Trust You?: Explaining the Predictions of Any Classifier",
+          "type": "paper",
+          "year": 2016,
+          "source": "KDD",
+          "url": "https://dl.acm.org/doi/10.1145/2939672.2939778",
+          "note": "Introduces the LIME method."
+        }, 
+        {
+          "used_in": "ferret: a Framework for Benchmarking Explainers on Transformers",
+          "type": "paper",
+          "year": 2023,
+          "source": "Proceedings of the 17th Conference of the European Chapter of the Association for Computational Linguistics: System Demonstrations",
+          "url": "https://dl.acm.org/doi/10.1145/2939672.2939778",
+          "note": "Introduces the ferret toolkit which leverages feature attribution approaches like LIME to support the interpretation of individual model predictions."
+        }, 
+        {
+          "used_in": "InterpretML: {A} Unified Framework for Machine Learning Interpretability",
+          "type": "paper",
+          "year": 2019,
+          "source": "ArXiv",
+          "url": "http://arxiv.org/abs/1909.09223",
+          "note": "Introduces the  InterpretML toolkit which implements the LIME method."
+        }, 
+          {
+          "used_in": "Using Captum to Explain Generative Language Models",
+          "type": "paper",
+          "year": 2023,
+          "source": "Proceedings of the 3rd Workshop for Natural Language Processing Open Source Software (NLP-OSS 2023)",
+          "url": "https://aclanthology.org/2023.nlposs-1.19.pdf",
+          "note": "Introduces attribution tools like Saliency in the popular Captum toolkit."
+        }
+      ],
+      "typical_cost": "high", 
+      "implementation": "https://github.com/meta-pytorch/captum"
+    }, 
+    {
   "name": "Linear CKA (layer similarity)",
   "plugin_id": "linear_cka_layers",
   "notes": "Representation similarity across layers using linear CKA.",
