@@ -427,7 +427,7 @@
         ]
       },
       "strengths": [
-        "Intuitive and human-friendly explanations"
+        "Intuitive and human-friendly explanations", "Model agnostic"
       ],
       "limitations": [
         "Ablating tokens can create out-of-distribution inputs.",
