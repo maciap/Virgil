@@ -30,6 +30,7 @@ from toolkits.captum_classifier import (
 
 )
 from toolkits.bertviz_attention import BertVizAttention
+from toolkits.tracIn import TracInInfluenceClassifier
 from toolkits.logit_lens import LogitLens
 from toolkits.alibi_anchors_text import AlibiAnchorsText
 from toolkits.direct_logit_attribution import DirectLogitAttribution
@@ -169,6 +170,9 @@ def get_plugins():
 
     plugin36 = CaptumShapleyValueSamplingClassifierAttribution()
 
+    plugin37 = TracInInfluenceClassifier()
+
+
     return {
         plugin1.id: plugin1,
         plugin2.id: plugin2,
@@ -211,7 +215,9 @@ def get_plugins():
 
         plugin34.id: plugin34,
         plugin35.id: plugin35, 
-        plugin36.id: plugin36
+        plugin36.id: plugin36, 
+
+        plugin37.id: plugin37
 
     }
 
@@ -1551,12 +1557,72 @@ with col_run:
 
                     render_downloads(outputs, selected_item=selected_item)
                         
+                elif outputs and outputs.get("plugin") == "tracin_influence_classifier":
+                  st.subheader("Result")
+            
+                  if outputs.get("error"):
+                      st.error(outputs["error"])
+                  else:
+                      with st.expander("ℹ️ How to read TracIn influence scores", expanded=True):
+                        st.markdown(
+                            """
+                        - **TracIn** accumulates gradient-alignment scores between each training example and the test example across all saved training checkpoints.
+                        - **Proponents** (🟢) are training examples whose gradient pointed in the *same* direction as the test gradient — they *supported* this prediction.
+                        - **Opponents** (🔴) are training examples whose gradient pointed in the *opposite* direction — they *contradicted* this prediction.
+                        - A mislabelled proponent is a strong signal of a spurious training pattern.
+                        - Scores are relative — only their ranking across examples matters.
+                        - ⚠️ Only implemented for classification with encoder-only models (for which design choices such as the loss function are straightforward).
+                        - ⚠️ To obtain more robust results, increase the number of training examples.
+                        """
+                        )
+        
+                      pred = outputs["prediction"]
+                      st.write(f"**Model:** {outputs.get('model', 'NA')}")
+                      st.write(f"**Device:** {outputs.get('device', 'NA')}")
+                      st.write(f"**Test sentence:** {outputs.get('test_text', 'NA')}")
+                      st.caption(
+                          f"Training set: {outputs.get('n_pos')} positive + "
+                          f"{outputs.get('n_neg')} negative = {outputs.get('total')} examples · "
+                          f"epochs={outputs.get('epochs')}"
+                     )
+            #
+                      c1, c2, c3 = st.columns(3)
+                      with c1:
+                          st.metric("Prediction", pred["label_name"].upper())
+                      with c2:
+                          st.metric("Confidence", f"{pred['confidence']:.2%}")
+                      with c3:
+                          st.metric("Probs (neg / pos)", f"{pred['prob_neg']:.3f} / {pred['prob_pos']:.3f}")
+            #
+                      col_p, col_o = st.columns(2, gap="large")
+            #
+                      with col_p:
+                          st.markdown(f"### 🟢 Top-{len(outputs['proponents'])} Proponents")
+                          st.caption("Training examples that most *supported* this prediction.")
+                          for ex in outputs["proponents"]:
+                              tag = "✅ POS" if ex["label"] == 1 else "❌ NEG"
+                              with st.container(border=True):
+                                  st.markdown(f"**#{ex['rank']}** · {tag} · score `{ex['score']:+.4f}`")
+                                  st.write(ex["text"])
+            #
+                      with col_o:
+                          st.markdown(f"### 🔴 Top-{len(outputs['opponents'])} Opponents")
+                          st.caption("Training examples that most *contradicted* this prediction.")
+                          for ex in outputs["opponents"]:
+                              tag = "✅ POS" if ex["label"] == 1 else "❌ NEG"
+                              with st.container(border=True):
+                                  st.markdown(f"**#{ex['rank']}** · {tag} · score `{ex['score']:+.4f}`")
+                                  st.write(ex["text"])
+            #
+                      with st.expander("Parameters", expanded=False):
+                          st.json(outputs.get("params", {}), expanded=False)
+            #
+                      render_downloads(outputs, selected_item=selected_item)
 
-    # -------------------------
-    # Compare tools (NEW DESIGN)
-    # -------------------------
+
+
+
     st.markdown("---")
-    #st.subheader("Compare tools")
 
     anchor_item = st.session_state.get("selected_item")
     anchor_key = st.session_state.get("selected_key")
