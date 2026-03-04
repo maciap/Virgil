@@ -541,7 +541,7 @@
           "type": "paper",
           "year": 2024, 
           "source": "Proceedings of the 1st Workshop on NLP for Science (NLP4Science)",
-          "url": "https://arxiv.org/pdf/2407.10114",
+          "url": "https://aclanthology.org/2024.nlp4science-1.1.pdf",
           "note": "Introduces TokenSHAP, a Monte Carlo implementation of SHAP tailored to autoregressive large language models."
         }
       ],
@@ -616,7 +616,7 @@
           "type": "paper",
           "year": 2017,
           "source": "NeurIPS",
-          "url": "https://arxiv.org/pdf/2111.04138",
+          "url": "https://proceedings.neurips.cc/paper/2021/file/da94cbeff56cfda50785df477941308b-Paper.pdf",
           "note": "Introduces the Sobol tool."
         }, 
         {
