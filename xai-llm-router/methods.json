@@ -1360,6 +1360,40 @@
       "typical_cost": "medium"
     },
     {
+  "name": "Minimal Contrastive Editing (MICE)",
+  "task_input": ["classification"],
+  "access_arch": {"access": ["black_box"], "arch": ["all"]},
+  "target_scope": "local",
+  "accessibility": "non experts",
+  "description": {
+    "overview": "Minimal Contrastive Editing (MICE) explains a model prediction by generating minimally edited versions of an input text that flip the model’s prediction. The method works in two stages: first an editor model is trained to propose edits targeting the predictor’s output; then these edits are used to generate contrastive examples, from which the smallest change that alters the prediction is identified.",
+    "main_functionalities": [
+      "Generate counterfactual inputs close to the original inputs that flip the model prediction",
+    ]
+  },
+  "strengths": [
+    "Produces intuitive explanations by identifying limited edits to the input",
+    "Highlights causal evidence by identifying changes that directly alter the model output"
+  ],
+  "limitations": [
+    "Can be very computationally expensive, requiring fine-tuning and multiple passes"  ,
+    "Quality of explanations depends on the editing model used to generate candidate changes",
+    "Edits may produce slightly unnatural or semantically altered sentences"
+  ],
+  "research_applications": [
+    {
+      "used_in": "Explaining NLP Models via Minimal Contrastive Editing (MICE)",
+      "type": "paper",
+      "year": 2021,
+      "source": "Findings of the Association for Computational Linguistics",
+      "url": "https://aclanthology.org/2021.findings-acl.336.pdf",
+      "note": "Introduces the MICE method for generating minimal contrastive edits that explain NLP model predictions."
+    }
+  ],
+  "typical_cost": "high", 
+  "implementation": "https://github.com/allenai/mice"
+    }, 
+    {
       "name": "MLP update decomposition",
       "task_input": ["generation"],
       "access_arch": {"access": ["white_box"], "arch": ["decoder"]},
