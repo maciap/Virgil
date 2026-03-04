@@ -788,7 +788,7 @@ with col_run:
                     "captum_noisetunnel_inputxgrad_classifier",
                     "captum_lime_classifier",
                     "captum_kernelshap_classifier",
-                    "captum_shapleyvaluesampling_classifier",
+                    "captum_shapleyvaluesampling_classifier"
                     ):
                     render_captum_result(outputs, selected_item)
 
