@@ -602,13 +602,13 @@
       "target_scope": "local",
       "accessibility":"non experts",
       "description": {
-        "overview": "Based on the theoretical framework of sensitivity analysis via Sobol indices, Sobol indices measure both individual (first-order) and interaction (higher-order) effects of features on model outputs.",
+        "overview": "Based on the theoretical framework of sensitivity analysis via Sobol indices, they measure both individual (first-order) and interaction (higher-order) effects of features on model outputs.",
         "main_functionalities": [
-          "Compute local attributions"
+          "Compute local attributions", "Visualization and benchmarking of local sensitivity scores"
         ]
       },
       "strengths": ["Theoretically grounded in sensitivity analysis", 
-    "Accounts for interaction effects beyond univariate attributions"],
+    "Accounts for interaction effects beyond univariate attributions", "Model agnostic", "Human friendly explanations"],
       "limitations": ["Not tailored to natural language"],
       "research_applications": [
         {
