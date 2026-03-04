@@ -1368,7 +1368,7 @@
   "description": {
     "overview": "Minimal Contrastive Editing (MICE) explains a model prediction by generating minimally edited versions of an input text that flip the model’s prediction. The method works in two stages: first an editor model is trained to propose edits targeting the predictor’s output; then these edits are used to generate contrastive examples, from which the smallest change that alters the prediction is identified.",
     "main_functionalities": [
-      "Generate counterfactual inputs close to the original inputs that flip the model prediction",
+      "Generate counterfactual inputs close to the original inputs that flip the model prediction"
     ]
   },
   "strengths": [
