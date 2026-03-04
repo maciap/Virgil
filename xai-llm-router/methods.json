@@ -455,52 +455,57 @@
       "implementation": "https://github.com/FOR-sight-ai/interpreto"
     },
     {
-      "name": "SHAP",
-      "task_input": ["classification"],
-      "access_arch": {"access": ["black_box"], "arch": ["all"]},
-      "target_scope": "local",
-      "accessibility": "non experts",
-      "description": {
-       "overview": "SHAP explains a single prediction by estimating each token Shapley value: the average marginal contribution of that token across all coalitions, yielding additive attributions for the target output.",
-        "main_functionalities": [
-          "Compute local attributions"
-        ]
-      },
-      "strengths": ["Shapley values are grounded in game theory", 
-                    "Very popular across different domains"],
-      "limitations": ["Computationally expensive", 
-      "Masking/removing tokens can create out-of-distribution inputs", 
-       "Sensitive to the choice of background set; using more and more diverse background examples generally makes explanations more robust but increases cost"
-      ],
-      "research_applications": [
-        {
-          "used_in": "A Unified Approach to Interpreting Model Predictions",
-          "type": "paper",
-          "year": 2017,
-          "source": "NeurIPS",
-          "url": "https://proceedings.neurips.cc/paper/2017/file/8a20a8621978632d76c43dfd28b67767-Paper.pdf",
-          "note": "Introduces SHAP (Lundberg & Lee, 2017)."
-        }, 
-        {
-          "used_in": "ferret: a Framework for Benchmarking Explainers on Transformers",
-          "type": "paper",
-          "year": 2023,
-          "source": "Proceedings of the 17th Conference of the European Chapter of the Association for Computational Linguistics: System Demonstrations",
-          "url": "https://dl.acm.org/doi/10.1145/2939672.2939778",
-          "note": "Introduces the ferret toolkit which leverages feature attribution approaches like LIME to support the interpretation of individual model predictions."
-        }, 
-        {
-          "used_in": "Using Captum to Explain Generative Language Models",
-          "type": "paper",
-          "year": 2023,
-          "source": "Proceedings of the 3rd Workshop for Natural Language Processing Open Source Software (NLP-OSS 2023)",
-          "url": "https://aclanthology.org/2023.nlposs-1.19.pdf",
-          "note": "Introduces attribution tools like Saliency in the popular Captum toolkit."
-        }
-      ],
-      "typical_cost": "high", 
-      "implementation": "https://github.com/meta-pytorch/captum"
+  "name": "SHAP (Shapley Value Sampling)",
+  "task_input": ["classification"],
+  "access_arch": { "access": ["black_box"], "arch": ["all"] },
+  "plugin_routing": [
+    { "task": "classification", "arch": "all", "plugin_id": "captum_shapleyvaluesampling_classifier" }
+  ],
+  "target_scope": "local",
+  "accessibility": "non experts",
+  "description": {
+    "overview": "Shapley Value Sampling approximates SHAP attributions by Monte Carlo sampling of token coalitions and averaging each token’s marginal contribution to the target output.",
+    "main_functionalities": [
+      "Compute local attributions"
+    ]
+  },
+  "strengths": [
+    "Game-theoretic foundation (Shapley values)",
+    "Model-agnostic (no gradients required)",
+    "Very popular across different domains"
+  ],
+  "limitations": [
+    "Can be very expensive; stable estimates often require many samples",
+    "Perturbations/masking can create out-of-distribution inputs"  ],
+  "research_applications": [
+    {
+      "used_in": "A Unified Approach to Interpreting Model Predictions",
+      "type": "paper",
+      "year": 2017,
+      "source": "NeurIPS",
+      "url": "https://proceedings.neurips.cc/paper/2017/file/8a20a8621978632d76c43dfd28b67767-Paper.pdf",
+      "note": "Introduces SHAP framework (Lundberg & Lee, 2017)."
     },
+    {
+      "used_in": "Using Captum to Explain Generative Language Models",
+      "type": "paper",
+      "year": 2023,
+      "source": "Proceedings of the 3rd Workshop for Natural Language Processing Open Source Software (NLP-OSS 2023)",
+      "url": "https://aclanthology.org/2023.nlposs-1.19.pdf",
+      "note": "Describes Captum’s perturbation-based attribution APIs including Shapley Value Sampling."
+    },
+    {
+      "used_in": "Captum Documentation — Shapley Value Sampling",
+      "type": "docs",
+      "year": 2023,
+      "source": "Meta AI / Captum",
+      "url": "https://captum.ai/api/shapley_value_sampling.html",
+      "note": "API reference for Captum’s ShapleyValueSampling."
+    }
+  ],
+  "typical_cost": "high",
+  "implementation": "https://github.com/meta-pytorch/captum"
+   }, 
      {
       "name": "TokenSHAP",
       "task_input": ["generation"],
@@ -546,6 +551,9 @@
       "name": "Kernel SHAP",
       "task_input": ["classification"],
       "access_arch": {"access": ["black_box"], "arch": ["all"]},
+      "plugin_routing": [
+        { "task": "classification", "arch": "all", "plugin_id": "captum_kernelshap_classifier" }
+       ],
       "target_scope": "all",
       "accessibility":"non experts",
       "description": {
@@ -680,6 +688,9 @@
       "name": "LIME",
       "task_input": ["classification"],
       "access_arch": {"access": ["black_box"], "arch": ["all"]},
+      "plugin_routing": [
+    { "task": "classification", "arch": "all", "plugin_id": "captum_lime_classifier" }
+    ],
       "target_scope": "local",
       "accessibility":"non experts", 
       "description": {
@@ -1098,7 +1109,7 @@
       "used_in": "Measuring the Mixing of Contextual Information in the Transformer",
       "type": "paper",
       "year": 2022,
-      "source": "Proceedings of the 2022 Conference on Empirical Methods in Natural Language Processing",
+      "source": "Proceedings of the 2022 Conference on Empirical Methods in Natural Language Processing (EMNLP)",
       "url": "https://aclanthology.org/2022.emnlp-main.595/",
       "note": "Introduces ALTI."
     }

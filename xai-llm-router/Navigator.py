@@ -24,6 +24,10 @@ from toolkits.captum_classifier import (
     CaptumNoiseTunnelSaliencyClassifierAttribution,
     CaptumNoiseTunnelIGClassifierAttribution,
     CaptumNoiseTunnelInputXGradClassifierAttribution,
+    CaptumLimeClassifierAttribution,
+    CaptumKernelShapClassifierAttribution,
+    CaptumShapleyValueSamplingClassifierAttribution,
+
 )
 from toolkits.bertviz_attention import BertVizAttention
 from toolkits.logit_lens import LogitLens
@@ -158,8 +162,12 @@ def get_plugins():
     plugin31 = CaptumNoiseTunnelIGClassifierAttribution()
     plugin32 = CaptumNoiseTunnelInputXGradClassifierAttribution()
 
-
     plugin33 = ProbingBinaryExamples()
+    
+    plugin34 = CaptumLimeClassifierAttribution()
+    plugin35 = CaptumKernelShapClassifierAttribution()
+
+    plugin36 = CaptumShapleyValueSamplingClassifierAttribution()
 
     return {
         plugin1.id: plugin1,
@@ -199,7 +207,11 @@ def get_plugins():
         plugin31.id: plugin31,
         plugin32.id: plugin32,
 
-        plugin33.id: plugin33
+        plugin33.id: plugin33, 
+
+        plugin34.id: plugin34,
+        plugin35.id: plugin35, 
+        plugin36.id: plugin36
 
     }
 
@@ -762,7 +774,7 @@ with col_run:
 
                 outputs = st.session_state.get("last_outputs")
 
-                # ---- Captum renderers ----
+                #  Captum renderers 
                 if outputs and outputs.get("plugin") in (
                     "captum_ig_classifier",
                     "captum_saliency_classifier",
@@ -774,6 +786,9 @@ with col_run:
                     "captum_noisetunnel_saliency_classifier",
                     "captum_noisetunnel_ig_classifier",
                     "captum_noisetunnel_inputxgrad_classifier",
+                    "captum_lime_classifier",
+                    "captum_kernelshap_classifier",
+                    "captum_shapleyvaluesampling_classifier",
                     ):
                     render_captum_result(outputs, selected_item)
 

@@ -16,6 +16,10 @@ from captum.attr import (
     Occlusion,
     FeatureAblation,
     NoiseTunnel,
+    Lime,
+    KernelShap,
+    ShapleyValueSampling,
+
 )
 from transformers import AutoConfig, AutoModelForSequenceClassification, AutoTokenizer
 
@@ -109,6 +113,8 @@ class _CaptumClassifierBase(ToolkitPlugin):
       - Occlusion (embedding occlusion)
       - FeatureAblation (embedding ablation)
       - NoiseTunnel(Saliency) / NoiseTunnel(IntegratedGradients) / NoiseTunnel(InputXGradient)
+      - Lime
+      - KernelShap
     """
 
     # Child classes must override these:
@@ -242,6 +248,60 @@ class _CaptumClassifierBase(ToolkitPlugin):
             )
         )
 
+        # LIME / KernelSHAP params
+        fields.extend(
+            [
+                FieldSpec(
+                    key="lime_samples",
+                    label="LIME samples",
+                    type="number",
+                    required=False,
+                    help="Used only for LIME. Typical: 200–2000 (higher = slower).",
+                ),
+                FieldSpec(
+                    key="lime_perturbations_per_eval",
+                    label="LIME perturbations per eval",
+                    type="number",
+                    required=False,
+                    help="Used only for LIME. Typical: 16–128 (higher = faster, more memory).",
+                ),
+                FieldSpec(
+                    key="ks_samples",
+                    label="KernelSHAP samples",
+                    type="number",
+                    required=False,
+                    help="Used only for KernelSHAP. Typical: 200–2000 (higher = slower).",
+                ),
+                FieldSpec(
+                    key="ks_perturbations_per_eval",
+                    label="KernelSHAP perturbations per eval",
+                    type="number",
+                    required=False,
+                    help="Used only for KernelSHAP. Typical: 16–128 (higher = faster, more memory).",
+                ),
+            ]
+        )
+
+        # ShapleyValueSampling params
+        fields.extend(
+            [
+                FieldSpec(
+                    key="svs_n_samples",
+                    label="ShapleyValueSampling samples",
+                    type="number",
+                    required=False,
+                    help="Used only for ShapleyValueSampling. Typical: 50–500 (higher = more stable, more costly).",
+                ),
+                FieldSpec(
+                    key="svs_perturbations_per_eval",
+                    label="ShapleyValueSampling perturbations per eval",
+                    type="number",
+                    required=False,
+                    help="Used only for ShapleyValueSampling. Batches perturbations for efficiency. Typical: 8–64.",
+                ),
+            ]
+        )
+
         drop = set(self.DROP_FIELDS or set())
         return [f for f in fields if f.key not in drop]
 
@@ -298,6 +358,16 @@ class _CaptumClassifierBase(ToolkitPlugin):
         # Occlusion params
         occl_window = max(1, min(_to_int(inputs.get("occlusion_window", 1), 1), 64))
 
+        # LIME / KernelSHAP params
+        lime_samples = max(10, min(_to_int(inputs.get("lime_samples", 800), 800), 20000))
+        lime_ppe = max(1, min(_to_int(inputs.get("lime_perturbations_per_eval", 64), 64), 4096))
+        ks_samples = max(10, min(_to_int(inputs.get("ks_samples", 800), 800), 20000))
+        ks_ppe = max(1, min(_to_int(inputs.get("ks_perturbations_per_eval", 64), 64), 4096))
+
+        # ShapleyValueSampling params
+        svs_n_samples = max(10, min(_to_int(inputs.get("svs_n_samples", 200), 200), 5000))
+        svs_perturbations_per_eval = max(1, min(_to_int(inputs.get("svs_perturbations_per_eval", 16), 16), 256))
+
         bundle = self._load_model(model_name)
         tokenizer = bundle["tokenizer"]
         model = bundle["model"]
@@ -344,6 +414,11 @@ class _CaptumClassifierBase(ToolkitPlugin):
         wrapped_model = _EmbeddingForwardWrapper(model)
         forward_fn = wrapped_model
 
+        # Feature mask: each token position is one interpretable feature id.
+        # Shape must match inputs_embeds: [1, T, D]
+        T = input_embeds.size(1)
+        D = input_embeds.size(-1)
+        feature_mask = torch.arange(T, device=self.device).view(1, T, 1).expand(1, T, D)
 
         # ---- choose explainer ----
         if algorithm == "IntegratedGradients":
@@ -410,6 +485,41 @@ class _CaptumClassifierBase(ToolkitPlugin):
                 baselines=baseline_embeds,
                 additional_forward_args=(attention_mask,),
                 target=tgt_idx,
+            )
+
+        elif algorithm == "Lime":
+            explainer = Lime(wrapped_model)
+            attributions = explainer.attribute(
+                inputs=input_embeds,
+                baselines=baseline_embeds,
+                additional_forward_args=(attention_mask,),
+                target=tgt_idx,
+                n_samples=lime_samples,
+                perturbations_per_eval=lime_ppe,
+                feature_mask=feature_mask,
+            )
+
+        elif algorithm == "KernelShap":
+            explainer = KernelShap(wrapped_model)
+            attributions = explainer.attribute(
+                inputs=input_embeds,
+                baselines=baseline_embeds,
+                additional_forward_args=(attention_mask,),
+                target=tgt_idx,
+                n_samples=ks_samples,
+                perturbations_per_eval=ks_ppe,
+                feature_mask=feature_mask,
+            )
+
+        elif algorithm == "ShapleyValueSampling":
+            explainer = ShapleyValueSampling(wrapped_model)
+            attributions = explainer.attribute(
+                inputs=input_embeds,
+                baselines=baseline_embeds,
+                additional_forward_args=(attention_mask,),
+                target=tgt_idx,
+                n_samples=svs_n_samples,
+                perturbations_per_eval=svs_perturbations_per_eval,
             )
 
         elif algorithm.startswith("NoiseTunnel(") and algorithm.endswith(")"):
@@ -479,7 +589,7 @@ class _CaptumClassifierBase(ToolkitPlugin):
         if algorithm in ("IntegratedGradients",):
             algo_params.update({"n_steps": n_steps, "baseline": baseline_kind})
 
-        if algorithm in ("DeepLift", "FeatureAblation", "Occlusion", "GradientShap"):
+        if algorithm in ("DeepLift", "FeatureAblation", "Occlusion", "GradientShap", "Lime", "KernelShap"):
             algo_params.update({"baseline": baseline_kind})
 
         if algorithm == "GradientShap":
@@ -487,6 +597,21 @@ class _CaptumClassifierBase(ToolkitPlugin):
 
         if algorithm == "Occlusion":
             algo_params.update({"occlusion_window": occl_window})
+
+        if algorithm == "Lime":
+            algo_params.update({"lime_samples": lime_samples, "lime_perturbations_per_eval": lime_ppe})
+
+        if algorithm == "KernelShap":
+            algo_params.update({"ks_samples": ks_samples, "ks_perturbations_per_eval": ks_ppe})
+
+        if algorithm == "ShapleyValueSampling":
+            algo_params.update(
+                {
+                    "baseline": baseline_kind,
+                    "svs_n_samples": svs_n_samples,
+                    "svs_perturbations_per_eval": svs_perturbations_per_eval,
+                }
+            )
 
         if algorithm.startswith("NoiseTunnel("):
             algo_params.update({"nt_type": nt_type, "nt_samples": nt_samples, "nt_stdev": nt_stdev})
@@ -513,67 +638,171 @@ class CaptumIGClassifierAttribution(_CaptumClassifierBase):
     name = "Captum — Integrated Gradients (Classifier)"
     FIXED_ALGO = "IntegratedGradients"
     # show n_steps; hide others
-    DROP_FIELDS = {"nt_type", "nt_samples", "nt_stdev", "gs_samples", "gs_stdev", "occlusion_window"}
+    DROP_FIELDS = {
+        "nt_type", "nt_samples", "nt_stdev",
+        "gs_samples", "gs_stdev",
+        "occlusion_window",
+        "lime_samples", "lime_perturbations_per_eval",
+        "ks_samples", "ks_perturbations_per_eval",
+    }
 
 
 class CaptumSaliencyClassifierAttribution(_CaptumClassifierBase):
     id = "captum_saliency_classifier"
     name = "Captum — Saliency (Classifier)"
     FIXED_ALGO = "Saliency"
-    DROP_FIELDS = {"n_steps", "nt_type", "nt_samples", "nt_stdev", "gs_samples", "gs_stdev", "occlusion_window"}
+    DROP_FIELDS = {
+        "n_steps",
+        "nt_type", "nt_samples", "nt_stdev",
+        "gs_samples", "gs_stdev",
+        "occlusion_window",
+        "lime_samples", "lime_perturbations_per_eval",
+        "ks_samples", "ks_perturbations_per_eval",
+    }
 
 
 class CaptumDeepLiftClassifierAttribution(_CaptumClassifierBase):
     id = "captum_deeplift_classifier"
     name = "Captum — DeepLift (Classifier)"
     FIXED_ALGO = "DeepLift"
-    DROP_FIELDS = {"n_steps", "nt_type", "nt_samples", "nt_stdev", "gs_samples", "gs_stdev", "occlusion_window"}
+    DROP_FIELDS = {
+        "n_steps",
+        "nt_type", "nt_samples", "nt_stdev",
+        "gs_samples", "gs_stdev",
+        "occlusion_window",
+        "lime_samples", "lime_perturbations_per_eval",
+        "ks_samples", "ks_perturbations_per_eval",
+    }
 
 
 class CaptumInputXGradientClassifierAttribution(_CaptumClassifierBase):
     id = "captum_inputxgradient_classifier"
     name = "Captum — Input×Gradient (Classifier)"
     FIXED_ALGO = "InputXGradient"
-    DROP_FIELDS = {"n_steps", "nt_type", "nt_samples", "nt_stdev", "gs_samples", "gs_stdev", "occlusion_window"}
+    DROP_FIELDS = {
+        "n_steps",
+        "nt_type", "nt_samples", "nt_stdev",
+        "gs_samples", "gs_stdev",
+        "occlusion_window",
+        "lime_samples", "lime_perturbations_per_eval",
+        "ks_samples", "ks_perturbations_per_eval",
+    }
 
 
 class CaptumGradientShapClassifierAttribution(_CaptumClassifierBase):
     id = "captum_gradientshap_classifier"
     name = "Captum — GradientShap (Classifier)"
     FIXED_ALGO = "GradientShap"
-    DROP_FIELDS = {"n_steps", "nt_type", "nt_samples", "nt_stdev", "occlusion_window"}
+    DROP_FIELDS = {
+        "n_steps",
+        "nt_type", "nt_samples", "nt_stdev",
+        "occlusion_window",
+        "lime_samples", "lime_perturbations_per_eval",
+        "ks_samples", "ks_perturbations_per_eval",
+    }
 
 
 class CaptumOcclusionClassifierAttribution(_CaptumClassifierBase):
     id = "captum_occlusion_classifier"
     name = "Captum — Occlusion (Classifier)"
     FIXED_ALGO = "Occlusion"
-    DROP_FIELDS = {"n_steps", "nt_type", "nt_samples", "nt_stdev", "gs_samples", "gs_stdev"}
+    DROP_FIELDS = {
+        "n_steps",
+        "nt_type", "nt_samples", "nt_stdev",
+        "gs_samples", "gs_stdev",
+        "lime_samples", "lime_perturbations_per_eval",
+        "ks_samples", "ks_perturbations_per_eval",
+    }
 
 
 class CaptumFeatureAblationClassifierAttribution(_CaptumClassifierBase):
     id = "captum_featureablation_classifier"
     name = "Captum — Feature Ablation (Classifier)"
     FIXED_ALGO = "FeatureAblation"
-    DROP_FIELDS = {"n_steps", "nt_type", "nt_samples", "nt_stdev", "gs_samples", "gs_stdev", "occlusion_window"}
+    DROP_FIELDS = {
+        "n_steps",
+        "nt_type", "nt_samples", "nt_stdev",
+        "gs_samples", "gs_stdev",
+        "occlusion_window",
+        "lime_samples", "lime_perturbations_per_eval",
+        "ks_samples", "ks_perturbations_per_eval",
+    }
 
 
 class CaptumNoiseTunnelSaliencyClassifierAttribution(_CaptumClassifierBase):
     id = "captum_noisetunnel_saliency_classifier"
     name = "Captum — NoiseTunnel(Saliency) (Classifier)"
     FIXED_ALGO = "NoiseTunnel(Saliency)"
-    DROP_FIELDS = {"n_steps", "gs_samples", "gs_stdev", "occlusion_window"}
+    DROP_FIELDS = {
+        "n_steps",
+        "gs_samples", "gs_stdev",
+        "occlusion_window",
+        "lime_samples", "lime_perturbations_per_eval",
+        "ks_samples", "ks_perturbations_per_eval",
+    }
 
 
 class CaptumNoiseTunnelIGClassifierAttribution(_CaptumClassifierBase):
     id = "captum_noisetunnel_ig_classifier"
     name = "Captum — NoiseTunnel(Integrated Gradients) (Classifier)"
     FIXED_ALGO = "NoiseTunnel(IntegratedGradients)"
-    DROP_FIELDS = {"gs_samples", "gs_stdev", "occlusion_window"}
+    DROP_FIELDS = {
+        "gs_samples", "gs_stdev",
+        "occlusion_window",
+        "lime_samples", "lime_perturbations_per_eval",
+        "ks_samples", "ks_perturbations_per_eval",
+    }
 
 
 class CaptumNoiseTunnelInputXGradClassifierAttribution(_CaptumClassifierBase):
     id = "captum_noisetunnel_inputxgrad_classifier"
     name = "Captum — NoiseTunnel(Input×Gradient) (Classifier)"
     FIXED_ALGO = "NoiseTunnel(InputXGradient)"
-    DROP_FIELDS = {"n_steps", "gs_samples", "gs_stdev", "occlusion_window"}
+    DROP_FIELDS = {
+        "n_steps",
+        "gs_samples", "gs_stdev",
+        "occlusion_window",
+        "lime_samples", "lime_perturbations_per_eval",
+        "ks_samples", "ks_perturbations_per_eval",
+    }
+
+
+class CaptumLimeClassifierAttribution(_CaptumClassifierBase):
+    id = "captum_lime_classifier"
+    name = "Captum — LIME (Classifier)"
+    FIXED_ALGO = "Lime"
+    DROP_FIELDS = {
+        "n_steps",
+        "nt_type", "nt_samples", "nt_stdev",
+        "gs_samples", "gs_stdev",
+        "occlusion_window",
+        "ks_samples", "ks_perturbations_per_eval",
+    }
+
+
+class CaptumKernelShapClassifierAttribution(_CaptumClassifierBase):
+    id = "captum_kernelshap_classifier"
+    name = "Captum — KernelSHAP (Classifier)"
+    FIXED_ALGO = "KernelShap"
+    DROP_FIELDS = {
+        "n_steps",
+        "nt_type", "nt_samples", "nt_stdev",
+        "gs_samples", "gs_stdev",
+        "occlusion_window",
+        "lime_samples", "lime_perturbations_per_eval",
+    }
+
+
+    class CaptumShapleyValueSamplingClassifierAttribution(_CaptumClassifierBase):
+    id = "captum_shapleyvaluesampling_classifier"
+    name = "Captum — Shapley Value Sampling (Classifier)"
+    FIXED_ALGO = "ShapleyValueSampling"
+    DROP_FIELDS = {
+        "n_steps",
+        "nt_type",
+        "nt_samples",
+        "nt_stdev",
+        "gs_samples",
+        "gs_stdev",
+        "occlusion_window",
+    }
