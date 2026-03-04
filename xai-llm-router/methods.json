@@ -1292,31 +1292,47 @@
       "typical_cost": "high"
     },
     {
-      "name": "Attribution Patching",
-      "task_input": ["generation"],
-      "access_arch": {"access": ["white_box"], "arch": ["decoder"]},
-      "target_scope": "local",
-      "description": {
-        "overview": "Attribution Patching approximates activation patching using gradient-based calculations. It estimates many patching effects efficiently by propagating attribution scores.",
-        "main_functionalities": [
-          "Use gradients to approximate the effect of multiple patches",
-          "Enable large-scale causal analysis with fewer runs"
-        ]
-      },
-      "strengths": [],
-      "limitations": [],
-      "research_applications": [
-        {
-          "used_in": "Attribution Patching: Activation Patching at Industrial Scale",
-          "type": "blog",
-          "year": 2026,
-          "source": "Neel Nanda blog",
-          "url": "https://www.neelnanda.io/mechanistic-interpretability/attribution-patching",
-          "note": "Introduces attribution patching."
-        }
-      ],
-      "typical_cost": "high"
+  "name": "Attribution Patching (AtP) and AtP*",
+  "task_input": ["generation"],
+  "access_arch": {"access": ["white_box"], "arch": ["decoder"]},
+  "target_scope": "local",
+  "description": {
+    "overview": "Attribution Patching (AtP) is a fast, gradient-based first-order approximation to activation patching: it estimates the effect of patching an activation by computing the inner product between the activation difference (clean−corrupted) and the gradient of a behavior metric with respect to that activation. AtP* is a refined variant designed to reduce the approximation quality of AtP in attention-saturated and cancellation-heavy settings while preserving scalability.", 
+    "main_functionalities": [
+      "Efficienlty compute an importance score per component (e.g., attention head or MLP) which approximates causal activation patching" 
+    ]
+  },
+  "strengths": [
+    "Scalable and efficient",
+    "As an approximaiton of the expensive but causal and reliable activation patching, AtP can serve as a *pre-filter* to focus expensive causal interventions (activation/path patching) on a small candidate set",
+    "Can be useful to discover small computational subgraphs responsbile for a given behavior (i.e., circuits)"
+  ],
+  "limitations": [
+    "Approximate, not strictly causal: it is a local linearization and can disagree with true activation patching when effects are highly non-linear or large, particularly for standard AtP",
+    "Still sensitive to experimental design (construction of clean and corrupted dataset, choice of metric and choice of granularity for the computational graph)",
+    "AtP* improves the approximation of activation patching with respect to AtP, but adds extra implementation complexity (attention-specific handling + cancellation mitigation) and may be harder to generalize"
+  ],
+  "research_applications": [
+    {
+      "used_in": "Attribution Patching: Activation Patching At Industrial Scale",
+      "type": "blog",
+      "year": 2024,
+      "source": "Neel Nanda blog",
+      "url": "https://www.neelnanda.io/mechanistic-interpretability/attribution-patching",
+      "note": "Introduces AtP as a first-order Taylor approximation to activation patching and motivates it as a scalable heuristic."
     },
+    {
+      "used_in": "AtP*: Efficient and scalable methods for localizing LLM behaviour to components",
+      "type": "paper",
+      "year": 2024,
+      "source": "arXiv",
+      "url": "https://arxiv.org/abs/2403.00745",
+      "note": "Studies failure modes of AtP and subsequently introduces AtP* improvements (attention saturation + cancellation), plus diagnostics for remaining false negatives."
+       }
+    ],
+  "typical_cost": "high", 
+  "implementation":"https://colab.research.google.com/github/neelnanda-io/TransformerLens/blob/main/demos/Attribution_Patching_Demo.ipynb"
+    }, 
     {
       "name": "VISIT semantic information flow graph",
       "task_input": ["generation"],
