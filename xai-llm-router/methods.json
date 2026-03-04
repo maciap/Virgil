@@ -1443,7 +1443,7 @@
       "name": "BertViz",
       "plugin_id": "bertviz_attention",
       "task_input": ["classification", "generation"],
-      "access_arch": {"access": ["white_box"], "arch": ["all"]},
+      "access_arch": {"access": ["white_box"], "arch": ["encoder, encoder-decoder"]},
       "target_scope": "local",
       "description": {
         "overview": "BertViz is a tool for visualizing self-attention in transformers at multiple scales. It provides views of individual heads, all heads, or neuron-level interactions.",
@@ -1460,7 +1460,7 @@
           "type": "paper",
           "year": 2019,
           "source": "arXiv",
-          "url": "https://arxiv.org/abs/1904.02679",
+          "url": "https://aclanthology.org/P19-3007/",
           "note": "Introduces BertViz tool and its views."
         }
       ],
