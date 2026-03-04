@@ -702,7 +702,7 @@
       },
       "strengths": [
         "Simple and intuitive",
-        "Widely-used across different domains",
+        "Widely-used across different domains"
         
       ],
       "limitations": [
@@ -1439,6 +1439,60 @@
       ],
       "typical_cost": "medium"
     },
+    {
+  "name": "Training Data Influence (TracIn)",
+  "task_input": ["classification", "generation"],
+  "access_arch": { "access": ["white_box"], "arch": ["all"] },
+  "plugin_routing": [
+    { "task": "classification", "arch": "all", "plugin_id": "tracin_influence_classifier" },
+    { "task": "generation", "arch": "decoder", "plugin_id": "tracin_influence_decoder" },
+    { "task": "generation", "arch": "encdec", "plugin_id": "tracin_influence_encdec" }
+  ],
+  "target_scope": "local",
+  "accessibility": "experts",
+  "description": {
+    "overview": "TracIn estimates the influence of a training example on a specific test prediction by approximating how stochastic gradient descent updates changed the test loss during training. Concretely, at multiple saved training checkpoints, it computes the dot product between the gradient of the loss on the training example and the gradient of the loss on the test example, and sums these gradient-alignment scores (weighted by the learning rate) across checkpoints.", 
+    "main_functionalities": [
+      "Compute training data attribution (or influence) scores", 
+      "Influence can be computed on all model parameters or restricted to selected layers (e.g., only the final layer) to reduce computational cost and memory usage."
+    ]
+  },
+  "strengths": [
+    "Scalable and efficient",
+    "Useful for dataset debugging"
+  ],
+  "limitations": [
+    "Results can be noisy and depend on design choices (checkpoints, target layers, and the loss/target used)"
+  ],
+  "research_applications": [
+    {
+      "used_in": "Estimating Training Data Influence by Tracing Gradient Descent",
+      "type": "paper",
+      "year": 2020,
+      "source": "Proceedings of the 34th International Conference on Neural Information Processing Systems (NeurIPS)",
+      "url": "https://proceedings.neurips.cc/paper/2020/file/e6385d39ec9394f2f3a354d9d2b88eec-Paper.pdf",
+      "note": "Introduces TracIn."
+    },
+    {
+      "used_in": "TracIn: A Simple Method to Estimate Training Data Influence",
+      "type": "blog",
+      "year": 2021,
+      "source": "Google Research Blog",
+      "url": "https://research.google/blog/tracin-a-simple-method-to-estimate-training-data-influence/",
+      "note": "High-level explanation and intuition for gradient-alignment influence scores."
+    },
+    {
+      "used_in": "Analyzing the Use of Influence Functions for Instance-Specific Data Filtering in Neural Machine Translation",
+      "type": "paper",
+      "year": 2022,
+      "source": "Proceedings of the Seventh Conference on Machine Translation",
+      "url": "https://aclanthology.org/2022.wmt-1.23.pdf",
+      "note": "Applies TracIn to neural machine translation."
+    }
+  ],
+  "typical_cost": "high", 
+  "implementation": "https://github.com/meta-pytorch/captum"
+  }, 
     {
       "name": "BertViz",
       "plugin_id": "bertviz_attention",
