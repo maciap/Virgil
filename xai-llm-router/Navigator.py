@@ -47,6 +47,8 @@ from toolkits.inseq_proxy_http import (
 )
 from toolkits.meta_transparency import MetaTransparencyGraph  # adjust import path
 from toolkits.attention_rollout import AttentionRollout
+from toolkits.gradient_similarity import GradientSimilarityPlugin
+
 
 import tempfile
 import os
@@ -172,6 +174,8 @@ def get_plugins():
 
     plugin37 = TracInInfluenceClassifier()
 
+    plugin38 = GradientSimilarityPlugin() 
+
 
     return {
         plugin1.id: plugin1,
@@ -217,7 +221,8 @@ def get_plugins():
         plugin35.id: plugin35, 
         plugin36.id: plugin36, 
 
-        plugin37.id: plugin37
+        plugin37.id: plugin37, 
+        plugin38.id: plugin38
 
     }
 
@@ -1619,6 +1624,54 @@ with col_run:
             #
                       render_downloads(outputs, selected_item=selected_item)
 
+                elif outputs and outputs.get("plugin") =="gradient_similarity_classifier":
+                    st.subheader("Result")
+
+                    with st.expander("ℹ️ How to read Similarity-Based Explanations", expanded=True):
+                        st.markdown(
+                            """
+                - We compute **parameter gradients** of the loss for the **test instance** and each **training example**.
+                - We rank training examples by **similarity between gradient vectors** (dot / cosine / asym-dot).
+                - The top examples are the **nearest neighbors** under this gradient-similarity notion.
+                            """
+                        )
+
+                    pred = outputs.get("prediction", {})
+                    st.write(f"**Model:** {outputs.get('model','NA')}")
+                    st.write(f"**Device:** {outputs.get('device','NA')}")
+                    st.write(f"**Test text:** {outputs.get('test_text','NA')}")
+
+                    c1, c2 = st.columns(2)
+                    with c1:
+                        st.metric("Prediction", str(pred.get("label_name", pred.get("idx", "NA"))).upper())
+                    with c2:
+                        st.metric("Confidence", f"{float(pred.get('confidence', 0.0)):.2%}")
+
+                    st.caption(
+                        f"k={outputs.get('params',{}).get('k')} · "
+                        f"sim_fn={outputs.get('params',{}).get('sim_fn')} · "
+                        f"precompute_grads={outputs.get('params',{}).get('precompute_grads')}"
+                    )
+
+                    colA, colB = st.columns(2, gap="large")
+                    with colA:
+                        st.markdown("### 🟢 Top-k nearest neighbors")
+                        for ex in outputs.get("neighbors_topk", []):
+                            with st.container(border=True):
+                                st.markdown(f"**#{ex['rank']}** · {ex['label_tag']} · score `{ex['score']:+.4f}`")
+                                st.write(ex["text"])
+
+                    with colB:
+                        st.markdown("### 🔴 Bottom-k (least similar)")
+                        for ex in outputs.get("neighbors_bottomk", []):
+                            with st.container(border=True):
+                                st.markdown(f"**#{ex['rank']}** · {ex['label_tag']} · score `{ex['score']:+.4f}`")
+                                st.write(ex["text"])
+
+                    with st.expander("Parameters", expanded=False):
+                        st.json(outputs.get("params", {}), expanded=False)
+
+                    render_downloads(outputs, selected_item=selected_item)
 
 
 

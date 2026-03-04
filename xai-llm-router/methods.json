@@ -1867,6 +1867,57 @@
   "implementation": "https://github.com/jalammar/ecco"
 },
 {
+  "name": "Similarity-Based Explanations",
+  "task_input": ["classification"],
+  "access_arch": { "access": ["white_box"], "arch": ["all"] },
+  "plugin_routing": [
+    { "task": "classification", "arch": "all", "plugin_id": "gradient_similarity_classifier" }
+  ],
+  "target_scope": "local",
+  "accessibility": "non experts",
+  "description": {  
+    "overview": "Explains a prediction by retrieving the most similar training examples, where similarity takes into account the model trained for a specific task." , 
+    "main_functionalities": [
+      "Return top-k  training examples that are most similar (and optionally least similar) to a target test example"
+    ]
+  },
+  "strengths": [
+    "Produces example-based explanations that are intuitive easy to inspect (nearest-neighbour style rationales)",
+    "Similarity is model-aware (based on how the model’s parameters would update), not just embedding distance"
+    ],
+  "limitations": [
+    "Can be computationally expensive for large models or large training sets"
+  ],
+  "research_applications": [
+    {
+      "used_in": "Alibi Explain — Similarity-based explanations (documentation)",
+      "type": "docs",
+      "year": 2025,
+      "source": "Seldon Alibi Explain",
+      "url": "https://docs.seldon.ai/alibi-explain/explanations/methods/similarity",
+      "note": "Documents similarity explainers in Alibi, including Similarity-Based Explanations and its similarity metrics."
+    },
+    {
+      "used_in": "Alibi Explain: Algorithms for Explaining Machine Learning Models",
+      "type": "paper",
+      "year": 2021,
+      "source": "Journal of Machine Learning Research",
+      "url": "https://jmlr.org/papers/v22/21-0017.html",
+      "note": "Describes the Alibi library, which provides multiple explainers including similarity-based methods."
+    }, 
+    {
+  "used_in": "Evaluation of Similarity-based Explanations",
+  "type": "paper",
+  "year": 2023,
+  "source": "International Conference on Learning Representations (ICLR)",
+  "url": "https://openreview.net/forum?id=H2R8f8nYl8",
+  "note": "Systematically evaluates similarity-based explanation methods and analyzes how well retrieved examples align with model behavior."
+}
+  ],
+  "typical_cost": "medium-high",
+  "implementation": "https://docs.seldon.ai/alibi-explain/explanations/methods/similarity"
+},
+{
   "name": "CCA (layer similarity)",
   "plugin_id": "cca_layers",
   "notes": "Representation similarity across transformer layers using Canonical Correlation Analysis (CCA) via SVCCA-lib.",
