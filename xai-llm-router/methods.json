@@ -702,7 +702,8 @@
       },
       "strengths": [
         "Simple and intuitive",
-        "Widely-used across different domains"
+        "Widely-used across different domains",
+        
       ],
       "limitations": [
         "Can be computationally expensive",
