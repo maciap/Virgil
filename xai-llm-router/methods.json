@@ -513,14 +513,15 @@
       "target_scope": "local",
       "accessibility": "non experts",
       "description": {
-        "overview": "TokenSHAP adapts Shapley-value attribution to autoregressive language models by treating input tokens as players in a cooperative game and approximating their marginal contributions to generated token probabilities via Monte Carlo sampling..",
+        "overview": "TokenSHAP adapts Shapley-value attribution to autoregressive language models by treating input tokens as players in a cooperative game and approximating their marginal contributions to generated token probabilities via Monte Carlo sampling. TokenSHAP provides local explanation of LLM behaviour. The tool supports the computation, visualization, and benchmarking of TokenSHAP explanations, offering users an intuitive yet theoretically robust framework for understanding token importance in prompts.",
         "main_functionalities": [
-          "Compute local Shapley-based attributions for a predictor"
+          "Compute local Shapley-based attributions for a predictor", " Visualization and benchmarking of explanations"
         ]
       },
       "strengths": [
         "Theoretically grounded in game theory", 
-        "Tailored to autoregressive LLMs (explains next-token or sequence probabilities)"
+        "Tailored to autoregressive LLMs (explains next-token or sequence probabilities)", 
+        "Human friendly explanations"
       ],
       "limitations": ["Computationally expensive", 
         "Results depend on masking/perturbation strategy, which may create out-of-distribution inputs",
