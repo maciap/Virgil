@@ -776,7 +776,8 @@ class CaptumLimeClassifierAttribution(_CaptumClassifierBase):
         "nt_type", "nt_samples", "nt_stdev",
         "gs_samples", "gs_stdev",
         "occlusion_window",
-        "ks_samples", "ks_perturbations_per_eval",
+        "ks_samples", "ks_perturbations_per_eval",       # drop KernelShap
+        "svs_n_samples", "svs_perturbations_per_eval",   # drop ShapleyValueSampling
     }
 
 
@@ -789,20 +790,20 @@ class CaptumKernelShapClassifierAttribution(_CaptumClassifierBase):
         "nt_type", "nt_samples", "nt_stdev",
         "gs_samples", "gs_stdev",
         "occlusion_window",
-        "lime_samples", "lime_perturbations_per_eval",
+        "lime_samples", "lime_perturbations_per_eval",   # drop LIME
+        "svs_n_samples", "svs_perturbations_per_eval",   # drop ShapleyValueSampling
     }
 
 
-    class CaptumShapleyValueSamplingClassifierAttribution(_CaptumClassifierBase):
+class CaptumShapleyValueSamplingClassifierAttribution(_CaptumClassifierBase):
     id = "captum_shapleyvaluesampling_classifier"
     name = "Captum — Shapley Value Sampling (Classifier)"
     FIXED_ALGO = "ShapleyValueSampling"
     DROP_FIELDS = {
         "n_steps",
-        "nt_type",
-        "nt_samples",
-        "nt_stdev",
-        "gs_samples",
-        "gs_stdev",
+        "nt_type", "nt_samples", "nt_stdev",
+        "gs_samples", "gs_stdev",
         "occlusion_window",
+        "lime_samples", "lime_perturbations_per_eval",   # drop LIME
+        "ks_samples", "ks_perturbations_per_eval",       # drop KernelShap
     }
