@@ -413,8 +413,51 @@ def render_captum_result(outputs: Dict[str, Any], selected_item: Dict[str, Any] 
     st.write(f"**Label being explained:** {tgt.get('label', tgt.get('idx', 'NA'))}")
 
     # Method-specific explanation (✅ differs per method)
-    with st.expander("ℹ️ How to read this explanation", expanded=True):
-        st.markdown(captum_method_explainer_text(algo, params))
+    if algo != "LayerIntegratedGradients":
+        with st.expander("ℹ️ How to read this explanation", expanded=True):
+            st.markdown(captum_method_explainer_text(algo, params))
+
+    else: 
+        lig_layer = params.get("lig_layer", "encoder_layer")
+        lig_layer_index = params.get("lig_layer_index", "NA")
+        layer_desc = params.get("layer_desc", None)  # optional, nice if you add it
+        baseline = params.get("baseline", "pad_embeddings / zeros")
+        n_steps = params.get("n_steps", "NA")
+
+        where = (
+            "the **embedding layer** (token → embedding vectors)"
+            if lig_layer == "embeddings"
+            else f"**encoder layer {lig_layer_index}** (a transformer block)"
+        )
+        if layer_desc:
+            where += f"\n  - *(Hooked submodule: `{layer_desc}`)*"
+
+        with st.expander("ℹ️ How to read this explanation", expanded=True):
+            st.markdown(
+                "### ℹ️ How to read Layer Integrated Gradients (Layer IG)\n"
+            "- **What it is**: Like Integrated Gradients, but instead of attributing *input tokens directly*, it attributes the **internal activations** at a chosen layer.\n"
+            "- **What is being attributed**: a tensor of hidden activations (roughly **[tokens × hidden-dim]**) at the selected layer.\n"
+            "- **Where you chose to attribute**:\n"
+            f"  - {where}\n"
+            "- **Baseline**: the input is interpolated from a baseline to your real input.\n"
+            f"  - In this app: baseline = **{baseline}**.\n"
+            f"- **Approximation quality**: `n_steps={n_steps}` (more steps = smoother, slower).\n"
+            "\n"
+            "###### What you’re seeing in the plot/table\n"
+            "- The app currently shows **token-level scores**, because it **sums hidden-dimension contributions** for each token.\n"
+            "- **Positive** score → token’s layer representation pushes the model **toward** the explained label.\n"
+            "- **Negative** score → pushes **away**.\n"
+            "\n"
+            "###### Important note ⚠️ \n"
+            "- Layer IG *can* produce per-neuron attribution **in principle** (because it attributes a layer tensor),\n"
+            "  but this UI is currently **aggregating across neurons** into one score per token.\n"
+            "- **Layer input attribution option removed**: earlier versions exposed a checkbox to attribute to the layer *input*,\n"
+            "  Layer IG *can*  attribute to the layer inputs or outputs \n"
+            "  Here, we attribute to the layer **output**.\n"
+            )
+
+        
+
 
     # Optional: show IG steps inline too
     if algo == "IntegratedGradients" and "n_steps" in params:

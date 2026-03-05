@@ -19,9 +19,44 @@ from captum.attr import (
     Lime,
     KernelShap,
     ShapleyValueSampling,
+    LayerIntegratedGradients
 
 )
 from transformers import AutoConfig, AutoModelForSequenceClassification, AutoTokenizer
+
+
+def _get_encoder_layer_module(model, layer_idx: int):
+    """
+    Returns the module corresponding to the transformer block `layer_idx`
+    for common HuggingFace architectures.
+    Raises ValueError if it can't find the stack.
+    """
+    # DistilBERT
+    if hasattr(model, "distilbert") and hasattr(model.distilbert, "transformer"):
+        layers = model.distilbert.transformer.layer
+        return layers[layer_idx]
+
+    # BERT / ALBERT-like
+    if hasattr(model, "bert") and hasattr(model.bert, "encoder"):
+        layers = model.bert.encoder.layer
+        return layers[layer_idx]
+
+    # RoBERTa / XLM-R
+    if hasattr(model, "roberta") and hasattr(model.roberta, "encoder"):
+        layers = model.roberta.encoder.layer
+        return layers[layer_idx]
+
+    # DeBERTa v2/v3
+    if hasattr(model, "deberta") and hasattr(model.deberta, "encoder"):
+        layers = model.deberta.encoder.layer
+        return layers[layer_idx]
+
+    # GPT-2 (decoder blocks)
+    if hasattr(model, "transformer") and hasattr(model.transformer, "h"):
+        layers = model.transformer.h
+        return layers[layer_idx]
+
+    raise ValueError("Unsupported architecture: cannot locate transformer layers.")
 
 
 class _EmbeddingForwardWrapper(torch.nn.Module):
@@ -32,6 +67,21 @@ class _EmbeddingForwardWrapper(torch.nn.Module):
 
     def forward(self, inputs_embeds: torch.Tensor, attention_mask: torch.Tensor) -> torch.Tensor:
         return self.model(inputs_embeds=inputs_embeds, attention_mask=attention_mask).logits
+    
+class _FirstTensorOutWrapper(torch.nn.Module):
+    """
+    Ensures the wrapped layer returns a single Tensor.
+    Captum LIG can crash if the hooked layer returns (tensor, None, ...).
+    """
+    def __init__(self, layer: torch.nn.Module):
+        super().__init__()
+        self.layer = layer
+
+    def forward(self, *args, **kwargs):
+        out = self.layer(*args, **kwargs)
+        if isinstance(out, (tuple, list)):
+            return out[0]
+        return out
 
 # ---------- Minimal UI schema (same style as before) ----------
 @dataclass
@@ -94,6 +144,32 @@ def _merge_wordpieces(tokens: List[str], scores: List[float]) -> Tuple[List[str]
             merged_scores.append(float(sc))
 
     return merged_tokens, merged_scores
+
+
+def _get_transformer_layers(model) -> List[torch.nn.Module]:
+    """
+    Return a list of transformer blocks for common HF encoder models.
+    Supports: BERT/RoBERTa-like, DistilBERT.
+    """
+    # BERT / RoBERTa / DeBERTa-v2 style (often: model.<base>.encoder.layer)
+    for base_name in ("bert", "roberta", "deberta", "deberta_v2", "electra", "camembert"):
+        base = getattr(model, base_name, None)
+        if base is not None:
+            enc = getattr(base, "encoder", None)
+            if enc is not None and hasattr(enc, "layer"):
+                return list(enc.layer)
+
+    # DistilBERT (model.distilbert.transformer.layer)
+    distil = getattr(model, "distilbert", None)
+    if distil is not None:
+        tr = getattr(distil, "transformer", None)
+        if tr is not None and hasattr(tr, "layer"):
+            return list(tr.layer)
+
+    raise ValueError(
+        "Could not locate transformer layers for this model. "
+        "Supported: bert/roberta/electra/camembert/deberta*, distilbert."
+    )
 
 
 # ---------- Generic Captum base (NOT registered directly) ----------
@@ -175,6 +251,7 @@ class _CaptumClassifierBase(ToolkitPlugin):
                 required=False,
                 help="Recommended for cleaner token display.",
             ),
+            
         ]
 
         # Method-specific knobs (only shown for methods that need them)
@@ -302,6 +379,44 @@ class _CaptumClassifierBase(ToolkitPlugin):
             ]
         )
 
+
+        # ---- Layer Integrated Gradients params ----
+        fields.extend(
+            [
+                FieldSpec(
+                    key="lig_layer",
+                    label="Layer IG: layer to attribute",
+                    type="select",
+                    required=False,
+                    options=["embeddings", "encoder_layer"],
+                    help=(
+                        "Choose which internal layer to attribute. "
+                        "embeddings = input embedding module; encoder_layer = one transformer block."
+                    ),
+                    default="encoder_layer",
+                ),
+                FieldSpec(
+                    key="lig_layer_index",
+                    label="Layer IG: encoder layer index",
+                    type="number",
+                    required=False,
+                    help="Used only if lig_layer=encoder_layer (0-based). Example: 0 = first block.",
+                    default=0,
+                ),
+                #FieldSpec(
+                #    key="lig_attribute_to_layer_input",lig_attribute_to_layer_input = bool(inputs.get("lig_attribute_to_layer_input", True))
+                #    label="Layer IG: attribute to layer input",
+                #    type="checkbox",
+                #    required=False,
+                #    help=(
+                #        "If enabled, computes attributions for the layer *input*; "
+                #        "otherwise, for the layer *output*."
+                #    ),
+                #    default=True,
+                #),
+            ]
+        )
+
         drop = set(self.DROP_FIELDS or set())
         return [f for f in fields if f.key not in drop]
 
@@ -367,6 +482,12 @@ class _CaptumClassifierBase(ToolkitPlugin):
         # ShapleyValueSampling params
         svs_n_samples = max(10, min(_to_int(inputs.get("svs_n_samples", 200), 200), 5000))
         svs_perturbations_per_eval = max(1, min(_to_int(inputs.get("svs_perturbations_per_eval", 16), 16), 256))
+
+
+        # LayerIntegratedGradients params
+        lig_layer = (inputs.get("lig_layer") or "encoder_layer").strip()
+        lig_layer_index = _to_int(inputs.get("lig_layer_index", 0), 0)
+        #lig_attribute_to_layer_input = bool(inputs.get("lig_attribute_to_layer_input", True))
 
         bundle = self._load_model(model_name)
         tokenizer = bundle["tokenizer"]
@@ -522,6 +643,49 @@ class _CaptumClassifierBase(ToolkitPlugin):
                 perturbations_per_eval=svs_perturbations_per_eval,
             )
 
+        elif algorithm == "LayerIntegratedGradients":
+            print("hereeeeeeeeeeeeeee")
+            if lig_layer == "embeddings":
+                layer_module = embeddings_layer
+                layer_desc = "embeddings"
+
+            elif lig_layer == "encoder_layer":
+                layers = _get_transformer_layers(model)
+                if not (0 <= lig_layer_index < len(layers)):
+                    raise ValueError(f"lig_layer_index must be in [0, {len(layers)-1}] for this model.")
+
+                block = layers[lig_layer_index]
+
+                # DistilBERT: block.ffn returns a Tensor and is called in forward ✅
+                if hasattr(block, "ffn"):
+                    layer_module = block.ffn
+                    layer_desc = f"encoder_layer[{lig_layer_index}].ffn"
+
+                # BERT/RoBERTa: intermediate returns a Tensor and is called in forward ✅
+                elif hasattr(block, "intermediate"):
+                    layer_module = block.intermediate
+                    layer_desc = f"encoder_layer[{lig_layer_index}].intermediate"
+
+                else:
+                    raise ValueError(
+                        "Could not find a safe Tensor-returning submodule for this architecture. "
+                        "Try lig_layer='embeddings'."
+                    )
+            else:
+                raise ValueError("lig_layer must be one of: embeddings, encoder_layer")
+                
+
+            explainer = LayerIntegratedGradients(wrapped_model, layer_module)
+            attributions = explainer.attribute(
+                inputs=input_embeds,
+                baselines=baseline_embeds,
+                additional_forward_args=(attention_mask,),
+                target=tgt_idx,
+                n_steps=n_steps,
+                attribute_to_layer_input=False,  # keep fixed
+            )
+
+     
         elif algorithm.startswith("NoiseTunnel(") and algorithm.endswith(")"):
             base_name = algorithm[len("NoiseTunnel(") : -1].strip()
 
@@ -560,6 +724,9 @@ class _CaptumClassifierBase(ToolkitPlugin):
                     nt_samples=nt_samples,
                     stdevs=nt_stdev,
                 )
+
+
+
             else:
                 raise ValueError(f"Unsupported NoiseTunnel base method: {base_name}")
 
@@ -820,4 +987,18 @@ class CaptumShapleyValueSamplingClassifierAttribution(_CaptumClassifierBase):
         "occlusion_window",
         "lime_samples", "lime_perturbations_per_eval",   # drop LIME
         "ks_samples", "ks_perturbations_per_eval",       # drop KernelShap
+    }
+
+class CaptumLayerIntegratedGradientsClassifierAttribution(_CaptumClassifierBase):
+    id = "captum_layer_ig_classifier"
+    name = "Captum — Layer Integrated Gradients (Classifier)"
+    FIXED_ALGO = "LayerIntegratedGradients"
+    # Keep n_steps + the LIG fields, drop unrelated ones
+    DROP_FIELDS = {
+        "nt_type", "nt_samples", "nt_stdev",
+        "gs_samples", "gs_stdev",
+        "occlusion_window",
+        "lime_samples", "lime_perturbations_per_eval",
+        "ks_samples", "ks_perturbations_per_eval",
+        "svs_n_samples", "svs_perturbations_per_eval",
     }

@@ -27,6 +27,7 @@ from toolkits.captum_classifier import (
     CaptumLimeClassifierAttribution,
     CaptumKernelShapClassifierAttribution,
     CaptumShapleyValueSamplingClassifierAttribution,
+    CaptumLayerIntegratedGradientsClassifierAttribution, 
 
 )
 from toolkits.bertviz_attention import BertVizAttention
@@ -176,6 +177,8 @@ def get_plugins():
 
     plugin38 = GradientSimilarityPlugin() 
 
+    plugin39 = CaptumLayerIntegratedGradientsClassifierAttribution()  
+
 
     return {
         plugin1.id: plugin1,
@@ -222,8 +225,9 @@ def get_plugins():
         plugin36.id: plugin36, 
 
         plugin37.id: plugin37, 
-        plugin38.id: plugin38
+        plugin38.id: plugin38, 
 
+        plugin39.id : plugin39 
     }
 
 
@@ -799,8 +803,10 @@ with col_run:
                     "captum_noisetunnel_inputxgrad_classifier",
                     "captum_lime_classifier",
                     "captum_kernelshap_classifier",
-                    "captum_shapleyvaluesampling_classifier"
+                    "captum_shapleyvaluesampling_classifier", 
+                    "captum_layer_ig_classifier"
                     ):
+                    
                     render_captum_result(outputs, selected_item)
 
                 elif outputs and outputs.get("plugin") == "bertviz_attention" and outputs.get("html"):

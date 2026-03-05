@@ -96,19 +96,22 @@
       "access_arch": { "access": ["white_box"], "arch": ["all"] },
       "target_scope": "local",
       "accessibility": "mid experts",
+      "plugin_routing": [
+      { "task": "classification", "arch": "all", "plugin_id": "captum_layer_ig_classifier" }
+      ],  
       "description": {
         "overview": "Layer Integrated Gradients is a variation of Integrated Gradients that computes importance scores for the inputs or outputs of a specific layer, rather than for the original input features. In contrast, Integrated Gradients assigns an importance score to each input feature by approximating the integral of the gradients of the model’s output with respect to those inputs along a path from chosen reference inputs to the actual inputs.",
         "main_functionalities": [
           "Compute attributions for internal layer inputs or outputs",
-          "Enable analysis of intermediate representations"
+          "Enable analysis of intermediate representations in addition to providing local attribution scores"
         ]
       },
       "strengths": [  "Like integrated gradients, provides theoretically grounded attributions satisfying axioms",
-    "Enables interpretability of intermediate representations rather than only input features",
+    "Enables interpretability of intermediate representations rather than input features",
     "More stable than raw gradient-based methods due to path integration",
-    "Can be combined with token-level or neuron-level analysis for fine-grained inspection"],
+    "Can be combined with token-level for finer-grained inspection"],
       "limitations": [ "Like integrated gradients, sensitive to the choice of baseline/reference input" , 
-      "Like integrated gradients, it is computationally more expensive than raw gradient-based tools"
+      "Like integrated gradients, it can be computationally expensive"
      ],
       "research_applications": [
          {
