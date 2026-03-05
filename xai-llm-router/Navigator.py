@@ -96,6 +96,9 @@ import html
 import re
 import streamlit.components.v1 as components
 
+from toolkits.nmf import EccoNMF
+
+
 _NODE_RE = re.compile(r"^(X0|A|M|I)(\d+)?_(\d+)$")  # X0_3 OR A6_3 etc.
 
 import os
@@ -179,6 +182,8 @@ def get_plugins():
 
     plugin39 = CaptumLayerIntegratedGradientsClassifierAttribution()  
 
+    plugin40 = EccoNMF()
+
 
     return {
         plugin1.id: plugin1,
@@ -227,7 +232,8 @@ def get_plugins():
         plugin37.id: plugin37, 
         plugin38.id: plugin38, 
 
-        plugin39.id : plugin39 
+        plugin39.id : plugin39, 
+        plugin40.id : plugin40 
     }
 
 
@@ -806,7 +812,6 @@ with col_run:
                     "captum_shapleyvaluesampling_classifier", 
                     "captum_layer_ig_classifier"
                     ):
-                    
                     render_captum_result(outputs, selected_item)
 
                 elif outputs and outputs.get("plugin") == "bertviz_attention" and outputs.get("html"):
@@ -1501,6 +1506,42 @@ with col_run:
                     with st.expander("Top source tokens", expanded=False):
                         st.dataframe(pd.DataFrame(outputs.get("top_sources", [])), use_container_width=True)
 
+                    render_downloads(outputs, selected_item=selected_item)
+
+
+
+
+                elif outputs and outputs.get("plugin") == "ecco_nmf" and outputs.get("html"):
+                    st.subheader("Result")
+                    with st.expander("ℹ️ How to read NMF (Ecco)", expanded=True):
+                        st.markdown(
+                            """
+                        - **Rows = factors**: each row is a pattern discovered in the model's activations.
+                        - **Tokens = input words** from the sentence.
+
+                        **Default view:**  
+                        Tokens are colored by their **maximum activation across all factors** (how strongly the token participates in any pattern).
+
+                        **Hover a factor:**  
+                        Token colors update to show **how strongly each token activates that specific factor**.
+
+                        Bright tokens indicate a **strong contribution to that factor**.\n
+
+                        - ⚠️ Note: activations are from the last layer.  
+                        """
+                        ) #
+
+                    st.write(f"**Model:** {outputs.get('model','NA')}")
+                    st.write(f"**n_components:** {outputs.get('n_components','NA')}")
+                    st.write(f"**Max length:** {outputs.get('max_length','NA')} tokens")
+
+                    # Optional token preview
+                    toks = outputs.get("tokens", [])
+                    if toks:
+                        with st.expander("Tokenization (index:token)", expanded=False):
+                            st.code(" ".join([f"{i}:{t}" for i, t in enumerate(toks)]))
+
+                    components.html(outputs["html"], height=int(outputs.get("height", 760)), scrolling=True)
                     render_downloads(outputs, selected_item=selected_item)
 
 

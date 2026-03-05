@@ -1825,6 +1825,10 @@
   "name": "Non-negative Matrix Factorization (NMF)",
   "task_input": [ "classification", "generation"],
   "access_arch": { "access": "white_box", "arch": "all" },
+   "plugin_routing": [
+    { "task": "classification", "arch": "all", "plugin_id": "ecco_nmf" },
+    { "task": "generation", "arch": "all", "plugin_id": "ecco_nmf" }
+  ],
   "accessibility": "experts", 
   "description": {
     "overview": "Matrix factorization approaches such as non-negative matrix factorization decompose activations into a concise set of patterns.",
@@ -1839,6 +1843,7 @@
   ],
   "limitations": [
     "Enforcing non-negative can result in information loss", 
+    "Factors can be polysemantic", 
     "Assumes an additive structure for activations which may not hold in practice"
   ],
   "research_applications": [ 
