@@ -49,6 +49,8 @@ from toolkits.inseq_proxy_http import (
 from toolkits.meta_transparency import MetaTransparencyGraph  # adjust import path
 from toolkits.attention_rollout import AttentionRollout
 from toolkits.gradient_similarity import GradientSimilarityPlugin
+from toolkits.nmf import EccoNMF
+from toolkits.compare_tokens import EccoTokenRankingCompare
 
 
 import tempfile
@@ -96,7 +98,7 @@ import html
 import re
 import streamlit.components.v1 as components
 
-from toolkits.nmf import EccoNMF
+
 
 
 _NODE_RE = re.compile(r"^(X0|A|M|I)(\d+)?_(\d+)$")  # X0_3 OR A6_3 etc.
@@ -184,6 +186,8 @@ def get_plugins():
 
     plugin40 = EccoNMF()
 
+    plugin41 = EccoTokenRankingCompare()
+
 
     return {
         plugin1.id: plugin1,
@@ -233,7 +237,8 @@ def get_plugins():
         plugin38.id: plugin38, 
 
         plugin39.id : plugin39, 
-        plugin40.id : plugin40 
+        plugin40.id : plugin40,
+        plugin41.id : plugin41  
     }
 
 
@@ -1544,6 +1549,47 @@ with col_run:
                     components.html(outputs["html"], height=int(outputs.get("height", 760)), scrolling=True)
                     render_downloads(outputs, selected_item=selected_item)
 
+
+                elif outputs and outputs.get("plugin") == "ecco_token_rank_compare":
+                    st.subheader("Result")
+                    with st.expander("ℹ️ How to read Token Ranking Comparison", expanded=True):
+                        st.markdown(
+                        """
+                        - The table shows how the model's **preference for specific tokens** changes across transformer layers.
+
+                        - We select a **position in the prompt** and inspect the model's hidden representation at that point.  
+                        That representation determines the model's **probability distribution over the next token**.
+
+                        - For each **layer**, we project the hidden state into the vocabulary space and check **where the watched tokens appear in the ranking** of possible next tokens.
+
+                        - **Rank = position in the sorted probability distribution**:
+                        - Rank **1** → most likely next token
+                        - Higher rank → less likely token
+
+                        - By reading the table **down the layers**, you can see how the model's internal computation gradually **increases or decreases its preference for each token**.
+
+                        - Example interpretation:
+                        - If a token moves from rank **2000 → 50 → 3**, the model becomes increasingly confident that this token could be the next word.
+                        - If the rank worsens across layers, the model is **rejecting that hypothesis**.
+                            """
+                        )
+
+                    st.write(f"**Model:** {outputs.get('model','NA')}")
+                    st.write(f"**Position:** {outputs.get('position','NA')} (0-based)")
+                    st.write(f"**Watched token ids:** {outputs.get('watch', [])}")
+
+                    toks = outputs.get("tokens", []) or []
+                    if toks:
+                        with st.expander("Tokenization (index:token)", expanded=False):
+                            st.code(" ".join([f"{i}:{t}" for i, t in enumerate(toks)]))
+
+                    # ✅ HTML only (no dataframe)
+                    if outputs.get("html"):
+                        components.html(outputs["html"], height=560, scrolling=True)
+                    else:
+                        st.warning("No HTML output returned.")
+
+                            
 
                 elif outputs and outputs.get("plugin") == "probing_binary_examples":
                     st.subheader("Result")

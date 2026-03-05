@@ -1825,6 +1825,7 @@
   "name": "Non-negative Matrix Factorization (NMF)",
   "task_input": [ "classification", "generation"],
   "access_arch": { "access": "white_box", "arch": "all" },
+    "target_scope": "global",
    "plugin_routing": [
     { "task": "classification", "arch": "all", "plugin_id": "ecco_nmf" },
     { "task": "generation", "arch": "all", "plugin_id": "ecco_nmf" }
@@ -1874,6 +1875,40 @@
   ], 
   "implementation": "https://github.com/jalammar/ecco"
 },
+{
+  "name": "Token Ranking Comparison",
+  "task_input": ["generation"],
+  "access_arch": { "access": "white_box", "arch": "decoder" },
+  "plugin_routing": [
+    { "task": "generation", "arch": "decoder", "plugin_id": "ecco_token_rank_compare" }
+  ],
+  "target_scope": "local",
+  "accessibility": "non experts",
+  "description": {
+    "overview": "Using the main idea underlying the logit lens, Token Ranking Comparison tracks how a model ranks selected tokens at a specific prompt position, allowing comparison of token preference trajectories under the model’s next-token distribution.",
+    "main_functionalities": [
+      "Inspect how token preference changes across layers"
+    ]
+  },
+  "strengths": [
+    "Gives an intuitive view of the model’s relative preference between specific hypotheses (tokens)"
+  ],
+  "limitations": [
+    "Can compare vocubulary tokens and not all words (without modifications)",
+    "Ranks are relative and do not directly convey probability mass differences"
+  ],
+  "research_applications": [
+    {
+      "used_in": "Ecco: An Open Source Library for the Explainability of Transformer Language Models",
+      "type": "paper",
+      "year": 2021,
+      "source": "Proceedings of the 59th Annual Meeting of the Association for Computational Linguistics and the 11th International Joint Conference on Natural Language Processing: System Demonstrations",
+      "url": "https://aclanthology.org/2021.acl-demo.30.pdf",
+      "note": "Introduces Ecco and its interactive analysis tools, including token ranking inspection for transformer language models."
+    }
+  ],
+  "implementation": "https://github.com/jalammar/ecco"
+}, 
 {
   "name": "Similarity-Based Explanations",
   "task_input": ["classification"],
