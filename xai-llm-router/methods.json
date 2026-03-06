@@ -596,7 +596,7 @@
         }
       ],
       "typical_cost": "high", 
-      "implementation": "https://github.com/FOR-sight-ai/interpreto"
+      "implementation": "https://github.com/meta-pytorch/captum"
     },
     {
       "name": "Sobol",
@@ -686,7 +686,8 @@
           "note": "Describes PnPXAI toolkit, which implements several explainers, including SmoothGrad."
         }
       ],
-      "typical_cost": "missing"
+      "typical_cost": "missing", 
+      "implementation": "https://github.com/pkmr06/pytorch-smoothgrad"
     },
      {
       "name": "LIME",
@@ -809,7 +810,8 @@
           "note": "Describes Alibi library, which implements Anchors."
         }
       ],
-      "typical_cost": "high"
+      "typical_cost": "high", 
+      "implementation": "https://github.com/SeldonIO/alibi"
     },
     {
       "name": "Direct Logit Attribution",
