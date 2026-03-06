@@ -177,6 +177,8 @@ class ProbingBinaryExamples(ToolkitPlugin):
     id = "probing_binary_examples"
     name = "Probing"
 
+    DEFAULT_MODELS = ["distilbert-base-uncased"]
+
     def __init__(self, device: Optional[str] = None):
         self.device = device or ("cuda" if torch.cuda.is_available() else "cpu")
         self._cache: Dict[str, Dict[str, Any]] = {}
@@ -186,7 +188,8 @@ class ProbingBinaryExamples(ToolkitPlugin):
             FieldSpec(
                 key="model_name",
                 label="HF model name",
-                type="text",
+                type="select",
+                options=self.DEFAULT_MODELS,
                 help="Encoder (e.g., distilbert-base-uncased) or decoder base model. Keep it small for speed.",
                 default="distilbert-base-uncased",
             ),

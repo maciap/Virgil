@@ -101,6 +101,8 @@ class LogitLens(ToolkitPlugin):
     id = "logit_lens"
     name = "Logit Lens"
 
+    DEFAULT_MODELS = ["gpt2", "EleutherAI/gpt-neo-125M"]
+
     def __init__(self, device: Optional[str] = None):
         self.device = device or ("cuda" if torch.cuda.is_available() else "cpu")
         self._cache: Dict[str, Dict[str, Any]] = {}
@@ -110,7 +112,8 @@ class LogitLens(ToolkitPlugin):
             FieldSpec(
                 key="model_name",
                 label="HF model name (causal LM)",
-                type="text",
+                type="select",
+                options=self.DEFAULT_MODELS,
                 help="Example: gpt2, EleutherAI/gpt-neo-125M, meta-llama/... (if available).",
             ),
             FieldSpec(
