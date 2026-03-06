@@ -28,7 +28,7 @@ from toolkits.captum_classifier import (
     CaptumKernelShapClassifierAttribution,
     CaptumShapleyValueSamplingClassifierAttribution,
     CaptumLayerIntegratedGradientsClassifierAttribution, 
-    
+
 
 )
 from toolkits.bertviz_attention import BertVizAttention
@@ -250,11 +250,11 @@ PLUGINS = get_plugins()
 # -------------------------
 
 DIM_VALUES = {
-    "task": ["NA", "classification", "generation"],
-    "access": ["NA", "black_box",  "white_box"],
-    "arch": ["NA", "decoder", "encdec"],
-    "scope": ["NA", "local", "global", "both"],
-    "accessibility": ["NA", "experts", "mid experts", "non experts"],
+    "task": ["all", "classification", "generation"],
+    "access": ["all", "black_box",  "white_box"],
+    "arch": ["all", "decoder", "encoder", "encdec"],
+    "scope": ["all", "local", "global"],
+    "accessibility": ["all", "experts", "mid experts", "non experts"],
 }
 
 DEFAULTS = {
@@ -534,10 +534,10 @@ with st.sidebar:
     if mode == "Pick with filters":
         with st.expander("✅ Hard constraints (filters)", expanded=True):
             st.caption("These are *must-have*. Tools that don't satisfy these will be hidden.")
-            hard["task"] = st.selectbox("Task (hard)", DIM_VALUES["task"], index=DIM_VALUES["task"].index(DEFAULTS["task"]))
-            hard["access"] = st.selectbox("Model access (hard)", DIM_VALUES["access"], index=DIM_VALUES["access"].index(DEFAULTS["access"]))
-            hard["arch"] = st.selectbox("Architecture (hard)", DIM_VALUES["arch"], index=DIM_VALUES["arch"].index(DEFAULTS["arch"]))
-            hard["scope"] = st.selectbox("Explanation scope (hard)", DIM_VALUES["scope"], index=DIM_VALUES["scope"].index(DEFAULTS["scope"]))
+            hard["task"] = st.selectbox("Task", DIM_VALUES["task"], index=DIM_VALUES["task"].index(DEFAULTS["task"]))
+            hard["access"] = st.selectbox("Model access", DIM_VALUES["access"], index=DIM_VALUES["access"].index(DEFAULTS["access"]))
+            hard["arch"] = st.selectbox("Architecture", DIM_VALUES["arch"], index=DIM_VALUES["arch"].index(DEFAULTS["arch"]))
+            hard["scope"] = st.selectbox("Explanation scope", DIM_VALUES["scope"], index=DIM_VALUES["scope"].index(DEFAULTS["scope"]))
 
         with st.expander("⭐ Ranking preference (accessibility)", expanded=True):
             st.caption("This does not hide tools. It only changes ordering.")
