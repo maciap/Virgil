@@ -245,9 +245,22 @@ def get_plugins():
 
 PLUGINS = get_plugins()
 
-# -------------------------
-# Config: dimension values
-# -------------------------
+UI_TO_INTERNAL = {
+    "all": "NA"
+}
+
+INTERNAL_TO_UI = {
+    "NA": "all"
+}
+
+def _to_internal(v: str) -> str:
+    return UI_TO_INTERNAL.get(v, v)
+
+def _to_ui(v: str) -> str:
+    return INTERNAL_TO_UI.get(v, v)
+
+def _dict_to_ui(d: Dict[str, str]) -> Dict[str, str]:
+    return {k: _to_ui(v) for k, v in d.items()}
 
 DIM_VALUES = {
     "task": ["all", "classification", "generation"],
@@ -534,17 +547,27 @@ with st.sidebar:
     if mode == "Pick with filters":
         with st.expander("✅ Hard constraints (filters)", expanded=True):
             st.caption("These are *must-have*. Tools that don't satisfy these will be hidden.")
-            hard["task"] = st.selectbox("Task", DIM_VALUES["task"], index=DIM_VALUES["task"].index(DEFAULTS["task"]))
-            hard["access"] = st.selectbox("Model access", DIM_VALUES["access"], index=DIM_VALUES["access"].index(DEFAULTS["access"]))
-            hard["arch"] = st.selectbox("Architecture", DIM_VALUES["arch"], index=DIM_VALUES["arch"].index(DEFAULTS["arch"]))
-            hard["scope"] = st.selectbox("Explanation scope", DIM_VALUES["scope"], index=DIM_VALUES["scope"].index(DEFAULTS["scope"]))
+            hard["task"] = _to_internal(
+                st.selectbox("Task", DIM_VALUES["task"], index=DIM_VALUES["task"].index(DEFAULTS["task"]))
+            )
+            hard["access"] = _to_internal(
+                st.selectbox("Model access", DIM_VALUES["access"], index=DIM_VALUES["access"].index(DEFAULTS["access"]))
+            )
+            hard["arch"] = _to_internal(
+                st.selectbox("Architecture", DIM_VALUES["arch"], index=DIM_VALUES["arch"].index(DEFAULTS["arch"]))
+            )
+            hard["scope"] = _to_internal(
+                st.selectbox("Explanation scope", DIM_VALUES["scope"], index=DIM_VALUES["scope"].index(DEFAULTS["scope"]))
+            )
 
         with st.expander("⭐ Ranking preference (accessibility)", expanded=True):
             st.caption("This does not hide tools. It only changes ordering.")
-            prefs["accessibility"] = st.selectbox(
-                "Audience / accessibility (ranking only)",
-                DIM_VALUES["accessibility"],
-                index=DIM_VALUES["accessibility"].index(DEFAULTS["accessibility"]),
+            prefs["accessibility"] = _to_internal(
+                st.selectbox(
+                    "Audience / accessibility (ranking only)",
+                    DIM_VALUES["accessibility"],
+                    index=DIM_VALUES["accessibility"].index(DEFAULTS["accessibility"]),
+                )
             )
 
         st.info("Tip: If a tool appears but doesn't match your level of expertise, it’s because that is just a preference.")
@@ -564,10 +587,10 @@ with st.sidebar:
 
         if add_hard:
             with st.expander("✅ Hard constraints (optional)", expanded=True):
-                hard["task"] = st.selectbox("Task (hard)", DIM_VALUES["task"], index=0)
-                hard["access"] = st.selectbox("Model access (hard)", DIM_VALUES["access"], index=0)
-                hard["arch"] = st.selectbox("Architecture (hard)", DIM_VALUES["arch"], index=0)
-                hard["scope"] = st.selectbox("Explanation scope (hard)", DIM_VALUES["scope"], index=0)
+                hard["task"] = _to_internal(st.selectbox("Task", DIM_VALUES["task"], index=0))
+                hard["access"] = _to_internal(st.selectbox("Model access", DIM_VALUES["access"], index=0))
+                hard["arch"] = _to_internal(st.selectbox("Architecture", DIM_VALUES["arch"], index=0))
+                hard["scope"] = _to_internal(st.selectbox("Explanation scope", DIM_VALUES["scope"], index=0))
 
         with st.expander("⭐ Ranking preference (accessibility)", expanded=True):
             prefs["accessibility"] = st.selectbox(
