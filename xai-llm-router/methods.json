@@ -769,19 +769,16 @@
       "description": {
         "overview": "Anchors identifies a set of words or feature conditions (an 'anchor') that fix a model’s prediction locally. It generates IF-THEN rules guaranteeing the prediction with high precision.",
         "main_functionalities": [
-          "Find words/phrases whose presence anchors the prediction",
-          "Provide precision (reliability) and coverage metrics for anchors",
-          "Show example inputs where the anchor applies or fails"
+          "Find IF-THEN rules combining input tokens whose presence anchors the prediction"
         ]
       },
       "strengths": [
-        "Produces intuitive IF-THEN rule explanations",
-        "Model-agnostic: works with any classifier",
-        "Quantifies explanation reliability and scope"
+        "Produces intuitive rule-based explanations",
+        "Can provide precision (reliability) and coverage metrics for rules", 
+        "Can show example inputs where the anchor applies or fails"
       ],
       "limitations": [
-        "Local explanation only (no global insight)",
-        "Computationally expensive for long texts (sampling large neighborhoods)",
+        "Computationally expensive for long texts",
         "Quality depends on perturbation strategy (masking may be unnatural)"
       ],
       "research_applications": [
