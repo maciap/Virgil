@@ -212,6 +212,7 @@ class _CaptumClassifierBase(ToolkitPlugin):
                 key="model_name",
                 label="HF model name (sequence classification)",
                 type="text",
+                default="distilbert-base-uncased-finetuned-sst-2-english",
                 help=(
                     "Example: distilbert-base-uncased-finetuned-sst-2-english "
                     "or any AutoModelForSequenceClassification model."
@@ -221,6 +222,7 @@ class _CaptumClassifierBase(ToolkitPlugin):
                 key="sentence",
                 label="Input sentence",
                 type="textarea",
+                default="the movie was good",
                 help="Type a sentence to explain.",
             ),
             FieldSpec(
@@ -251,6 +253,19 @@ class _CaptumClassifierBase(ToolkitPlugin):
                 required=False,
                 help="Recommended for cleaner token display.",
             ),
+            FieldSpec(
+            key="aggregation",
+            label="Token attribution aggregation",
+            type="select",
+            options=["l2_norm", "abs_sum", "signed_sum"],
+            default="l2_norm",
+            help=(
+                "How to convert embedding-level attributions into token scores. "
+                "L2 norm (l2_norm) easures importance magnitude."
+                "Absolute sign (abs_sum) is an alternative to the L2 norm using the L1 norm"
+                "Signed sum (signed_sum) preserves direction but may cancel across embedding dimensions."
+            ),
+        )
             
         ]
 
@@ -734,7 +749,18 @@ class _CaptumClassifierBase(ToolkitPlugin):
             raise ValueError(f"Unknown algorithm: {algorithm}")
 
         # reduce embedding dim -> token attribution
-        token_attr = attributions.sum(dim=-1).squeeze(0).detach().cpu()  # [T]
+        #token_attr = attributions.sum(dim=-1).squeeze(0).detach().cpu()  # [T]
+        agg = inputs.get("aggregation", "l2_norm")
+
+        if agg == "signed_sum":
+            token_attr = attributions.sum(dim=-1)
+        elif agg == "abs_sum":
+            token_attr = attributions.abs().sum(dim=-1)
+        else:  # l2_norm
+            token_attr = attributions.norm(p=2, dim=-1)
+
+        token_attr = token_attr.squeeze(0).detach().cpu()
+                
         tokens = tokenizer.convert_ids_to_tokens(input_ids.squeeze(0).detach().cpu().tolist())
 
         raw_scores = token_attr.tolist()
@@ -751,7 +777,7 @@ class _CaptumClassifierBase(ToolkitPlugin):
         per_token = [{"token": t, "attr_raw": float(a), "attr_norm": float(n)} for t, a, n in zip(tokens, raw_scores, norm_scores)]
 
         # record params relevant to chosen algorithm for reproducibility
-        algo_params: Dict[str, Any] = {"max_length": max_length, "merge_subwords": merge_subwords}
+        algo_params: Dict[str, Any] = {"max_length": max_length, "merge_subwords": merge_subwords, "aggregation": agg}
 
         if algorithm in ("IntegratedGradients",):
             algo_params.update({"n_steps": n_steps, "baseline": baseline_kind})
@@ -802,7 +828,7 @@ class _CaptumClassifierBase(ToolkitPlugin):
 # ---------- One-plugin-per-method wrappers (REGISTER THESE) ----------
 class CaptumIGClassifierAttribution(_CaptumClassifierBase):
     id = "captum_ig_classifier"
-    name = "Captum — Integrated Gradients (Classifier)"
+    name = "Integrated Gradients (Captum Implementation)"
     FIXED_ALGO = "IntegratedGradients"
     # show n_steps; hide others
     DROP_FIELDS = {
@@ -811,14 +837,16 @@ class CaptumIGClassifierAttribution(_CaptumClassifierBase):
         "occlusion_window",
         "lime_samples", "lime_perturbations_per_eval",
         "ks_samples", "ks_perturbations_per_eval",
-        "svs_n_samples", "svs_perturbations_per_eval"
+        "svs_n_samples", "svs_perturbations_per_eval", 
+        "lig_layer", "lig_layer_index",
+
 
     }
 
 
 class CaptumSaliencyClassifierAttribution(_CaptumClassifierBase):
     id = "captum_saliency_classifier"
-    name = "Captum — Saliency (Classifier)"
+    name = "Saliency (Captum Implementation)"
     FIXED_ALGO = "Saliency"
     DROP_FIELDS = {
         "n_steps",
@@ -827,14 +855,15 @@ class CaptumSaliencyClassifierAttribution(_CaptumClassifierBase):
         "occlusion_window",
         "lime_samples", "lime_perturbations_per_eval",
         "ks_samples", "ks_perturbations_per_eval",
-        "svs_n_samples", "svs_perturbations_per_eval"
+        "svs_n_samples", "svs_perturbations_per_eval", 
+        "lig_layer", "lig_layer_index",
 
     }
 
 
 class CaptumDeepLiftClassifierAttribution(_CaptumClassifierBase):
     id = "captum_deeplift_classifier"
-    name = "Captum — DeepLift (Classifier)"
+    name = "DeepLift (Captum Implementation)"
     FIXED_ALGO = "DeepLift"
     DROP_FIELDS = {
         "n_steps",
@@ -843,14 +872,15 @@ class CaptumDeepLiftClassifierAttribution(_CaptumClassifierBase):
         "occlusion_window",
         "lime_samples", "lime_perturbations_per_eval",
         "ks_samples", "ks_perturbations_per_eval",
-        "svs_n_samples", "svs_perturbations_per_eval"
+        "svs_n_samples", "svs_perturbations_per_eval", 
+        "lig_layer", "lig_layer_index",
 
     }
 
 
 class CaptumInputXGradientClassifierAttribution(_CaptumClassifierBase):
     id = "captum_inputxgradient_classifier"
-    name = "Captum — Input×Gradient (Classifier)"
+    name = "Input×Gradient (Captum Implementation)"
     FIXED_ALGO = "InputXGradient"
     DROP_FIELDS = {
         "n_steps",
@@ -859,14 +889,15 @@ class CaptumInputXGradientClassifierAttribution(_CaptumClassifierBase):
         "occlusion_window",
         "lime_samples", "lime_perturbations_per_eval",
         "ks_samples", "ks_perturbations_per_eval",
-        "svs_n_samples", "svs_perturbations_per_eval"
+        "svs_n_samples", "svs_perturbations_per_eval", 
+        "lig_layer", "lig_layer_index"
 
     }
 
 
 class CaptumGradientShapClassifierAttribution(_CaptumClassifierBase):
     id = "captum_gradientshap_classifier"
-    name = "Captum — GradientShap (Classifier)"
+    name = "GradientShap (Captum Implementation)"
     FIXED_ALGO = "GradientShap"
     DROP_FIELDS = {
         "n_steps",
@@ -874,13 +905,14 @@ class CaptumGradientShapClassifierAttribution(_CaptumClassifierBase):
         "occlusion_window",
         "lime_samples", "lime_perturbations_per_eval",
         "ks_samples", "ks_perturbations_per_eval",
-        "svs_n_samples", "svs_perturbations_per_eval"
+        "svs_n_samples", "svs_perturbations_per_eval", 
+        "lig_layer", "lig_layer_index"
     }
 
 
 class CaptumOcclusionClassifierAttribution(_CaptumClassifierBase):
     id = "captum_occlusion_classifier"
-    name = "Captum — Occlusion (Classifier)"
+    name = "Occlusion (Captum Implementation)"
     FIXED_ALGO = "Occlusion"
     DROP_FIELDS = {
         "n_steps",
@@ -888,13 +920,14 @@ class CaptumOcclusionClassifierAttribution(_CaptumClassifierBase):
         "gs_samples", "gs_stdev",
         "lime_samples", "lime_perturbations_per_eval",
         "ks_samples", "ks_perturbations_per_eval",
-        "svs_n_samples", "svs_perturbations_per_eval"
+        "svs_n_samples", "svs_perturbations_per_eval", 
+        "lig_layer", "lig_layer_index"
     }
 
 
 class CaptumFeatureAblationClassifierAttribution(_CaptumClassifierBase):
     id = "captum_featureablation_classifier"
-    name = "Captum — Feature Ablation (Classifier)"
+    name = "Feature Ablation (Captum Implementation)"
     FIXED_ALGO = "FeatureAblation"
     DROP_FIELDS = {
         "n_steps",
@@ -903,13 +936,14 @@ class CaptumFeatureAblationClassifierAttribution(_CaptumClassifierBase):
         "occlusion_window",
         "lime_samples", "lime_perturbations_per_eval",
         "ks_samples", "ks_perturbations_per_eval",
-        "svs_n_samples", "svs_perturbations_per_eval"
+        "svs_n_samples", "svs_perturbations_per_eval", 
+        "lig_layer", "lig_layer_index"
     }
 
 
 class CaptumNoiseTunnelSaliencyClassifierAttribution(_CaptumClassifierBase):
     id = "captum_noisetunnel_saliency_classifier"
-    name = "Captum — NoiseTunnel(Saliency) (Classifier)"
+    name = "NoiseTunnel(Saliency) (Captum Implementation)"
     FIXED_ALGO = "NoiseTunnel(Saliency)"
     DROP_FIELDS = {
         "n_steps",
@@ -917,26 +951,28 @@ class CaptumNoiseTunnelSaliencyClassifierAttribution(_CaptumClassifierBase):
         "occlusion_window",
         "lime_samples", "lime_perturbations_per_eval",
         "ks_samples", "ks_perturbations_per_eval",
-        "svs_n_samples", "svs_perturbations_per_eval"
+        "svs_n_samples", "svs_perturbations_per_eval", 
+        "lig_layer", "lig_layer_index"
     }
 
 
 class CaptumNoiseTunnelIGClassifierAttribution(_CaptumClassifierBase):
     id = "captum_noisetunnel_ig_classifier"
-    name = "Captum — NoiseTunnel(Integrated Gradients) (Classifier)"
+    name = "NoiseTunnel(Integrated Gradients) (Captum Implementation)"
     FIXED_ALGO = "NoiseTunnel(IntegratedGradients)"
     DROP_FIELDS = {
         "gs_samples", "gs_stdev",
         "occlusion_window",
         "lime_samples", "lime_perturbations_per_eval",
         "ks_samples", "ks_perturbations_per_eval",
-        "svs_n_samples", "svs_perturbations_per_eval"
+        "svs_n_samples", "svs_perturbations_per_eval", 
+        "lig_layer", "lig_layer_index"
     }
 
 
 class CaptumNoiseTunnelInputXGradClassifierAttribution(_CaptumClassifierBase):
     id = "captum_noisetunnel_inputxgrad_classifier"
-    name = "Captum — NoiseTunnel(Input×Gradient) (Classifier)"
+    name = "NoiseTunnel(Input×Gradient) (Captum Implementation)"
     FIXED_ALGO = "NoiseTunnel(InputXGradient)"
     DROP_FIELDS = {
         "n_steps",
@@ -944,13 +980,14 @@ class CaptumNoiseTunnelInputXGradClassifierAttribution(_CaptumClassifierBase):
         "occlusion_window",
         "lime_samples", "lime_perturbations_per_eval",
         "ks_samples", "ks_perturbations_per_eval",
-        "svs_n_samples", "svs_perturbations_per_eval"
+        "svs_n_samples", "svs_perturbations_per_eval", 
+        "lig_layer", "lig_layer_index"
     }
 
 
 class CaptumLimeClassifierAttribution(_CaptumClassifierBase):
     id = "captum_lime_classifier"
-    name = "Captum — LIME (Classifier)"
+    name = "LIME (Captum Implementation)"
     FIXED_ALGO = "Lime"
     DROP_FIELDS = {
         "n_steps",
@@ -959,26 +996,28 @@ class CaptumLimeClassifierAttribution(_CaptumClassifierBase):
         "occlusion_window",
         "ks_samples", "ks_perturbations_per_eval",       
         "svs_n_samples", "svs_perturbations_per_eval",   
+        "lig_layer", "lig_layer_index"
     }
 
 
 class CaptumKernelShapClassifierAttribution(_CaptumClassifierBase):
     id = "captum_kernelshap_classifier"
-    name = "Captum — KernelSHAP (Classifier)"
+    name = "KernelSHAP (Captum Implementation)"
     FIXED_ALGO = "KernelShap"
     DROP_FIELDS = {
         "n_steps",
         "nt_type", "nt_samples", "nt_stdev",
         "gs_samples", "gs_stdev",
         "occlusion_window",
-        "lime_samples", "lime_perturbations_per_eval",   # drop LIME
-        "svs_n_samples", "svs_perturbations_per_eval",   # drop ShapleyValueSampling
+        "lime_samples", "lime_perturbations_per_eval",   
+        "svs_n_samples", "svs_perturbations_per_eval",   
+        "lig_layer", "lig_layer_index"
     }
 
 
 class CaptumShapleyValueSamplingClassifierAttribution(_CaptumClassifierBase):
     id = "captum_shapleyvaluesampling_classifier"
-    name = "Captum — Shapley Value Sampling (Classifier)"
+    name = "Shapley Value Sampling  (Captum Implementation)"
     FIXED_ALGO = "ShapleyValueSampling"
     DROP_FIELDS = {
         "n_steps",
@@ -987,11 +1026,12 @@ class CaptumShapleyValueSamplingClassifierAttribution(_CaptumClassifierBase):
         "occlusion_window",
         "lime_samples", "lime_perturbations_per_eval",   # drop LIME
         "ks_samples", "ks_perturbations_per_eval",       # drop KernelShap
+        "lig_layer", "lig_layer_index"
     }
 
 class CaptumLayerIntegratedGradientsClassifierAttribution(_CaptumClassifierBase):
     id = "captum_layer_ig_classifier"
-    name = "Captum — Layer Integrated Gradients (Classifier)"
+    name = "Layer Integrated Gradients (Captum Implementation)"
     FIXED_ALGO = "LayerIntegratedGradients"
     # Keep n_steps + the LIG fields, drop unrelated ones
     DROP_FIELDS = {
