@@ -1,4 +1,3 @@
-
 import json
 import re
 import io
@@ -158,7 +157,7 @@ def captum_method_explainer_text(algo: str, params: Dict[str, Any]) -> str:
         return (
             "### ℹ️ How to read Integrated Gradients (IG)\n"
             "- **What it is**: IG measures how much each token changes the target class score when moving from a **baseline** input to your input.\n"
-            "- **Baseline**: here it’s the model’s **[PAD] embedding** (or zeros if PAD doesn’t exist).\n"
+            "- **Baseline**: here it's the model's **[PAD] embedding** (or zeros if PAD doesn't exist).\n"
             "- **Interpretation**: tokens with large **positive** values push the model **toward** the explained label; large **negative** values push it **away**.\n"
             "- **Stability knob**: `n_steps` controls the approximation quality. More steps → smoother but slower.\n"
             f"- **Your run**: `n_steps={n_steps}`.\n"
@@ -177,7 +176,7 @@ def captum_method_explainer_text(algo: str, params: Dict[str, Any]) -> str:
         return (
             "### ℹ️ How to read DeepLift\n"
             "- **What it is**: DeepLift compares activations to a **baseline** and attributes differences back to inputs.\n"
-            "- **Baseline**: here it’s the model’s **[PAD] embedding** (or zeros if PAD doesn’t exist).\n"
+            "- **Baseline**: here it's the model's **[PAD] embedding** (or zeros if PAD doesn't exist).\n"
             "- **Interpretation**: positive pushes toward the explained label; negative pushes away.\n"
             "- **Why use it**: can produce **sharper** attributions than plain gradients when gradients saturate.\n"
         )
@@ -188,9 +187,6 @@ def captum_method_explainer_text(algo: str, params: Dict[str, Any]) -> str:
         "- Positive pushes toward the explained label; negative pushes away.\n"
         "- Larger magnitude = larger influence.\n"
     )
-
-
-
 
 
 def render_token_highlight(
@@ -255,9 +251,6 @@ def render_token_highlight(
     )
 
     st.caption("Blue = pushes toward explained label. Red = pushes away. Hover a token to see the score.")
-
-
-
 
 
 def render_downloads(
@@ -443,9 +436,9 @@ def render_captum_result(outputs: Dict[str, Any], selected_item: Dict[str, Any] 
             f"  - In this app: baseline = **{baseline}**.\n"
             f"- **Approximation quality**: `n_steps={n_steps}` (more steps = smoother, slower).\n"
             "\n"
-            "###### What you’re seeing in the plot/table\n"
+            "###### What you're seeing in the plot/table\n"
             "- The app currently shows **token-level scores**, because it **sums hidden-dimension contributions** for each token.\n"
-            "- **Positive** score → token’s layer representation pushes the model **toward** the explained label.\n"
+            "- **Positive** score → token's layer representation pushes the model **toward** the explained label.\n"
             "- **Negative** score → pushes **away**.\n"
             "\n"
             "###### Important note ⚠️ \n"
@@ -478,7 +471,8 @@ def render_captum_result(outputs: Dict[str, Any], selected_item: Dict[str, Any] 
     plt.tight_layout()
     st.pyplot(fig)
 
-    show_highlight = st.checkbox("Show highlighted text", value=True, key="captum_show_highlight")
+    # Key is made unique via id(outputs) so multiple panels don't clash
+    show_highlight = st.checkbox("Show highlighted text", value=True, key=f"captum_show_highlight_{id(outputs)}")
     if show_highlight:
         render_token_highlight(
             tokens=df_plot["token"].tolist(),
@@ -588,7 +582,7 @@ def render_meta_flow_pyvis(outputs: Dict[str, Any]):
     if not edges:
         st.warning(
             "Could not infer edges from graph_data. "
-            "Show the raw JSON below and we’ll adapt the converter to Meta’s exact structure."
+            "Show the raw JSON below and we'll adapt the converter to Meta's exact structure."
         )
         st.json(g, expanded=False)
         return
@@ -616,10 +610,10 @@ def render_meta_flow_pyvis(outputs: Dict[str, Any]):
     net.repulsion(node_distance=170, central_gravity=0.1, spring_length=140, spring_strength=0.04, damping=0.25)
 
     # Render to HTML and embed
-    html = net.generate_html()
+    html_out = net.generate_html()
 
     # Make it more streamlit-friendly (avoid external fetches if possible)
-    components.html(html, height=760, scrolling=True)
+    components.html(html_out, height=760, scrolling=True)
 
 
 def _now_stamp() -> str:
@@ -746,8 +740,17 @@ def score(prefs: Dict[str, str], m: Dict[str, Any]) -> Tuple[int, List[str], Lis
     return 0, [], [f"🎓 accessibility lower priority (tool has {tool_acc})"]
 
 
+# -------------------------
+# Plugin form rendering
+# -------------------------
 
-def render_plugin_form(plugin):
+def _render_plugin_form_keyed(plugin, prefix: str) -> dict:
+    """
+    Core implementation of the plugin form renderer.
+    All widget keys are namespaced under `prefix` so that multiple panels
+    using the same plugin type never produce duplicate Streamlit widget keys.
+    Called by both render_plugin_form (main panel) and render_compare_run_panel.
+    """
     vals = {}
 
     ANCHOR_DEFAULTS = {
@@ -779,7 +782,7 @@ def render_plugin_form(plugin):
     default_map = SAE_DEFAULTS if plugin_id == "sae_feature_explorer" else {}
 
     def _k(field_key: str) -> str:
-        return f"{plugin_id}__{field_key}"
+        return f"{prefix}__{plugin_id}__{field_key}"
 
     for f in plugin.spec():
         f_default = getattr(f, "default", None)  # ✅ SAFE across plugins
@@ -824,11 +827,6 @@ def render_plugin_form(plugin):
 
         # --- NUMBER ---
         elif f.type == "number":
-            # Priority order:
-            # 1) FieldSpec.default if present
-            # 2) plugin-specific defaults (SAE_DEFAULTS)
-            # 3) anchor defaults
-            # 4) heuristics fallback
             if f_default is not None:
                 default = float(f_default)
             elif f.key in default_map:
@@ -875,17 +873,52 @@ def render_plugin_form(plugin):
     return vals
 
 
+def render_plugin_form(plugin) -> dict:
+    """
+    Public entry point used by the main selected-tool panel.
+    Delegates to _render_plugin_form_keyed using the plugin's own id as prefix,
+    preserving the original widget key behaviour (plugin_id__field_key).
+    """
+    return _render_plugin_form_keyed(plugin, prefix=getattr(plugin, "id", "plugin"))
 
 
+def render_compare_run_panel(
+    item: Dict[str, Any],
+    plugin,
+    panel_key: str,
+    outputs_store: dict,
+    render_result_fn,
+):
+    """
+    A self-contained run panel for ONE tool inside the compare view.
 
+    Renders the plugin input form with fully namespaced widget keys (so two panels
+    running the same plugin type never clash), a ▶ Run button, and the result via
+    render_result_fn.
 
+    Parameters
+    ----------
+    item             : method dict (same shape as selected_item)
+    plugin           : resolved plugin object from PLUGINS
+    panel_key        : unique stable string per panel, e.g. "cmp__plugin::captum_ig"
+    outputs_store    : mutable dict owned by caller; keyed by panel_key
+    render_result_fn : callable(outputs, selected_item) – the _render_outputs dispatcher
+    """
+    st.markdown(f"##### ▶ {plugin.name}")
 
+    vals = _render_plugin_form_keyed(plugin, prefix=panel_key)
 
+    if st.button("▶ Run", key=f"{panel_key}__run_btn", use_container_width=True):
+        with st.spinner("Running…"):
+            try:
+                outputs = plugin.run(vals)
+                outputs_store[panel_key] = outputs
+            except Exception as e:
+                st.error(f"Run failed: {e}")
 
-
-
-
-
+    outputs = outputs_store.get(panel_key)
+    if outputs:
+        render_result_fn(outputs, item)
 
 
 # -------------------------
