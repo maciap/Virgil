@@ -65,7 +65,7 @@ class EccoNMF(ToolkitPlugin):
     """
 
     id = "ecco_nmf"
-    name = "Ecco — Non-negative Matrix Factorization (NMF)"
+    name = "Non-negative Matrix Factorization (ECCO)"
 
     # A small curated set; you can expand later.
     # Keep them “safe” / commonly available on HF.
@@ -99,6 +99,7 @@ class EccoNMF(ToolkitPlugin):
                 label="Input text",
                 type="textarea",
                 help="Text to analyze with Ecco (will be tokenized by the chosen model).",
+                default="Paris, the capital of France, has long been considered one of the cultural centers of Europe. The city is known for its historic architecture, its museums, and its role in shaping art, philosophy, and political thought. Visitors walking along the Seine often stop to admire landmarks such as the Eiffel Tower.", 
             ),
             FieldSpec(
                 key="max_length",
