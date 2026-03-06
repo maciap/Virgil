@@ -951,9 +951,18 @@
           "source": "Computational Linguistics, Volume 48, Issue 1",
           "url": "https://aclanthology.org/2022.cl-1.7.pdf",
           "note": "Critical review of probing, highlighting strengths, limitations and advances."
-        }
+        }, 
+          {
+          "used_in": "Universal and Independent: Multilingual Probing Framework for Exhaustive Model Interpretation and Evaluation",
+          "type": "paper",
+          "year": 2022,
+          "source": "Proceedings of the Fifth BlackboxNLP Workshop on Analyzing and Interpreting Neural Networks for NLP",
+          "url": "https://aclanthology.org/2022.blackboxnlp-1.37.pdf",
+          "note": "The paper proposes a probing-based framework to analyze how multilingual models like mBERT encode morphosyntactic features across languages."
+        }        
       ],
-      "typical_cost": "medium"
+      "typical_cost": "medium", 
+      "implementation": "https://github.com/AIRI-Institute/Probing_framework/tree/main"
     },
     {
       "name": "Layer-wise Relevance Propagation (LRP)",
@@ -961,15 +970,13 @@
       "access_arch": {"access": ["white_box"], "arch": ["all"]},
       "target_scope": "local",
       "description": {
-        "overview": "LRP redistributes the prediction score backward through the network to the inputs, assigning relevance scores via fixed propagation rules. It can compute attributions for the input token as well as at any layer",
+        "overview": "LRP redistributes the prediction score backward through the network to the inputs, assigning relevance scores via fixed propagation rules. In propagation, it ensures relevance conservation (inputs sum to output)",
         "main_functionalities": [
-          "Backpropagate a target score to input features through relevance rules",
-          "Ensure relevance conservation (inputs sum to output)",
-          "Handle transformer components like positional embeddings specially"
+          "Computes attributions for the input token as well as at any layer"
         ]
       },
       "strengths": [
-        "Theoretically grounded propagation rules enforce conservation",
+        "Theoretically grounded propagation rules enforce conservation (inputs sum to output)",
         "Inuitive and efficient"
       ],
       "limitations": [
@@ -1009,7 +1016,8 @@
           "note": "Describes PnPXAI toolkit, which implements several explainers, including LRP."
         }
       ],
-      "typical_cost": "medium"
+      "typical_cost": "medium", 
+      "implementation": "https://openxaiproject.github.io/pnpxai/"
     },
     {
       "name": "Attention Rollout",
