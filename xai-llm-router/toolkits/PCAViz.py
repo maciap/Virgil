@@ -112,7 +112,7 @@ class EmbeddingPCALayers(ToolkitPlugin):
                 key="model_name",
                 label="HF model name",
                 type="text",
-                default="gpt2-small",
+                default="gpt2",
                 help="Works with encoder-only (BERT/RoBERTa), decoder-only (GPT-2/OPT), and encoder-decoder (T5/BART).",
             ),
             FieldSpec(

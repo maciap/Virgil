@@ -714,9 +714,9 @@ with col_recs:
 
     with st.expander("🔎 Current selection (what filters vs what ranks)", expanded=False):
         st.markdown("**✅ Hard constraints (filters):**")
-        st.json({k: hard.get(k, "NA") for k in HARD_DIMS}, expanded=False)
+        st.json(_dict_to_ui({k: hard.get(k, "NA") for k in HARD_DIMS}), expanded=False)
         st.markdown("**⭐ Preferences (ranking only):**")
-        st.json({k: prefs.get(k, "NA") for k in PREF_DIMS}, expanded=False)
+        st.json(_dict_to_ui({k: prefs.get(k, "NA") for k in PREF_DIMS}), expanded=False)
 
     for item in recommended[:top_k]:
         item_key = _compare_key(item)
@@ -1355,7 +1355,7 @@ with col_run:
 
                                 fig3d.update_layout(
                                     height=720,
-                                    title=f"Token representations in 3D PCA space — layer {layer_idx}",
+                                    title=f"Token representations in 3D PCA space (hover) — layer {layer_idx}",
                                     margin=dict(l=0, r=0, t=50, b=0),
                                 )
 

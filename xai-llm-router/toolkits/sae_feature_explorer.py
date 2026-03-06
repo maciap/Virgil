@@ -76,7 +76,7 @@ def _neuronpedia_feature_url(
 
 class SAEFeatureExplorer:
     id = "sae_feature_explorer"
-    name = "SAE Feature Explorer (SAELens)"
+    name = "Sparse Autoencoders (SAE + Neuronpedia)"
 
     RELEASE_OPTIONS = [
         "gpt2-small-res-jb",

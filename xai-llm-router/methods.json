@@ -1600,6 +1600,13 @@
           "source": "Proceedings of the International Conference on Learning Representations (ICLR)",
           "url": "https://proceedings.iclr.cc/paper_files/paper/2024/file/1fa1ab11f4bd5f94b2ec20e794dbfa3b-Paper-Conference.pdf",
           "note": "Explains the superposition hypothesis and role of sparse features."
+        }, 
+        {
+          "used_in": "Neuronpedia",
+          "type": "Web-hosted resource",
+          "year": 2024,
+          "url": "https://www.neuronpedia.org/",
+          "note": "Neuronpedia is a platform for exploring and interpreting internal features of neural networks by visualizing Sparse Autoencoders (SAE) features, showing where those learned directions in model activations fire and what patterns or concepts they represent."
         }
       ],
       "typical_cost": "high", 
@@ -1966,7 +1973,7 @@
   "implementation": "https://docs.seldon.ai/alibi-explain/explanations/methods/similarity"
 },
 {
-  "name": "CCA (layer similarity)",
+  "name": "CCA",
   "plugin_id": "cca_layers",
   "notes": "Representation similarity across transformer layers using Canonical Correlation Analysis (CCA) via SVCCA-lib.",
   "task_input": ["classification", "generation"],

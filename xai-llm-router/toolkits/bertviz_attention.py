@@ -64,7 +64,7 @@ class BertVizAttention(ToolkitPlugin):
     """
 
     id = "bertviz_attention"
-    name = "BertViz (Attention Visualization) — head_view / model_view"
+    name = "Attention Visualization (BertViz)"
 
     def __init__(self, device: Optional[str] = None):
         self.device = device or ("cuda" if torch.cuda.is_available() else "cpu")
