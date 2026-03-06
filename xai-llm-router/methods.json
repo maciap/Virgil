@@ -1609,19 +1609,18 @@
       "name": "Information Flow Routes",
       "plugin_id": "meta_transparency_graph",
       "task_input": ["generation"],
-      "access_arch": {"access": ["white_box"], "arch": ["decoder", "encdec"]},
+      "access_arch": {"access": ["white_box"], "arch": ["decoder"]},
       "target_scope": "both",
        "accessibility": "experts",
       "description": {
-        "overview": "Information Flow Routes identifies a sparse computational subgraph that explains a model prediction. To this aim, it computes attributions for intermediate components and prunes low-contribution edges to reveal key information pathways.",
+        "overview": "Given a representation of a transformer as a computational graph, Information Flow Routes identifies a sparse computational subgraph that explains a model prediction. To this aim, it computes attributions for intermediate components and prunes low-contribution edges to reveal key information pathways.",
         "main_functionalities": [
-          "Compute component contributions in one forward pass",
-          "Build a directed graph of important residual-stream pathways",
-          "Extract prediction-specific circuits without costly interventions"
+          "Efficiently compute contributions of model components in one forward pass",
+          "Extract prediction-specific important computational subgraphs (circuits) without costly interventions"
         ]
       },
       "strengths": [
-        "Scalable: single-pass attribution finds circuits efficiently【60†L23-L32】",
+        "Scalable: it runs in a single pass to find circuits efficiently",
         "No need for custom corruption or extensive patching",
         "Highlights likely critical components for a prediction"
       ],
@@ -1660,7 +1659,7 @@
       "description": {
         "overview": "ACDC is a mechanistic interpretability method to automatize part of the workflow carried out to discover circuits responsible for a given task. In particular, researchers and practitioners are required to specify a metric describing the behavior of interest, a dataset of clean and corrupted inputs associated to the behavior of interest and the computational graph granularity ( (e.g. attention heads and MLP layers or individual neurons). Then, ACDC automatically uses patching to extract a subgraph (circuit) that is as concise as possibile while retaining the behavior of interest",
         "main_functionalities": [
-       "Given a metric describing a behavior of interest, a clean and corrupted dataset and computational graph definition, ACDC uses patching to iteravely prune the computational graph and extract concise circuits that are responsibile for the behavior of interest"
+       "Given a metric describing a behavior of interest, a clean and corrupted dataset and a representation of a transformer as a computational graph, ACDC uses patching to extract concise computational subgraphs (circuits) that are causally responsibile for the behavior of interest"
         ]
       },
       "strengths": [
@@ -1719,7 +1718,8 @@
           "note": "Introduces Discretized Integrated Gradients."
         }
       ],
-      "typical_cost": "medium-high"
+      "typical_cost": "medium-high", 
+      "implementation": "https://github.com/inseq-team/inseq"
     },
     {
   "name": "PCA",
@@ -1727,25 +1727,24 @@
   "task_input": ["generation", "classification"],
   "access_arch": {
     "access": ["white_box"],
-    "arch": ["decoder", "encdec"]
+    "arch": ["all"]
   },
-  "target_scope": "local",
+  "target_scope": "global",
   "description": {
-    "overview": "Projects token representations (input embeddings and hidden states) into 2D using Principal Component Analysis (PCA) to visualize the geometry of transformer representations across layers. Users can choose a single fixed PCA basis (for cross-layer comparison) or per-layer bases (for layer-local structure).",
+    "overview": "Projects token representations (input embeddings and hidden states) into a low-dimensional space using Principal Component Analysis (PCA). Choosing a 2D or 3D spaces, allows us to visualize the geometry of transformer representations across layers.",
     "main_functionalities": [
-      "Token-level PCA projections for any model layer",
-      "Single-basis mode for cross-layer comparative visualization",
-      "Per-layer PCA mode for exploring layer-specific representational structure",
-      "Interactive layer selection and labeled scatter plots of tokens in PCA space"
+      "Summarizing activations by finding the directions explaining the most variance in the latent space of a model", 
+      "Enable effective visualization of the latent space of the model"
     ]
   },
   "strengths": [
+    "Theoretically grounded, being guaranteed to identify the orthogonal directions of maximal variance", 
     "Provides intuitive visualization of representational geometry in high-dimensional spaces",
     "Reveals layerwise evolution of token representations",
     "Supports both fixed and per-layer PCA bases for flexible analysis"
   ],
   "limitations": [
-    "PCA captures only linear structure and may miss non-linear geometry",
+    "Captures only linear structure and may miss non-linear geometry",
     "PCA of high-dimensional token embeddings misses a lot of important information and may destroy important semantic relationship",
     "Visualization quality depends on token count and sentence length"
   ],
@@ -1774,21 +1773,18 @@
       "url": "https://aclanthology.org/2024.repl4nlp-1.17.pdf",
       "note": "Applies PCA to analyze the dimensionality and structure of positional and word embeddings in BERT models. They find that positional embeddings have a low-dimensional structure, using only about 10% of the available dimensions."
     }
-    ] 
+    ], 
+     "typical_cost": "low", 
+    "implementation": "https://scikit-learn.org/"
     }, 
    {
-  "name": "Linear CKA (layer similarity)",
+  "name": "Linear CKA",
   "plugin_id": "linear_cka_layers",
   "notes": "Representation similarity across layers using linear CKA.",
   "task_input": ["general_NLP", "classification", "generation"],
-  "access_arch": { "access": "white_box", "arch": "transformer_general" },
-  "target_scope": "global",
-  "granularity": ["layer"],
-  "user_goal_audience": ["research_debug", "mech_interp", "model_eval"],
-  "fidelity": "mixed",
-  "format": ["visual_UI", "metrics"],
+  "access_arch": { "access": "white_box", "arch": "all" },
   "description": {
-    "overview": "Computes a layer-by-layer linear CKA matrix to visualize representation similarity across transformer layers.",
+    "overview": "Linear CKA (Centered Kernel Alignment) is a similarity measure that quantifies how similarly two sets of latent representations (e.g., neural network layer activations) encode information by comparing their centered linear kernels in a way that is invariant to isotropic scaling and orthogonal transformations.",
     "main_functionalities": [
       "Extract hidden states for each layer",
       "Compute linear CKA similarity matrix",
@@ -1832,9 +1828,9 @@
 }, 
  {
   "name": "Non-negative Matrix Factorization (NMF)",
-  "task_input": [ "classification", "generation"],
+  "task_input": ["classification", "generation"],
   "access_arch": { "access": "white_box", "arch": "all" },
-    "target_scope": "global",
+"target_scope": "global",
    "plugin_routing": [
     { "task": "classification", "arch": "all", "plugin_id": "ecco_nmf" },
     { "task": "generation", "arch": "all", "plugin_id": "ecco_nmf" }
@@ -1930,7 +1926,7 @@
   "description": {  
     "overview": "Explains a prediction by retrieving the most similar training examples, where similarity takes into account the model trained for a specific task." , 
     "main_functionalities": [
-      "Return top-k  training examples that are most similar (and optionally least similar) to a target test example"
+      "Finds top-k  inputs in training that are most similar (and optionally least similar) to a target test input"
     ]
   },
   "strengths": [
@@ -1974,14 +1970,12 @@
   "plugin_id": "cca_layers",
   "notes": "Representation similarity across transformer layers using Canonical Correlation Analysis (CCA) via SVCCA-lib.",
   "task_input": ["classification", "generation"],
-  "access_arch": { "access": "white_box", "arch": "transformer_general" },
+  "access_arch": { "access": "white_box", "arch": "all" },
   "target_scope": "global",
   "description": {
-    "overview": "Computes a layer-by-layer similarity matrix using Canonical Correlation Analysis (CCA) to compare hidden representations across transformer layers.",
+    "overview": "Canonical Correlation Analysis (CCA) is a statistical method that measures the similarity between two sets of variables by finding pairs of linear combinations—one from each set—that are maximally correlated.",
     "main_functionalities": [
-      "Extract hidden states for each transformer layer",
-      "Compute mean canonical correlation between layer representations",
-      "Visualize layer similarity matrix as a heatmap"
+      "Computes similarity of latent representations across transformer layers"
     ]
   },
   "strengths": [
