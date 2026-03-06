@@ -99,7 +99,7 @@ class LogitLens(ToolkitPlugin):
     """
 
     id = "logit_lens"
-    name = "Logit Lens (HF-native) — layer-wise vocab projection"
+    name = "Logit Lens"
 
     def __init__(self, device: Optional[str] = None):
         self.device = device or ("cuda" if torch.cuda.is_available() else "cpu")

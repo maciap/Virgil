@@ -1220,7 +1220,7 @@
     {
       "name": "Activation Patching",
       "task_input": ["generation", "classification"],
-      "access_arch": {"access": ["white_box"], "arch": ["encdec", "decoder"]},
+      "access_arch": {"access": ["white_box"], "arch": ["all"]},
       "target_scope": "global", 
       "accessibility": "experts",
       "description": {
@@ -1257,12 +1257,13 @@
           "note": "Evaluates the impact of design choices in activation patching, providing recommendations for the best practices of activation patching going forwards."
         }
       ],
-      "typical_cost": "high"
+      "typical_cost": "high", 
+      "implementation": "https://transformerlensorg.github.io/TransformerLens/"
     },
     {
       "name": "Path Patching",
       "task_input": ["generation", "classification"],
-      "access_arch": {"access": ["white_box"], "arch": ["encdec", "decoder"]},
+      "access_arch": {"access": ["white_box"], "arch": ["all"]},
       "target_scope": "global",
       "accessibility": "experts",
       "description": {
@@ -1306,7 +1307,8 @@
           "note": "Exhaustively illustrates activation patching, also covering path patching."
         }
       ],
-      "typical_cost": "high"
+      "typical_cost": "high", 
+      "implementation": "https://transformerlensorg.github.io/TransformerLens/"
     },
     {
   "name": "Attribution Patching (AtP) and AtP*",
@@ -1351,32 +1353,6 @@
   "implementation":"https://colab.research.google.com/github/neelnanda-io/TransformerLens/blob/main/demos/Attribution_Patching_Demo.ipynb"
     }, 
     {
-      "name": "VISIT semantic information flow graph",
-      "task_input": ["generation"],
-      "access_arch": {"access": ["white_box"], "arch": ["decoder"]},
-      "target_scope": "local",
-      "description": {
-        "overview": "VISIT visualizes a forward pass as a semantic flow graph. Nodes represent neurons or activations and edges represent interactions, projected into vocabulary space to trace information flow.",
-        "main_functionalities": [
-          "Construct interactive flow graph of activations and attentions",
-          "Enable analysis of attention heads and memory values via vocabulary projections"
-        ]
-      },
-      "strengths": [],
-      "limitations": [],
-      "research_applications": [
-        {
-          "used_in": "VISIT: Visualizing Semantic Information Flow of Transformers",
-          "type": "paper",
-          "year": 2023,
-          "source": "arXiv",
-          "url": "https://arxiv.org/abs/2305.13417",
-          "note": "Introduces the VISIT flow-graph visualization tool."
-        }
-      ],
-      "typical_cost": "medium"
-    },
-    {
   "name": "Minimal Contrastive Editing (MICE)",
   "task_input": ["classification"],
   "access_arch": {"access": ["black_box"], "arch": ["all"]},
@@ -1416,15 +1392,15 @@
       "access_arch": {"access": ["white_box"], "arch": ["decoder"]},
       "target_scope": "local",
       "description": {
-        "overview": "This method decomposes a Transformer MLP (feed-forward) layer as updates that pertain to single paramter vectors. Each vector is then interpreted as promoting specific  concepts.",
+        "overview": "This method decomposes a Transformer MLP (feed-forward) layer as updates that pertain to single paramter vectors. Each vector is then projected to the vocabulary space and interpreted as promoting specific concepts.",
         "main_functionalities": [
-          "Project MLP output changes into vocabulary logit space",
-          "Decompose the MLP update into components which can be interpreted", 
-          "Allows steering generation towards a direction of interest"
+          "Decompose the MLP update into components which can be interpreted"
         ]
       }, 
       "strengths": ["Valuable to gain fine-grained insight on the mechanisms implemented in the MLP, which is a core yet poorly-understood component of the transformer.", 
-    "Vectors in the decomposition of the MLP update are often interpretable."],
+    "Vectors in the decomposition of the MLP update are often interpretable.", 
+       "Allows steering generation towards a direction of interest"
+  ],
       "limitations": ["Possible non-linear interactions between MLP weight vectors that may generate new meanings are ignored."],
       "research_applications": [
         {
@@ -1501,8 +1477,9 @@
   "implementation": "https://github.com/meta-pytorch/captum"
   }, 
     {
-      "name": "BertViz",
+      "name": "Attention Visualization (BertViz)",
       "plugin_id": "bertviz_attention",
+      "accessibility":"mid experts",
       "task_input": ["classification", "generation"],
       "access_arch": {"access": ["white_box"], "arch": ["encoder, encoder-decoder"]},
       "target_scope": "local",
@@ -1513,8 +1490,8 @@
           "Provide multiple interactive views (head-level, model-level, neuron-level)"
         ]
       },
-      "strengths": [],
-      "limitations": [],
+      "strengths": ["Easy to access", "Intuitive visualizations", "Can focus on a specific attention head or provide a complete view of all attention heads in the model" ],
+      "limitations": ["Attention is known not to provide faithful explananations (see \"Attention is not Explanation\" in Further Readings section)"],
       "research_applications": [
         {
           "used_in": "A Multiscale Visualization of Attention in the Transformer Model",
@@ -1523,9 +1500,18 @@
           "source": "arXiv",
           "url": "https://aclanthology.org/P19-3007/",
           "note": "Introduces BertViz tool and its views."
-        }
+        }, 
+        {
+          "used_in": "Attention is not Explanation",
+          "type": "paper",
+          "year": 2019,
+          "source": "Proceedings of the 2019 Conference of the North American Chapter of the Association for Computational Linguistics: Human Language Technologies, Volume 1",
+          "url": "https://aclanthology.org/N19-1357.pdf",
+          "note": "Finds that attention patterns do not provide faithful explanations."
+        } 
       ],
-      "typical_cost": "medium"
+      "typical_cost": "medium", 
+      "implementation": "https://github.com/jessevig/bertviz"
     },
     {
       "name": "exBERT",
@@ -1533,53 +1519,62 @@
       "access_arch": {"access": ["white_box"], "arch": ["all"]},
       "target_scope": "local",
       "description": {
-        "overview": "exBERT is a tool which provides a concise overview of attention (attention view) and the internal representations (corpus view).",
+        "overview": "exBERT (available at: https://exbert.vizhub.ai/client/exBERT.html) is a tool which provides a concise overview of attention (attention view) and the internal representations (corpus view).",
         "main_functionalities": [
           "Visualize attention weights and token embeddings for a given input",
-          "Computes summary statistics summarizing internal representations for a given token", 
-          "The tool can be easily accessed online at https://exbert.vizhub.ai/client/exBERT.html"
+          "Computes summary statistics summarizing internal representations for a given token"
         ]
       },
-      "strengths": ["Easy to access", 
-    "Useful to quickly test hypotheses on the internal representation of a specific token in a specific context"],
-      "limitations": ["Attention is known not to provide faithful explananations", 
+       "strengths": ["Easy to access", 
+        "Useful to quickly test hypotheses on the internal representation of a specific token in a specific context", 
+        "The tool can be easily accessed online at https://exbert.vizhub.ai/client/exBERT.html"
+    ],
+      "limitations": ["Attention is known not to provide faithful explananations (see \"Attention is not Explanation\" in Further Readings section)", 
     "exBERT only provides statistics for a single token, considering a small number of neighbours, yielding no insights on global behaviors"],
       "research_applications": [
         {
-          "used_in": "exBERT: A Visual Analysis Tool to Explore Learned Representations",
+          "used_in": "exBERT: A Visual Analysis Tool to Explore Learned Representations in Transformer Models",
           "type": "paper",
           "year": 2019,
-          "source": "arXiv",
-          "url": "https://arxiv.org/abs/1910.05276",
+          "source": "Proceedings of the 58th Annual Meeting of the Association for Computational Linguistics: System Demonstrations",
+          "url": "https://aclanthology.org/2020.acl-demos.22.pdf",
           "note": "Presents exBERT interactive tool."
-        }
+        }, 
+        {
+          "used_in": "Attention is not Explanation",
+          "type": "paper",
+          "year": 2019,
+          "source": "Proceedings of the 2019 Conference of the North American Chapter of the Association for Computational Linguistics: Human Language Technologies, Volume 1",
+          "url": "https://aclanthology.org/N19-1357.pdf",
+          "note": "Finds that attention patterns do not provide faithful explanations."
+        } 
       ],
       "typical_cost": "medium", 
       "implementation": "https://github.com/bhoov/exbert"
     },
     {
-      "name": "Sparse Autoencoders (SAELens + Neuronpedia)",
+      "name": "Sparse Autoencoders",
       "plugin_id": "sae_feature_explorer",
-      "task_input": ["generation", "seq2seq", "general_NLP"],
-      "access_arch": {"access": ["white_box"], "arch": ["decoder", "encdec", "transformer_general"]},
-      "target_scope": "both",
+      "task_input": ["generation"],
+      "accessibility": "experts",
+      "access_arch": {"access": ["white_box"], "arch": ["all"]},
+      "target_scope": "global",
       "description": {
-        "overview": "Sparse Autoencoders (SAEs) train a larger, sparse latent space to decompose transformer activations into features. Each sparse unit aims to capture a semantically meaningful concept【60†L23-L32】.",
+        "overview": "Sparse Autoencoders (SAEs) train a larger, sparse latent space to reconstruct model activations with the goal of disentangling highly-polysemnatic features into more monosemantic features. Each sparse unit aims to capture a semantically meaningful concept.",
         "main_functionalities": [
-          "Train a sparse overcomplete dictionary on hidden activations",
-          "Produce feature activations that reconstruct the original representation",
-          "Enable analysis (visualization, ablation) of discovered features"
+          "Enable discovery of human-interpretable features", 
+          "Facilitates investigation of the causual role of discovered features via ablation"
         ]
       },
       "strengths": [
-        "Unsupervised discovery of latent feature directions",
-        "Often yields more monosemantic features than raw neurons【60†L23-L32】",
+        "Allows discovery of latent feature directions without supervision",
+        "Often effectively yields more monosemantic features than raw neurons",
         "Integrates with any model layer for interpretability"
       ],
       "limitations": [
-        "Feature meanings must be interpreted (e.g., via top activations)",
+        "Interpreting meaning of discovered features is not straightforward and may require human inspection (e.g., via top activations)",
         "No guarantee of true monosemantics; polysemantic features may remain",
-        "Trade-off between reconstruction quality and sparsity"
+        "In training, there is a trade-off between reconstruction quality and sparsity"
       ],
       "research_applications": [
         {
@@ -1597,9 +1592,18 @@
           "source": "Transformer Circuits blog",
           "url": "https://transformer-circuits.pub/2022/toy_model/index.html",
           "note": "Explains the superposition hypothesis and role of sparse features."
+        }, 
+        {
+          "used_in": "Sparse Autoencoders Find Highly Interpretable Features in Language Models",
+          "type": "paper",
+          "year": 2024,
+          "source": "Proceedings of the International Conference on Learning Representations (ICLR)",
+          "url": "https://proceedings.iclr.cc/paper_files/paper/2024/file/1fa1ab11f4bd5f94b2ec20e794dbfa3b-Paper-Conference.pdf",
+          "note": "Explains the superposition hypothesis and role of sparse features."
         }
       ],
-      "typical_cost": "high"
+      "typical_cost": "high", 
+      "implementation": "https://github.com/decoderesearch/SAELens"
     },
     {
       "name": "Information Flow Routes",
@@ -1609,7 +1613,7 @@
       "target_scope": "both",
        "accessibility": "experts",
       "description": {
-        "overview": "Information Flow Routes identifies a sparse computational subgraph that explains a model prediction. It computes attributions for intermediate components and prunes low-contribution edges to reveal key information pathways.",
+        "overview": "Information Flow Routes identifies a sparse computational subgraph that explains a model prediction. To this aim, it computes attributions for intermediate components and prunes low-contribution edges to reveal key information pathways.",
         "main_functionalities": [
           "Compute component contributions in one forward pass",
           "Build a directed graph of important residual-stream pathways",
@@ -1644,7 +1648,8 @@
           "note": "Presents a user interface leveraging Information Flow Routes."
         }
       ],
-      "typical_cost": "medium"
+      "typical_cost": "medium", 
+      "implementation": "https://github.com/facebookresearch/llm-transparency-tool"
     }, 
      {
       "name": "Automatic Circuit DisCovery (ACDC)",
