@@ -813,15 +813,13 @@
     {
       "name": "Direct Logit Attribution",
       "plugin_id": "direct_logit_attribution",
-      "task_input": ["generation", "seq2seq", "general_NLP", "NA"],
-      "access_arch": {"access": ["white_box"], "arch": ["decoder", "encdec", "transformer_general", "NA"]},
+      "task_input": ["generation"],
+      "access_arch": {"access": ["white_box"], "arch": ["decoder"]},
       "target_scope": "local",
       "description": {
         "overview": "Direct Logit Attribution (DLA) projects each model component’s contribution onto the target token’s logit in the unembedding space. Positive contributions push the logit up (toward the token), negatives push it down.",
         "main_functionalities": [
-          "Project each layer, attention head, or MLP output onto the target token’s output weight",
-          "Compute signed contributions of components to a chosen token’s logit",
-          "Rank components by their absolute contribution magnitude"
+          "Compute signed contributions of model components to a chosen next-token prediction"
         ]
       },
       "strengths": [
@@ -831,9 +829,8 @@
       ],
       "limitations": [
         "Not causal: large contribution might be overridden later",
-        "Ignores interactions (softmax competition, nonlinear effects)",
-        "Depends on normalization placement (affects interpretability)",
-        "Can mislead if components clean up earlier signals"
+        "Ignores possbile interactions (softmax competition, nonlinear effects)",
+        "Depends on normalization placement (affects interpretability)"
       ],
       "research_applications": [
         {
@@ -869,20 +866,19 @@
           "note": "Demonstrates cases where DLA can be misleading (residual erasure)."
         }
       ],
-      "typical_cost": "low"
+      "typical_cost": "low", 
+      "implementation": "https://transformerlensorg.github.io/TransformerLens/"
     },
     {
       "name": "Logit Lens",
       "plugin_id": "logit_lens",
-      "task_input": ["generation", "seq2seq", "general_NLP", "NA"],
-      "access_arch": {"access": ["white_box"], "arch": ["decoder", "encdec", "transformer_general", "NA"]},
+      "task_input": ["generation"],
+      "access_arch": {"access": ["white_box"], "arch": ["decoder"]},
       "target_scope": "local",
       "description": {
-        "overview": "Logit Lens projects each intermediate hidden state through the model’s output head to view predicted token probabilities at each layer. It tracks how the model’s top prediction evolves through the layers【64†L53-L61】.",
+        "overview": "Logit Lens projects each intermediate hidden state through the model’s output head to view predicted token probabilities at each layer. It tracks how the model’s top prediction evolves through the layers.",
         "main_functionalities": [
-          "Compute top-k token predictions for each layer at a chosen position",
-          "Track the target token’s logit or probability across layers",
-          "Compare layer-wise predictions under optional normalization"
+          "Compute top-k token next-token predictions for each layer at a chosen position"
         ]
       },
       "strengths": [
@@ -921,7 +917,8 @@
           "note": "Uses logit lens to detect latent language signals."
         }
       ],
-      "typical_cost": "low"
+      "typical_cost": "low", 
+      "implementation": "https://transformerlensorg.github.io/TransformerLens/"
     },
     {
       "name": "Probing",
