@@ -51,7 +51,8 @@ And we need two envioronments to handle conflicting dependenices. Martino uses a
 * Information flow routes - LLM transparency tool (also very cool)
 * PCA Embedding Vizualization (cool) 
 * Linear CKA
-* CCA 
+* CCA
+* And more (see toolkits/)
 
 #### TODO 
 
