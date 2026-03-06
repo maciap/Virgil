@@ -54,8 +54,10 @@ class _InseqHTTPBase(ToolkitPlugin):
 # Shared spec helpers
 # -------------------------
 def _decoder_common_spec(*, include_n_steps: bool = True, include_internal_bs: bool = False, include_lime_samples: bool = False) -> List[FieldSpec]:
+    DEFAULT_MODELS = ["gpt2", "arnir0/Tiny-LLM"]
+    
     fields: List[FieldSpec] = [
-        FieldSpec("model_name", "HF model name (decoder)", "text",
+        FieldSpec("model_name", "HF model name (decoder)", "select", options=DEFAULT_MODELS,
                   help="Example: gpt2, arnir0/Tiny-LLM"),
         FieldSpec("sentence", "Input sentence", "textarea"),
         FieldSpec("max_new_tokens", "Max new tokens", "number", default=5),
@@ -69,8 +71,9 @@ def _decoder_common_spec(*, include_n_steps: bool = True, include_internal_bs: b
     return fields
 
 def _encdec_common_spec(*, include_n_steps: bool = True, include_lime_samples: bool = False) -> List[FieldSpec]:
+    DEFAULT_MODELS = ["puettmann/Foglietta-mt-en-it", "Helsinki-NLP/opus-mt-en-fr"]
     fields: List[FieldSpec] = [
-        FieldSpec("model_name", "HF model name (enc-dec)", "text",
+        FieldSpec("model_name", "HF model name (enc-dec)", "select", options=DEFAULT_MODELS,
                   help="Example: puettmann/Foglietta-mt-en-it, Helsinki-NLP/opus-mt-en-fr"),
         FieldSpec("sentence", "Input sentence", "textarea"),
     ]

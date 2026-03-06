@@ -78,6 +78,8 @@ class SAEFeatureExplorer:
     id = "sae_feature_explorer"
     name = "SAE Feature Explorer (SAELens)"
 
+    DEFAULT_MODELS = ["gpt2-small"]
+
     RELEASE_OPTIONS = [
         "gpt2-small-res-jb",
         "gemma-scope-2b-pt-res-canonical",
@@ -92,7 +94,8 @@ class SAEFeatureExplorer:
             FieldSpec(
                 "model_name",
                 "TransformerLens model name",
-                "text",
+                "select",
+                options=self.DEFAULT_MODELS,
                 help="E.g. gpt2-small. Must match the SAE release you load.",
             ),
             FieldSpec(

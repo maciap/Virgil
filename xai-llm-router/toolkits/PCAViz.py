@@ -102,6 +102,8 @@ class EmbeddingPCALayers(ToolkitPlugin):
     id = "embedding_pca_layers"
     name = "Embedding PCA across layers (2D + 3D)"
 
+    DEFAULT_MODELS = ["gpt2-small"]
+
     def __init__(self, device: Optional[str] = None):
         self.device = device or ("cuda" if torch.cuda.is_available() else "cpu")
         self._cache: Dict[str, Dict[str, Any]] = {}
@@ -111,7 +113,8 @@ class EmbeddingPCALayers(ToolkitPlugin):
             FieldSpec(
                 key="model_name",
                 label="HF model name",
-                type="text",
+                type="select",
+                options=self.DEFAULT_MODELS,
                 default="gpt2-small",
                 help="Works with encoder-only (BERT/RoBERTa), decoder-only (GPT-2/OPT), and encoder-decoder (T5/BART).",
             ),

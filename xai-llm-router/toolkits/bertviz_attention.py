@@ -66,6 +66,8 @@ class BertVizAttention(ToolkitPlugin):
     id = "bertviz_attention"
     name = "BertViz (Attention Visualization) — head_view / model_view"
 
+    DEFAULT_MODELS = ["bert-base-uncased", "roberta-base"]
+
     def __init__(self, device: Optional[str] = None):
         self.device = device or ("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -77,7 +79,8 @@ class BertVizAttention(ToolkitPlugin):
             FieldSpec(
                 key="model_name",
                 label="HF model name (encoder)",
-                type="text",
+                type="select",
+                options=self.DEFAULT_MODELS,
                 help="Example: bert-base-uncased or roberta-base.",
             ),
             FieldSpec(

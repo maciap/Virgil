@@ -116,6 +116,8 @@ class LinearCKALayers(ToolkitPlugin):
     id = "linear_cka_layers"
     name = "Linear CKA — representation similarity across layers"
 
+    DEFAULT_MODELS = ["gpt2", "distilgpt2", "bert-base-uncased", "roberta-base"]
+
     def __init__(self, device: Optional[str] = None):
         self.device = device or ("cuda" if torch.cuda.is_available() else "cpu")
         self._cache: Dict[str, Dict[str, Any]] = {}
@@ -125,7 +127,8 @@ class LinearCKALayers(ToolkitPlugin):
             FieldSpec(
                 key="model_name",
                 label="HF model name",
-                type="text",
+                type="select",
+                options=self.DEFAULT_MODELS,
                 help="Examples: gpt2, distilgpt2, bert-base-uncased, roberta-base ...",
                 default="gpt2",
             ),

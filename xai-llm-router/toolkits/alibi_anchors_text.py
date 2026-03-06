@@ -36,6 +36,8 @@ class AlibiAnchorsText(ToolkitPlugin):
     id = "alibi_anchors_text"
     name = "Alibi Anchors (Text)"
 
+    DEFAULT_MODELS = ["distilbert-base-uncased-finetuned-sst-2-english"]
+
     def __init__(self, device: Optional[str] = None):
         self.device = device or ("cuda" if torch.cuda.is_available() else "cpu")
         self._cache: Dict[str, Dict[str, Any]] = {}
@@ -46,7 +48,8 @@ class AlibiAnchorsText(ToolkitPlugin):
             FieldSpec(
                 key="model_name",
                 label="HF model name (sequence classification)",
-                type="text",
+                type="select",
+                options=self.DEFAULT_MODELS,
                 help="Example: distilbert-base-uncased-finetuned-sst-2-english",
             ),
             FieldSpec(

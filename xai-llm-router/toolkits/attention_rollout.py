@@ -169,6 +169,8 @@ class AttentionRollout:
     id = "attention_rollout"
     name = "Attention Rollout"
 
+    DEFAULT_MODELS = ["gpt2", "distilgpt2", "bert-base-uncased", "roberta-base"]
+
     def spec(self) -> List[FieldSpec]:
         return [
             # OPTIONAL: keep this so you can override if inference is wrong for some checkpoints
@@ -186,7 +188,8 @@ class AttentionRollout:
             FieldSpec(
                 key="model_name",
                 label="Model name (HuggingFace)",
-                type="text",
+                type="select",
+                options=self.DEFAULT_MODELS,
                 default="gpt2",
                 help="Examples: gpt2/distilgpt2 (generation); bert-base-uncased/roberta-base (classification).",
             ),

@@ -95,6 +95,8 @@ class CCALayers:
     id = "cca_layers"
     name = "CCA similarity across layers"
 
+    DEFAULT_MODELS = ["gpt2-small", "opt-125m"]
+
     def __init__(self):
         self._model: HookedTransformer | None = None
         self._model_name: str | None = None
@@ -104,7 +106,8 @@ class CCALayers:
             FieldSpec(
                 key="model_name",
                 label="Model (TransformerLens name)",
-                type="text",
+                type="select",
+                options=self.DEFAULT_MODELS,
                 default="gpt2-small",
                 help="Example: gpt2-small, opt-125m, etc.",
             ),

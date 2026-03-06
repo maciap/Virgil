@@ -201,6 +201,8 @@ class _CaptumClassifierBase(ToolkitPlugin):
     # Child classes can drop irrelevant fields from the shared spec:
     DROP_FIELDS: set[str] = set()
 
+    DEFAULT_MODELS = ["distilbert-base-uncased-finetuned-sst-2-english"]
+
     def __init__(self, device: Optional[str] = None):
         self.device = device or ("cuda" if torch.cuda.is_available() else "cpu")
         self._cache: Dict[str, Dict[str, Any]] = {}
@@ -211,8 +213,9 @@ class _CaptumClassifierBase(ToolkitPlugin):
             FieldSpec(
                 key="model_name",
                 label="HF model name (sequence classification)",
-                type="text",
+                type="select",
                 default="distilbert-base-uncased-finetuned-sst-2-english",
+                options=self.DEFAULT_MODELS,
                 help=(
                     "Example: distilbert-base-uncased-finetuned-sst-2-english "
                     "or any AutoModelForSequenceClassification model."
