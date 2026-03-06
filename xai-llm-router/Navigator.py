@@ -362,7 +362,7 @@ def render_compare_view(anchor_item: Dict[str, Any], other_items: List[Dict[str,
                     for v in vals:
                         st.markdown(f"- {v}")
 
-    render_section("Main functionalities", main_funcs)
+    render_section("Capabilities", main_funcs)
     render_section("Strengths", strengths)
     render_section("Limitations", limitations)
 
@@ -371,7 +371,7 @@ def render_compare_view(anchor_item: Dict[str, Any], other_items: List[Dict[str,
 # _render_outputs  –  unified dispatcher used by col_run AND compare panels
 # ─────────────────────────────────────────────────────────────────────────────
 
-def _render_outputs(outputs: Dict[str, Any], selected_item: Dict[str, Any] | None):
+def _render_outputs(outputs: Dict[str, Any], selected_item: Dict[str, Any] | None, key_suffix: str = ""):
     """
     Routes plugin outputs to the correct renderer block.
     Extracted from the original inline col_run if/elif chain so it can be
@@ -400,7 +400,7 @@ def _render_outputs(outputs: Dict[str, Any], selected_item: Dict[str, Any] | Non
         "captum_shapleyvaluesampling_classifier", 
         "captum_layer_ig_classifier"
         ):
-        render_captum_result(outputs, selected_item)
+        render_captum_result(outputs, selected_item, key_suffix=key_suffix)
 
     elif plugin_tag == "bertviz_attention" and outputs.get("html"):
         st.subheader("Result")
@@ -511,7 +511,7 @@ def _render_outputs(outputs: Dict[str, Any], selected_item: Dict[str, Any] | Non
         n_layers = len(layers)
         top_k_ll = int(outputs.get("top_k", 10))
 
-        layer_idx = st.slider("Layer", 0, n_layers - 1, n_layers - 1, key=f"ll_slider_{id(outputs)}")
+        layer_idx = st.slider("Layer", 0, n_layers - 1, n_layers - 1, key=f"ll_slider_{key_suffix or id(outputs)}")
         layer_obj = layers[layer_idx]
 
         st.markdown(f"### Top-{top_k_ll} tokens at layer {layer_idx}")
@@ -581,7 +581,8 @@ def _render_outputs(outputs: Dict[str, Any], selected_item: Dict[str, Any] | Non
         comps = outputs["components"]
         df = pd.DataFrame(comps)
 
-        sort_mode = st.selectbox("Sort components by", ["abs_contribution (desc)", "contribution (desc)", "layer (asc)"], key=f"dla_sort_{id(outputs)}")
+        sort_mode = st.selectbox("Sort components by", ["abs_contribution (desc)", "contribution (desc)", "layer (asc)"], key=f"dla_sort_{key_suffix or id(outputs)}")
+
         if sort_mode == "contribution (desc)":
             df = df.sort_values("contribution", ascending=False)
         elif sort_mode == "layer (asc)":
@@ -689,7 +690,7 @@ def _render_outputs(outputs: Dict[str, Any], selected_item: Dict[str, Any] | Non
                 )
 
                 max_n = min(10, len(np_out["feature_urls"]))
-                slider_key = f"np_show_n__{outputs.get('sae_id','na')}__pos{pos}__{id(outputs)}"
+                slider_key = f"np_show_n__{outputs.get('sae_id','na')}__pos{pos}__{key_suffix or id(outputs)}"
                 show_n = st.slider("How many dashboards to embed", 1, max_n, min(3, max_n), key=slider_key)
 
                 for item in np_out["feature_urls"][:show_n]:
@@ -802,7 +803,7 @@ def _render_outputs(outputs: Dict[str, Any], selected_item: Dict[str, Any] | Non
             0,
             max_layer,
             max_layer,
-            key=f"pca_layers__layer_idx_{id(outputs)}",
+            key=f"pca_layers__layer_idx_{key_suffix or id(outputs)}",
         )
 
         layer_obj = projected[layer_idx]
@@ -830,13 +831,14 @@ def _render_outputs(outputs: Dict[str, Any], selected_item: Dict[str, Any] | Non
             # --- plot controls ---
             c1, c2, c3, c4 = st.columns([1.0, 1.0, 1.0, 1.2], gap="medium")
             with c1:
-                show_labels_2d = st.checkbox("Label points with tokens (2D)", value=True, key=f"pca_layers__labels_2d_{id(outputs)}")
+                show_labels_2d = st.checkbox("Label points with tokens (2D)", value=True, key=f"pca_layers__labels_2d_{key_suffix or id(outputs)}")
             with c2:
-                label_every_2d = st.slider("2D label every N tokens", 1, 8, 1, key=f"pca_layers__label_every_2d_{id(outputs)}")
+                label_every_2d = st.slider("2D label every N tokens", 1, 8, 1, key=f"pca_layers__label_every_2d_{key_suffix or id(outputs)}")
             with c3:
-                point_size = st.slider("Point size", 10, 80, 35, key=f"pca_layers__ptsize_{id(outputs)}")
+                point_size = st.slider("Point size", 10, 80, 35, key=f"pca_layers__ptsize_{key_suffix or id(outputs)}")
             with c4:
-                show_3d = st.checkbox("Show interactive 3D (drag)", value=True, key=f"pca_layers__show_3d_{id(outputs)}")
+                show_3d = st.checkbox("Show interactive 3D (drag)", value=True, key=f"pca_layers__show_3d_{key_suffix or id(outputs)}")
+
 
             # -------------------------
             # 2D scatter (matplotlib)
@@ -869,11 +871,12 @@ def _render_outputs(outputs: Dict[str, Any], selected_item: Dict[str, Any] | Non
                     # extra UI for 3D labeling
                     d1, d2, d3 = st.columns([1.0, 1.0, 1.2], gap="medium")
                     with d1:
-                        show_3d_labels = st.checkbox("Show token labels in 3D", value=False, key=f"pca_layers__3d_labels_{id(outputs)}")
+                        show_3d_labels = st.checkbox("Show token labels in 3D", value=False, key=f"pca_layers__3d_labels_{key_suffix or id(outputs)}")
                     with d2:
-                        label_every_3d = st.slider("3D label every N tokens", 1, 12, 3, key=f"pca_layers__label_every_3d_{id(outputs)}")
+                        label_every_3d = st.slider("3D label every N tokens", 1, 12, 3, key=f"pca_layers__label_every_3d_{key_suffix or id(outputs)}")
                     with d3:
-                        marker_size_3d = st.slider("3D marker size", 2, 12, 5, key=f"pca_layers__marker_size_3d_{id(outputs)}")
+                        marker_size_3d = st.slider("3D marker size", 2, 12, 5, key=f"pca_layers__marker_size_3d_{key_suffix or id(outputs)}")
+
 
                     df3 = df.copy()
                     if show_3d_labels:

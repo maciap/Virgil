@@ -391,7 +391,8 @@ def render_downloads(
 
 
     
-def render_captum_result(outputs: Dict[str, Any], selected_item: Dict[str, Any] | None):
+def render_captum_result(outputs: Dict[str, Any], selected_item: Dict[str, Any] | None, key_suffix: str = ""):
+
     pred = outputs.get("predicted", {}) or {}
     tgt = outputs.get("target", {}) or {}
     params = outputs.get("params", {}) or {}
@@ -472,7 +473,8 @@ def render_captum_result(outputs: Dict[str, Any], selected_item: Dict[str, Any] 
     st.pyplot(fig)
 
     # Key is made unique via id(outputs) so multiple panels don't clash
-    show_highlight = st.checkbox("Show highlighted text", value=True, key=f"captum_show_highlight_{id(outputs)}")
+    show_highlight = st.checkbox("Show highlighted text", value=True, key=f"captum_show_highlight_{key_suffix or id(outputs)}")
+
     if show_highlight:
         render_token_highlight(
             tokens=df_plot["token"].tolist(),
@@ -918,7 +920,7 @@ def render_compare_run_panel(
 
     outputs = outputs_store.get(panel_key)
     if outputs:
-        render_result_fn(outputs, item)
+        render_result_fn(outputs, item, key_suffix=panel_key)
 
 
 # -------------------------
@@ -1126,12 +1128,12 @@ def render_selected_tool_card(selected_item: Dict[str, Any]):
         left, right = st.columns([1.2, 1.0], gap="large")
 
         with left:
-            st.markdown("#### ⚙️ Main functionalities")
+            st.markdown("#### ⚙️ Capabilities")
             if funcs:
                 for x in funcs:
                     st.write(f"- {x}")
             else:
-                st.caption("No main functionalities provided for this method yet.")
+                st.caption("No capabilities provided for this method yet.")
             if notes and overview:
                 with st.expander("Extra notes", expanded=False):
                     st.write(notes)
