@@ -1091,11 +1091,11 @@ def render_selected_tool_card(selected_item: Dict[str, Any]):
             f"""
             <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:1rem;">
               <div>
-                <div style="font-size:1.45rem; font-weight:700; margin-bottom:0.25rem;">
+                <div style="font-size:1.75rem; font-weight:700; margin-bottom:0.25rem;">
                  🛠️ {_safe(name)}
                 </div>
-                {f"<div style='color:#6b7280; font-size:0.92rem; margin-top:0.1rem;'>{subtitle}</div>" if subtitle else ""}
-                <div style="color: var(--text-color); font-size:0.98rem; line-height:1.35;">
+                {f"<div style='color:#6b7280; font-size:1.22rem; margin-top:0.1rem;'>{subtitle}</div>" if subtitle else ""}
+                <div style="color: var(--text-color); font-size:1.28rem; line-height:1.35;">
                   {_safe(overview) if overview else _safe(notes)}
                 </div>
               </div>

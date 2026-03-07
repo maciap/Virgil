@@ -125,7 +125,12 @@ mpl.rcParams["axes.titlecolor"] = "#f9fafb"
 mpl.rcParams["grid.color"] = "#374151"
 mpl.rcParams["grid.alpha"] = 0.4
 
-
+mpl.rcParams["font.size"] = 16
+mpl.rcParams["axes.titlesize"] = 18
+mpl.rcParams["axes.labelsize"] = 16
+mpl.rcParams["xtick.labelsize"] = 14
+mpl.rcParams["ytick.labelsize"] = 14
+mpl.rcParams["legend.fontsize"] = 14
 
 
 @st.cache_resource
@@ -1380,8 +1385,49 @@ st.markdown("""
   max-width: 1650px !important;
 }
 
+/* Base text size for app */
+html, body, [data-testid="stAppViewContainer"] {
+  font-size: 18px;
+}
+
+/* Normal markdown text */
+div[data-testid="stMarkdownContainer"] p,
+div[data-testid="stMarkdownContainer"] li,
+div[data-testid="stMarkdownContainer"] span {
+  font-size: 1.05rem !important;
+  white-space: normal !important;
+  overflow-wrap: anywhere !important;
+  word-break: break-word !important;
+}
+
+/* Labels for widgets */
+label,
+div[data-testid="stWidgetLabel"] {
+  font-size: 1.05rem !important;
+}
+
+/* Captions */
+.stCaption,
+[data-testid="stCaptionContainer"],
+[data-testid="stCaptionContainer"] p,
+[data-testid="stCaptionContainer"] span {
+  color: var(--text-color) !important;
+  opacity: 0.78;
+  font-size: 1.2rem !important;
+  line-height: 1.45 !important;
+}
+
 /* Headings */
-h1, h2, h3 {
+h1 {
+  font-size: 3rem !important;
+  letter-spacing: -0.3px;
+}
+h2 {
+  font-size: 2.2rem !important;
+  letter-spacing: -0.3px;
+}
+h3 {
+  font-size: 1.6rem !important;
   letter-spacing: -0.3px;
 }
 
@@ -1399,10 +1445,29 @@ div[data-testid="stExpander"] > details {
   background: var(--secondary-background-color) !important;
 }
 
+div[data-testid="stExpander"] > details {
+  border-radius: 16px !important;
+  background: var(--secondary-background-color) !important;
+}
+
+/* Expander header row */
+div[data-testid="stExpander"] summary,
+div[data-testid="stExpander"] summary p,
+div[data-testid="stExpander"] summary span,
+div[data-testid="stExpander"] details summary,
+div[data-testid="stExpander"] details summary p,
+div[data-testid="stExpander"] details summary span {
+  font-size: 1.4rem !important;
+  font-weight: 600 !important;
+  line-height: 1.4 !important;
+}
+            
 /* Buttons */
 .stButton button {
   border-radius: 12px;
   font-weight: 600;
+  font-size: 1rem !important;
+  padding: 0.6rem 1rem !important;
 }
 
 /* Inputs */
@@ -1410,12 +1475,37 @@ div[data-baseweb="select"] > div,
 .stTextInput input,
 .stTextArea textarea {
   border-radius: 12px;
+  font-size: 1rem !important;
 }
 
-/* Make captions readable in dark mode */
-.stCaption {
-  color: var(--text-color) !important;
-  opacity: 0.7;
+/* Slider / radio / checkbox text */
+div[data-testid="stRadio"] label,
+div[data-testid="stCheckbox"] label,
+div[data-testid="stSlider"] label {
+  font-size: 1rem !important;
+}
+
+/* Selectbox selected text */
+div[data-baseweb="select"] span {
+  font-size: 1rem !important;
+}
+
+/* Metric text */
+div[data-testid="stMetricLabel"] {
+  font-size: 1rem !important;
+}
+div[data-testid="stMetricValue"] {
+  font-size: 1.5rem !important;
+}
+
+/* Tabs */
+button[data-baseweb="tab"] {
+  font-size: 1rem !important;
+}
+
+/* Dataframe text */
+[data-testid="stDataFrame"] div {
+  font-size: 0.95rem !important;
 }
 
 .xai-chip {
@@ -1428,7 +1518,7 @@ div[data-baseweb="select"] > div,
   border: 1px solid rgba(255,255,255,0.25) !important;
   color: #E5E7EB !important;
 
-  font-size: 0.85rem;
+  font-size: 0.95rem;
   font-weight: 600;
 }
 
@@ -1437,16 +1527,99 @@ div[data-testid="column"] * {
   min-width: 0 !important;
 }
 
-div[data-testid="stMarkdownContainer"] p,
-div[data-testid="stMarkdownContainer"] li {
-  white-space: normal !important;
-  overflow-wrap: anywhere !important;
-  word-break: break-word !important;
-}
-
 div[data-testid="stMarkdownContainer"] span {
   white-space: normal !important;
   overflow-wrap: anywhere !important;
+}
+            
+
+/* Sidebar section title */
+section[data-testid="stSidebar"] h1,
+section[data-testid="stSidebar"] h2,
+section[data-testid="stSidebar"] h3 {
+  font-size: 1.35rem !important;
+}
+
+/* Widget labels (e.g. "How would you like to search?") */
+section[data-testid="stSidebar"] label,
+section[data-testid="stSidebar"] div[data-testid="stWidgetLabel"] {
+  font-size: 1.35rem !important;
+  font-weight: 600 !important;
+}
+
+/* Radio button text */
+section[data-testid="stSidebar"] div[data-testid="stRadio"] label {
+  font-size: 1.35rem !important;
+}
+
+/* Slider label */
+section[data-testid="stSidebar"] div[data-testid="stSlider"] label {
+  font-size: 1.35rem !important;
+}
+
+/* Slider numbers */
+section[data-testid="stSidebar"] div[data-baseweb="slider"] span {
+  font-size: 1.35rem !important;
+}
+
+/* Selectbox text */
+section[data-testid="stSidebar"] div[data-baseweb="select"] span {
+  font-size: 1.35rem !important;
+}
+
+/* Text input / textarea */
+section[data-testid="stSidebar"] input,
+section[data-testid="stSidebar"] textarea {
+  font-size: 1.35rem !important;
+}
+
+
+            
+/* Sidebar widget titles */
+section[data-testid="stSidebar"] div[data-testid="stWidgetLabel"] p,
+section[data-testid="stSidebar"] div[data-testid="stWidgetLabel"] span,
+section[data-testid="stSidebar"] div[data-testid="stWidgetLabel"] label,
+section[data-testid="stSidebar"] .stRadio > label p,
+section[data-testid="stSidebar"] .stSlider > label p {
+  font-size: 1.4rem !important;
+  font-weight: 600 !important;
+  line-height: 1.4 !important;
+}
+
+/* Radio option text: "Pick with filters", "Describe it in words" */
+section[data-testid="stSidebar"] div[role="radiogroup"] label p,
+section[data-testid="stSidebar"] div[role="radiogroup"] label span,
+section[data-testid="stSidebar"] .stRadio div[role="radiogroup"] p,
+section[data-testid="stSidebar"] .stRadio div[role="radiogroup"] span {
+  font-size: 1.32rem !important;
+  line-height: 1.4 !important;
+}
+
+/* Slider label: "Max recommendations" */
+section[data-testid="stSidebar"] .stSlider label p,
+section[data-testid="stSidebar"] .stSlider label span,
+section[data-testid="stSidebar"] div[data-testid="stSlider"] label p,
+section[data-testid="stSidebar"] div[data-testid="stSlider"] label span {
+  font-size: 1.32rem !important;
+  font-weight: 600 !important;
+}
+
+/* Slider tick/min/max/current value text */
+section[data-testid="stSidebar"] div[data-baseweb="slider"] span,
+section[data-testid="stSidebar"] div[data-baseweb="slider"] div {
+  font-size: 1.35rem !important;
+}
+
+/* Selectbox visible text */
+section[data-testid="stSidebar"] div[data-baseweb="select"] span,
+section[data-testid="stSidebar"] div[data-baseweb="select"] div {
+  font-size: 1.35rem !important;
+}
+
+/* Checkbox text */
+section[data-testid="stSidebar"] .stCheckbox label p,
+section[data-testid="stSidebar"] .stCheckbox label span {
+  font-size: 1.38rem !important;
 }
 
 </style>
@@ -1458,7 +1631,7 @@ st.markdown(
 <div style="margin-bottom: 1.5rem;">
   <div style="
       font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
-      font-size: 3.4rem;
+      font-size: 4.2rem;
       font-weight: 800;
       letter-spacing: -1.5px;
       line-height: 1.2;
@@ -1468,7 +1641,7 @@ st.markdown(
   ">Virgil</div>
   <div style="
       font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
-      font-size: 1.5rem;
+      font-size: 1.9rem;
       font-weight: 600;
       letter-spacing: -0.3px;
       color: var(--text-color);
@@ -1476,7 +1649,7 @@ st.markdown(
       margin-bottom: 0.3rem;
   ">Your Language Model Explainability Navigator 🧭</div>
   <div style="
-      font-size: 1.05rem;
+      font-size: 1.8rem;
       color: var(--text-color);
       opacity: 0.6;
   ">Discover the tools for explaining transformer-based language models that fit your needs.</div>
@@ -1678,7 +1851,7 @@ col_spacer, col_recs, col_run = st.columns([0.2, 1.4, 1.8], gap="large")
 with col_recs:
     st.subheader(f"👇 {min(top_k, len(recommended))} tools match your request")
 
-    with st.expander("🔎 Current selection (what filters vs what ranks)", expanded=False):
+    with st.expander("🔎 Current selection (filters and preferences)", expanded=False):
         st.markdown("**✅ Hard constraints (filters):**")
         st.json(_dict_to_ui({k: hard.get(k, "NA") for k in HARD_DIMS}), expanded=False)
         st.markdown("**⭐ Preferences (ranking only):**")
