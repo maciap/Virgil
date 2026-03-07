@@ -113,11 +113,10 @@ def method_semantic_score_weighted(
     user_text: str,
     *,
     model_name: str = "sentence-transformers/all-MiniLM-L6-v2",
-    w1: float = 0.4,
+    w1: float = 0.5,
     w2: float = 0.4,
-    w3: float = 0.1,
-    w4: float = 0.1,
-) -> Tuple[float, Dict[str, float], List[str]]:
+    w3: float = 0.1
+    ) -> Tuple[float, Dict[str, float], List[str]]:
     """
     Returns:
       - final_score (float)
@@ -146,14 +145,12 @@ def method_semantic_score_weighted(
         float(w1) * sims["overview"]
         + float(w2) * sims["funcs"]
         + float(w3) * sims["strengths"]
-        - float(w4) * sims["limitations"]
     )
 
     reasons = [
         f"sim_overview={sims['overview']:.2f} (w={w1})",
         f"sim_funcs={sims['funcs']:.2f} (w={w2})",
         f"sim_strengths={sims['strengths']:.2f} (w={w3})",
-        f"sim_limitations={sims['limitations']:.2f} (w={w4}, subtract)",
         f"final={score:.3f}",
     ]
 
@@ -166,12 +163,11 @@ def rank_methods(
     model_name: str = "sentence-transformers/all-MiniLM-L6-v2",
     w1: float = 0.4,
     w2: float = 0.4,
-    w3: float = 0.1,
-    w4: float = 0.1,
-) -> Tuple[List[Dict[str, Any]], Dict[str, Dict[str, float]]]:
+    w3: float = 0.1
+    ) -> Tuple[List[Dict[str, Any]], Dict[str, Dict[str, float]]]:
     """
     Weighted semantic ranker:
-      score = w1*sim(q, overview) + w2*sim(q, main functionalities) + w3*sim(q, strengths) - w4*sim(q, limitations)
+      score = w1*sim(q, overview) + w2*sim(q, main functionalities) + w3*sim(q, strengths)
 
     Returns (ranked_methods, text_probs) for drop-in compatibility with your app.
     text_probs is {} because we are not predicting category distributions.
@@ -188,7 +184,6 @@ def rank_methods(
             w1=w1,
             w2=w2,
             w3=w3,
-            w4=w4,
         )
         ranked.append(
             {

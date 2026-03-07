@@ -14,14 +14,13 @@
       "description": {
         "overview": "Integrated Gradients (IG) attributes a model’s prediction to input tokens by integrating gradients along a path from a baseline to the actual input. It produces per-token attributions for the target output.",
         "main_functionalities": [
-          "Compute token-level importance by integrating gradients from a baseline",
-          "Support configurable number of integration steps",
-          "Applicable to any differentiable model (white-box access required)"
+          "Compute token-level attribution scores"
         ]
       },
       "strengths": [
         "Satisfies axioms of sensitivity and implementation invariance",
         "More stable and less noisy than raw gradients",
+        "Support configurable number of integration steps",
         "Provides intuitive baseline comparison ('change from reference to input')"
       ],
       "limitations": [
