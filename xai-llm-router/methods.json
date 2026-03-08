@@ -167,6 +167,7 @@
       "limitations": [
         "Often noisy or unstable, prone to highlight spurious importances",
         "Suffers from gradient saturation, which means that gradients approach zero and can be misleading in a neighbourhood of the inputs",
+        "Small changes in the input around thresholds imposed by nonlinearities in the transformer computations can lead to large jumps in gradient-based attribution scores",
         "Does not satisfy desirable axioms like sensitivity and implementation invariance"
       ],
       "research_applications": [
@@ -232,6 +233,7 @@
       "limitations": [
         "Often noisy or unstable, prone to highlight spurious importances",
         "Suffers from gradient saturation, which means that gradients approach zero and can be misleading in a neighbourhood of the inputs",
+        "Small changes in the input around thresholds imposed by nonlinearities in the transformer computations can lead to large jumps in gradient-based attribution scores",
         "Does not satisfy desirable axioms like sensitivity and implementation invariance"
       ],
       "research_applications": [
