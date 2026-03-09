@@ -92,14 +92,83 @@ from Navigator_utils import (
     _pretty_task_label, 
     _pretty_arch_label, 
     resolve_plugin_id,
-    # ── NEW: compare run panel ──
     render_compare_run_panel,
     _render_plugin_form_keyed,
 )
+from Navigator_styles import apply_styles
+
 
 import html
 import re
 import streamlit.components.v1 as components
+
+
+
+def get_theme_mode() -> str:
+    manual = st.session_state.get("manual_theme_mode", "auto")
+
+    if manual in ("light", "dark"):
+        return manual
+
+    try:
+        detected = getattr(st.context.theme, "type", None)
+        if detected in ("light", "dark"):
+            return detected
+    except Exception:
+        pass
+
+    return "dark"
+
+
+def get_theme_colors(mode: str | None = None) -> dict:
+    mode = mode or get_theme_mode()
+
+    if mode == "light":
+        return {
+        "mode": "light",
+        "accent": "#16A34A",
+        "text": "#111827",
+        "muted": "#6B7280",
+        "background": "#FFFFFF",
+        "secondary_background": "#ECEFF3",
+        "card_border": "#9CA3AF",
+        "chip_border": "#6B7280",
+        "plot_bg": "#FFFFFF",
+        "axes_bg": "#FFFFFF",
+        "edge": "#D1D5DB",
+        "grid": "#D1D5DB",
+        "tick": "#374151",
+        "token_box_border": "#9CA3AF",
+        "token_box_bg": "#F9FAFB",
+        "border": "#9CA3AF",
+        "panel_bg": "#FFFFFF",
+        "node_fill": "#374151",
+        "label_fill": "#111827",
+        "axis_fill": "#374151",
+    }
+
+    return {
+        "mode": "dark",
+        "accent": "#4ADE80",
+        "text": "#E5E7EB",
+        "muted": "#9CA3AF",
+        "background": "#0B1220",
+        "secondary_background": "#111827",
+        "card_border": "rgba(255,255,255,0.08)",
+        "chip_border": "rgba(255,255,255,0.25)",
+        "plot_bg": "#1A1A1A",
+        "axes_bg": "#1A1A1A",
+        "edge": "#374151",
+        "grid": "#374151",
+        "tick": "#9CA3AF",
+        "token_box_border": "#374151",
+        "token_box_bg": "#111827",
+        "border": "#374151",
+        "panel_bg": "#111827",
+        "node_fill": "#E5E7EB",
+        "label_fill": "#E5E7EB",
+        "axis_fill": "#9CA3AF",
+    }
 
 
 
@@ -111,25 +180,7 @@ os.chdir(os.path.dirname(os.path.abspath(__file__)))
 print(os.getcwd())
 
 
-import matplotlib as mpl
-mpl.rcParams["axes.prop_cycle"] = mpl.cycler(color=["#4ade80"])
-mpl.rcParams["axes.facecolor"] = "#1a1a1a"     
-mpl.rcParams["figure.facecolor"] = "#1a1a1a"
-mpl.rcParams["axes.edgecolor"] = "#374151"
-mpl.rcParams["xtick.color"] = "#9ca3af"
-mpl.rcParams["ytick.color"] = "#9ca3af"
-mpl.rcParams["text.color"] = "#f9fafb"
-mpl.rcParams["axes.labelcolor"] = "#f9fafb"
-mpl.rcParams["axes.titlecolor"] = "#f9fafb"
-mpl.rcParams["grid.color"] = "#374151"
-mpl.rcParams["grid.alpha"] = 0.4
 
-mpl.rcParams["font.size"] = 16
-mpl.rcParams["axes.titlesize"] = 18
-mpl.rcParams["axes.labelsize"] = 16
-mpl.rcParams["xtick.labelsize"] = 14
-mpl.rcParams["ytick.labelsize"] = 14
-mpl.rcParams["legend.fontsize"] = 14
 
 
 @st.cache_resource
@@ -711,25 +762,39 @@ def _render_outputs(outputs: Dict[str, Any], selected_item: Dict[str, Any] | Non
     elif str(outputs.get("plugin", "")).startswith("inseq_") and outputs.get("out"):
         import re as _re
 
-        def inseq_html_dark_fix(html: str) -> str:
+        def inseq_html_theme_fix(html: str) -> str:
             if not html:
                 return html
+
             html = _re.sub(r"<style.*?>.*?</style>", "", html, flags=_re.DOTALL | _re.IGNORECASE)
-            css = """
+
+            if THEME["mode"] == "light":
+                text_color = "#111827"
+                border_color = "rgba(17,24,39,0.15)"
+                code_bg = "rgba(17,24,39,0.05)"
+                color_scheme = "light"
+            else:
+                text_color = "#E5E7EB"
+                border_color = "rgba(255,255,255,0.15)"
+                code_bg = "rgba(255,255,255,0.06)"
+                color_scheme = "dark"
+
+            css = f"""
             <style>
-            :root { color-scheme: dark; }
-            html, body {
+            :root {{ color-scheme: {color_scheme}; }}
+            html, body {{
                 background: transparent !important;
-                color: #E5E7EB !important;
+                color: {text_color} !important;
                 font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-            }
-            body, body * { color: inherit !important; }
-            table { background: transparent !important; }
-            td, th { border-color: rgba(255,255,255,0.15) !important; }
-            pre, code { background: rgba(255,255,255,0.06) !important; color: inherit !important; }
-            div, section, article { background: transparent !important; }
+            }}
+            body, body * {{ color: inherit !important; }}
+            table {{ background: transparent !important; }}
+            td, th {{ border-color: {border_color} !important; }}
+            pre, code {{ background: {code_bg} !important; color: inherit !important; }}
+            div, section, article {{ background: transparent !important; }}
             </style>
             """
+
             if _re.search(r"</head>", html, flags=_re.IGNORECASE):
                 html = _re.sub(r"</head>", css + "</head>", html, flags=_re.IGNORECASE)
             else:
@@ -740,7 +805,7 @@ def _render_outputs(outputs: Dict[str, Any], selected_item: Dict[str, Any] | Non
         st.write(f"**Model:** {outputs.get('model', 'NA')}")
         st.write(f"**Device:** {outputs.get('device', 'NA')}")
         st.write(f"**Text:** {outputs.get('text', '')}")
-        fixed = inseq_html_dark_fix(outputs["out"])
+        fixed = inseq_html_theme_fix(outputs["out"])
         components.html(fixed, height=850, scrolling=True)
         render_downloads(outputs, selected_item=selected_item)
 
@@ -1443,13 +1508,12 @@ def _render_outputs(outputs: Dict[str, Any], selected_item: Dict[str, Any] | Non
         render_downloads(outputs, selected_item=selected_item)
 
 
-# -------------------------
-# Streamlit UI
-# -------------------------
-
+### UI 
 st.set_page_config(page_title="Language Model Explainability Navigator 🧭", layout="wide")
 
 # ---- Session state (important fixes) ----
+if "manual_theme_mode" not in st.session_state:
+    st.session_state["manual_theme_mode"] = "dark"
 if "selected_item" not in st.session_state:
     st.session_state["selected_item"] = None
 if "selected_key" not in st.session_state:
@@ -1480,305 +1544,13 @@ col1, col2, col3 = st.columns([1, 1, 1])
 with col2:
     st.image("images/logo_app.png", width=220)
 
-st.markdown("""
-<style>
-
-/* Use Streamlit theme variables */
-:root {
-  --radius: 16px;
-}
-
-/* Page spacing */
-.block-container {
-  padding-top: 1.6rem;
-  padding-bottom: 2rem;
-  max-width: 1650px !important;
-}
-
-/* Base text size for app */
-html, body, [data-testid="stAppViewContainer"] {
-  font-size: 18px;
-}
-
-/* Normal markdown text */
-div[data-testid="stMarkdownContainer"] p,
-div[data-testid="stMarkdownContainer"] li,
-div[data-testid="stMarkdownContainer"] span {
-  font-size: 1.05rem !important;
-  white-space: normal !important;
-  overflow-wrap: anywhere !important;
-  word-break: break-word !important;
-}
-
-/* Labels for widgets */
-label,
-div[data-testid="stWidgetLabel"] {
-  font-size: 1.05rem !important;
-}
-
-/* Captions */
-.stCaption,
-[data-testid="stCaptionContainer"],
-[data-testid="stCaptionContainer"] p,
-[data-testid="stCaptionContainer"] span {
-  color: var(--text-color) !important;
-  opacity: 0.78;
-  font-size: 1.2rem !important;
-  line-height: 1.45 !important;
-}
-
-/* Headings */
-h1 {
-  font-size: 3rem !important;
-  letter-spacing: -0.3px;
-}
-h2 {
-  font-size: 2.2rem !important;
-  letter-spacing: -0.3px;
-}
-h3 {
-  font-size: 1.6rem !important;
-  letter-spacing: -0.3px;
-}
-
-/* Cards */
-.xai-card {
-  border-radius: var(--radius);
-  background: var(--secondary-background-color);
-  border: 1px solid rgba(255,255,255,0.08);
-  padding: 1.2rem;
-}
-
-/* Expander styling */
-div[data-testid="stExpander"] > details {
-  border-radius: var(--radius) !important;
-  background: var(--secondary-background-color) !important;
-}
-
-div[data-testid="stExpander"] > details {
-  border-radius: 16px !important;
-  background: var(--secondary-background-color) !important;
-}
-
-/* Expander header row */
-div[data-testid="stExpander"] summary,
-div[data-testid="stExpander"] summary p,
-div[data-testid="stExpander"] summary span,
-div[data-testid="stExpander"] details summary,
-div[data-testid="stExpander"] details summary p,
-div[data-testid="stExpander"] details summary span {
-  font-size: 1.4rem !important;
-  font-weight: 600 !important;
-  line-height: 1.4 !important;
-}
-            
-/* Buttons */
-.stButton button {
-  border-radius: 12px;
-  font-weight: 600;
-  font-size: 1rem !important;
-  padding: 0.6rem 1rem !important;
-}
-
-/* Inputs */
-div[data-baseweb="select"] > div,
-.stTextInput input,
-.stTextArea textarea {
-  border-radius: 12px;
-  font-size: 1rem !important;
-}
-
-/* Slider / radio / checkbox text */
-div[data-testid="stRadio"] label,
-div[data-testid="stCheckbox"] label,
-div[data-testid="stSlider"] label {
-  font-size: 1rem !important;
-}
-
-/* Selectbox selected text */
-div[data-baseweb="select"] span {
-  font-size: 1rem !important;
-}
-
-/* Metric text */
-div[data-testid="stMetricLabel"] {
-  font-size: 1rem !important;
-}
-div[data-testid="stMetricValue"] {
-  font-size: 1.5rem !important;
-}
-
-/* Tabs */
-button[data-baseweb="tab"] {
-  font-size: 1rem !important;
-}
-
-/* Dataframe text */
-[data-testid="stDataFrame"] div {
-  font-size: 0.95rem !important;
-}
-
-.xai-chip {
-  display: inline-block;
-  padding: 0.22rem 0.65rem;
-  margin: 0 0.35rem 0.35rem 0;
-  border-radius: 999px;
-
-  background: transparent !important;
-  border: 1px solid rgba(255,255,255,0.25) !important;
-  color: #E5E7EB !important;
-
-  font-size: 0.95rem;
-  font-weight: 600;
-}
-
-/* --- Columns --- */
-div[data-testid="column"] * {
-  min-width: 0 !important;
-}
-
-div[data-testid="stMarkdownContainer"] span {
-  white-space: normal !important;
-  overflow-wrap: anywhere !important;
-}
-            
-
-/* Sidebar section title */
-section[data-testid="stSidebar"] h1,
-section[data-testid="stSidebar"] h2,
-section[data-testid="stSidebar"] h3 {
-  font-size: 1.35rem !important;
-}
-
-/* Widget labels (e.g. "How would you like to search?") */
-section[data-testid="stSidebar"] label,
-section[data-testid="stSidebar"] div[data-testid="stWidgetLabel"] {
-  font-size: 1.35rem !important;
-  font-weight: 600 !important;
-}
-
-/* Radio button text */
-section[data-testid="stSidebar"] div[data-testid="stRadio"] label {
-  font-size: 1.35rem !important;
-}
-
-/* Slider label */
-section[data-testid="stSidebar"] div[data-testid="stSlider"] label {
-  font-size: 1.35rem !important;
-}
-
-/* Slider numbers */
-section[data-testid="stSidebar"] div[data-baseweb="slider"] span {
-  font-size: 1.1rem !important;
-}
-
-/* Selectbox text */
-section[data-testid="stSidebar"] div[data-baseweb="select"] span {
-  font-size: 1.1rem !important;
-}
-
-/* Text input / textarea */
-section[data-testid="stSidebar"] input,
-section[data-testid="stSidebar"] textarea {
-  font-size: 1.1rem !important;
-}
-
-
-            
-/* Sidebar widget titles */
-section[data-testid="stSidebar"] div[data-testid="stWidgetLabel"] p,
-section[data-testid="stSidebar"] div[data-testid="stWidgetLabel"] span,
-section[data-testid="stSidebar"] div[data-testid="stWidgetLabel"] label,
-section[data-testid="stSidebar"] .stRadio > label p,
-section[data-testid="stSidebar"] .stSlider > label p {
-  font-size: 1.1rem !important;
-  font-weight: 600 !important;
-  line-height: 1.4 !important;
-}
-
-/* Radio option text: "Pick with filters", "Describe it in words" */
-section[data-testid="stSidebar"] div[role="radiogroup"] label p,
-section[data-testid="stSidebar"] div[role="radiogroup"] label span,
-section[data-testid="stSidebar"] .stRadio div[role="radiogroup"] p,
-section[data-testid="stSidebar"] .stRadio div[role="radiogroup"] span {
-  font-size: 1.1rem !important;
-  line-height: 1.4 !important;
-}
-
-/* Slider label: "Max recommendations" */
-section[data-testid="stSidebar"] .stSlider label p,
-section[data-testid="stSidebar"] .stSlider label span,
-section[data-testid="stSidebar"] div[data-testid="stSlider"] label p,
-section[data-testid="stSidebar"] div[data-testid="stSlider"] label span {
-  font-size: 1.1rem !important;
-  font-weight: 600 !important;
-}
-
-/* Slider tick/min/max/current value text */
-section[data-testid="stSidebar"] div[data-baseweb="slider"] span,
-section[data-testid="stSidebar"] div[data-baseweb="slider"] div {
-  font-size: 1rem !important;
-}
-
-/* Selectbox visible text */
-section[data-testid="stSidebar"] div[data-baseweb="select"] span,
-section[data-testid="stSidebar"] div[data-baseweb="select"] div {
-  font-size: 1rem !important;
-}
-
-/* Checkbox text */
-section[data-testid="stSidebar"] .stCheckbox label p,
-section[data-testid="stSidebar"] .stCheckbox label span {
-  font-size: 1.35rem !important;
-}
-
-</style>
-""", unsafe_allow_html=True)
-
-
-st.markdown(
-    """
-<div style="margin-bottom: 1.5rem;">
-  <div style="
-      font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
-      font-size: 4.2rem;
-      font-weight: 800;
-      letter-spacing: -1.5px;
-      line-height: 1.2;
-      padding-bottom: 0.1em;
-      color: #4ade80;
-      margin-bottom: 0.4rem;
-  ">Virgil</div>
-  <div style="
-      font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
-      font-size: 1.9rem;
-      font-weight: 600;
-      letter-spacing: -0.3px;
-      color: var(--text-color);
-      opacity: 0.85;
-      margin-bottom: 0.3rem;
-  ">Your Language Model Explainability Navigator 🧭</div>
-  <div style="
-      font-size: 1.8rem;
-      color: var(--text-color);
-      opacity: 0.6;
-  ">Discover the tools for explaining transformer-based language models that fit your needs.</div>
-</div>
-""",
-    unsafe_allow_html=True,
-)
-
-
-try:
-    methods = load_methods("methods.json")
-except Exception as e:
-    st.error(f"Failed to load methods.json: {e}")
-    st.stop()
 
 # -------------------------
 # Sidebar: hard constraints vs preferences
 # -------------------------
 with st.sidebar:
+
+    
     st.header("Tell me what you are looking for!")
 
     mode = st.radio(
@@ -1850,6 +1622,130 @@ with st.sidebar:
 
         temperature = st.slider("Text model temperature", 0.2, 1.5, 0.7, 0.05)
         show_text_prefs = st.checkbox("Show predicted preferences", value=True)
+
+    st.markdown("<div style='height: 2rem;'></div>", unsafe_allow_html=True)
+    st.markdown("---")
+    theme_choice = st.radio(
+        "🎨 Theme",
+        ["Dark (recommended)", "Light"],
+        index=0 if st.session_state["manual_theme_mode"] != "light" else 1,
+    )
+    st.session_state["manual_theme_mode"] = "light" if theme_choice == "Light" else "dark"
+
+
+THEME = get_theme_colors()
+
+
+if THEME["mode"] == "light":
+    st.markdown("""
+    <style>
+    div[data-testid="stVerticalBlockBorderWrapper"],
+    div[data-testid="stVerticalBlockBorderWrapper"] > div {
+        border: 2px solid #6B7280 !important;
+        outline: 2px solid #6B7280 !important;
+        box-shadow: 0 0 0 2px #6B7280 !important;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
+
+
+if THEME["mode"] == "light":
+    st.markdown("""
+    <style>
+    /* ── Light mode: make ALL bordered containers clearly visible ── */
+    div[data-testid="stVerticalBlockBorderWrapper"],
+    div[data-testid="stVerticalBlockBorderWrapper"] > div {
+        background: #FFFFFF !important;
+        border: 1.5px solid #9CA3AF !important;
+        border-radius: 14px !important;
+        box-shadow: 0 1px 4px rgba(0,0,0,0.10) !important;
+    }
+
+    /* Middle column recommendation cards */
+    div[data-testid="column"]:nth-of-type(2) div[data-testid="stVerticalBlockBorderWrapper"] {
+        background: #FFFFFF !important;
+        border: 2px solid #9CA3AF !important;
+        border-radius: 14px !important;
+        box-shadow: 0 1px 6px rgba(0,0,0,0.12) !important;
+    }
+
+    /* Right column selected tool card */
+    div[data-testid="column"]:nth-of-type(3) div[data-testid="stVerticalBlockBorderWrapper"] {
+        background: #F9FAFB !important;
+        border: 2px solid #9CA3AF !important;
+        border-radius: 14px !important;
+        box-shadow: 0 1px 6px rgba(0,0,0,0.12) !important;
+    }
+
+    /* st.container(border=True) inside results / compare panels */
+    div[data-testid="stVerticalBlock"] > div[data-testid="stVerticalBlockBorderWrapper"] {
+        border: 1.5px solid #6B7280 !important;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
+
+import matplotlib as mpl
+mpl.rcParams["axes.prop_cycle"] = mpl.cycler(color=["#4ade80"])
+mpl.rcParams["axes.facecolor"] = THEME["axes_bg"]
+mpl.rcParams["figure.facecolor"] = THEME["plot_bg"]
+mpl.rcParams["axes.edgecolor"] = THEME["edge"]
+mpl.rcParams["xtick.color"] = THEME["tick"]
+mpl.rcParams["ytick.color"] = THEME["tick"]
+mpl.rcParams["text.color"] = THEME["text"]
+mpl.rcParams["axes.labelcolor"] = THEME["text"]
+mpl.rcParams["axes.titlecolor"] = THEME["text"]
+mpl.rcParams["grid.color"] = THEME["grid"]
+mpl.rcParams["grid.alpha"] = 0.4
+
+mpl.rcParams["font.size"] = 16
+mpl.rcParams["axes.titlesize"] = 18
+mpl.rcParams["axes.labelsize"] = 16
+mpl.rcParams["xtick.labelsize"] = 14
+mpl.rcParams["ytick.labelsize"] = 14
+mpl.rcParams["legend.fontsize"] = 14
+
+apply_styles(THEME)
+
+
+st.markdown(
+    f"""
+<div style="margin-bottom: 1.5rem;">
+  <div style="
+      font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+      font-size: 4.2rem;
+      font-weight: 800;
+      letter-spacing: -1.5px;
+      line-height: 1.2;
+      padding-bottom: 0.1em;
+      color: {THEME["accent"]};
+      margin-bottom: 0.4rem;
+  ">Virgil</div>
+  <div style="
+      font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+      font-size: 1.9rem;
+      font-weight: 600;
+      letter-spacing: -0.3px;
+      color: var(--text-color);
+      opacity: 0.85;
+      margin-bottom: 0.3rem;
+  ">Your Language Model Explainability Navigator 🧭</div>
+  <div style="
+      font-size: 1.8rem;
+      color: var(--text-color);
+      opacity: 0.6;
+  ">Discover the tools for explaining transformer-based language models that fit your needs.</div>
+</div>
+""",
+    unsafe_allow_html=True,
+)
+
+try:
+    methods = load_methods("methods.json")
+except Exception as e:
+    st.error(f"Failed to load methods.json: {e}")
+    st.stop()
 
 # -------------------------
 # Compute recommendations
@@ -1971,6 +1867,7 @@ with col_recs:
         item_key = _compare_key(item)
 
         with st.container(border=True):
+    
             st.markdown(f"### {item['name']}")
 
             acc = (item.get("meta", {}) or {}).get("accessibility", "") or item.get("accessibility", "")

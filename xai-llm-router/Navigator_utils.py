@@ -57,6 +57,74 @@ import html as _html
 _NODE_RE = re.compile(r"^(X0|A|M|I)(\d+)?_(\d+)$")  # X0_3 OR A6_3 etc.
 
 
+def get_theme_mode() -> str:
+    manual = st.session_state.get("manual_theme_mode", "auto")
+    if manual in ("light", "dark"):
+        return manual
+    try:
+        detected = getattr(st.context.theme, "type", None)
+        if detected in ("light", "dark"):
+            return detected
+    except Exception:
+        pass
+    return "dark"
+
+
+
+def get_theme_colors(mode: str | None = None) -> dict:
+    mode = mode or get_theme_mode()
+
+    if mode == "light":
+        return {
+        "mode": "light",
+        "accent": "#16A34A",
+        "text": "#111827",
+        "muted": "#6B7280",
+        "background": "#FFFFFF",
+        "secondary_background": "#ECEFF3",
+        "card_border": "#9CA3AF",
+        "chip_border": "#6B7280",
+        "plot_bg": "#FFFFFF",
+        "axes_bg": "#FFFFFF",
+        "edge": "#D1D5DB",
+        "grid": "#D1D5DB",
+        "tick": "#374151",
+        "token_box_border": "#9CA3AF",
+        "token_box_bg": "#F9FAFB",
+        "border": "#9CA3AF",
+        "panel_bg": "#FFFFFF",
+        "node_fill": "#374151",
+        "label_fill": "#111827",
+        "axis_fill": "#374151",
+    }
+
+    return {
+        "mode": "dark",
+        "accent": "#4ADE80",
+        "text": "#E5E7EB",
+        "muted": "#9CA3AF",
+        "background": "#0B1220",
+        "secondary_background": "#111827",
+        "card_border": "rgba(255,255,255,0.08)",
+        "chip_border": "rgba(255,255,255,0.25)",
+        "plot_bg": "#1A1A1A",
+        "axes_bg": "#1A1A1A",
+        "edge": "#374151",
+        "grid": "#374151",
+        "tick": "#9CA3AF",
+        "token_box_border": "#374151",
+        "token_box_bg": "#111827",
+        "border": "#374151",
+        "panel_bg": "#111827",
+        "node_fill": "#E5E7EB",
+        "label_fill": "#E5E7EB",
+        "axis_fill": "#9CA3AF",
+    }
+
+
+
+
+
 def _parse_node(node_id: str):
     m = _NODE_RE.match(node_id)
     if not m:
@@ -67,6 +135,8 @@ def _parse_node(node_id: str):
     return typ, layer, tok
 
 def render_meta_graph_svg(tokens: list[str], graph: dict, n_layers: int, height_px: int = 720):
+    THEME = get_theme_colors()  # fresh per render
+
     x_step, y_step = 34, 34
     left_pad, top_pad = 120, 25
     type_row = {"X0": 0, "A": 1, "M": 2, "I": 3}
@@ -76,12 +146,11 @@ def render_meta_graph_svg(tokens: list[str], graph: dict, n_layers: int, height_
         if not p:
             return None
         typ, layer, tok = p
-        layer_row = layer + 1  # X0(-1)->0, L0->1 ...
+        layer_row = layer + 1
         x = left_pad + tok * x_step
         y = top_pad + (layer_row * 4 + type_row[typ]) * y_step
         return x, y
 
-    # positions
     pos = {}
     for nid in graph.get("nodes", []):
         nid = str(nid)
@@ -112,24 +181,24 @@ def render_meta_graph_svg(tokens: list[str], graph: dict, n_layers: int, height_
             f'stroke="{stroke}" stroke-width="{sw:.2f}" stroke-opacity="{op:.2f}" />'
         )
 
-    dot_elems = [f'<circle cx="{x}" cy="{y}" r="3.2" fill="#111827" fill-opacity="0.85" />'
-                 for (x, y) in pos.values()]
+    dot_elems = [
+        f'<circle cx="{x}" cy="{y}" r="3.2" fill="{THEME["node_fill"]}" fill-opacity="0.85" />'
+        for (x, y) in pos.values()
+    ]
 
-    # token labels
     base_y = top_pad + ((n_layers + 1) * 4 + 4) * y_step
     tok_labels = []
     for i, t in enumerate(tokens):
         tx = left_pad + i * x_step
         tok_labels.append(
-            f'<text x="{tx}" y="{base_y}" font-size="10" fill="#111827" text-anchor="middle">{html.escape(t)}</text>'
+            f'<text x="{tx}" y="{base_y}" font-size="10" fill="{THEME["label_fill"]}" text-anchor="middle">{html.escape(t)}</text>'
         )
 
-    # y labels
     ylabels = []
     for layer in range(-1, n_layers):
         layer_row = layer + 1
         ylabels.append(
-            f'<text x="10" y="{top_pad + (layer_row*4+0)*y_step + 4}" font-size="11" fill="#374151">'
+            f'<text x="10" y="{top_pad + (layer_row*4+0)*y_step + 4}" font-size="11" fill="{THEME["axis_fill"]}">'
             f'{"X0" if layer==-1 else "L"+str(layer)}</text>'
         )
 
@@ -137,7 +206,8 @@ def render_meta_graph_svg(tokens: list[str], graph: dict, n_layers: int, height_
     height = max(height_px, int(base_y + 60))
 
     svg = (
-        f'<svg width="{width}" height="{height}" style="background:white; border:1px solid #e5e7eb; border-radius:12px;">'
+        f'<svg width="{width}" height="{height}" '
+        f'style="background:{THEME["panel_bg"]}; border:1px solid {THEME["border"]}; border-radius:12px;">'
         + "".join(line_elems)
         + "".join(dot_elems)
         + "".join(ylabels)
@@ -190,6 +260,7 @@ def captum_method_explainer_text(algo: str, params: Dict[str, Any]) -> str:
 
 
 def render_token_highlight(
+        
     tokens: List[str],
     scores: List[float],
     *,
@@ -203,6 +274,8 @@ def render_token_highlight(
     tokens: list of tokens (already merged if you do that)
     scores: list of floats in [-1,1] or any scale; will normalize by max_abs if provided/needed.
     """
+    THEME = get_theme_colors() 
+
     if not tokens or not scores or len(tokens) != len(scores):
         st.caption("No token highlight available.")
         return
@@ -244,7 +317,8 @@ def render_token_highlight(
 
     st.markdown(f"#### {title}")
     st.markdown(
-        "<div style='padding:10px; border:1px solid #e5e7eb; border-radius:12px; background:#fff;'>"
+        f"<div style='padding:10px; border:1px solid {THEME['token_box_border']}; "
+        f"border-radius:12px; background:{THEME['token_box_bg']};'>"
         + "".join(spans)
         + "</div>",
         unsafe_allow_html=True,
@@ -1055,6 +1129,8 @@ def _chip(text: str):
     
 
 def render_selected_tool_card(selected_item: Dict[str, Any]):
+    THEME = get_theme_colors()   
+    
     name = selected_item.get("name", "Selected tool")
     notes = selected_item.get("notes", "")
     meta = selected_item.get("meta", {}) or {}
@@ -1094,7 +1170,7 @@ def render_selected_tool_card(selected_item: Dict[str, Any]):
                 <div style="font-size:1.75rem; font-weight:700; margin-bottom:0.25rem;">
                  🛠️ {_safe(name)}
                 </div>
-                {f"<div style='color:#6b7280; font-size:1.22rem; margin-top:0.1rem;'>{subtitle}</div>" if subtitle else ""}
+                {f"<div style='color:{THEME['muted']}; font-size:1.22rem; margin-top:0.1rem;'>{subtitle}</div>" if subtitle else ""}
                 <div style="color: var(--text-color); font-size:1.28rem; line-height:1.35;">
                   {_safe(overview) if overview else _safe(notes)}
                 </div>
