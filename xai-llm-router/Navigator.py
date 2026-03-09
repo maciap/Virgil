@@ -1559,18 +1559,18 @@ section[data-testid="stSidebar"] div[data-testid="stSlider"] label {
 
 /* Slider numbers */
 section[data-testid="stSidebar"] div[data-baseweb="slider"] span {
-  font-size: 1.35rem !important;
+  font-size: 1.1rem !important;
 }
 
 /* Selectbox text */
 section[data-testid="stSidebar"] div[data-baseweb="select"] span {
-  font-size: 1.35rem !important;
+  font-size: 1.1rem !important;
 }
 
 /* Text input / textarea */
 section[data-testid="stSidebar"] input,
 section[data-testid="stSidebar"] textarea {
-  font-size: 1.35rem !important;
+  font-size: 1.1rem !important;
 }
 
 
@@ -1581,7 +1581,7 @@ section[data-testid="stSidebar"] div[data-testid="stWidgetLabel"] span,
 section[data-testid="stSidebar"] div[data-testid="stWidgetLabel"] label,
 section[data-testid="stSidebar"] .stRadio > label p,
 section[data-testid="stSidebar"] .stSlider > label p {
-  font-size: 1.4rem !important;
+  font-size: 1.1rem !important;
   font-weight: 600 !important;
   line-height: 1.4 !important;
 }
@@ -1591,7 +1591,7 @@ section[data-testid="stSidebar"] div[role="radiogroup"] label p,
 section[data-testid="stSidebar"] div[role="radiogroup"] label span,
 section[data-testid="stSidebar"] .stRadio div[role="radiogroup"] p,
 section[data-testid="stSidebar"] .stRadio div[role="radiogroup"] span {
-  font-size: 1.32rem !important;
+  font-size: 1.1rem !important;
   line-height: 1.4 !important;
 }
 
@@ -1600,26 +1600,26 @@ section[data-testid="stSidebar"] .stSlider label p,
 section[data-testid="stSidebar"] .stSlider label span,
 section[data-testid="stSidebar"] div[data-testid="stSlider"] label p,
 section[data-testid="stSidebar"] div[data-testid="stSlider"] label span {
-  font-size: 1.32rem !important;
+  font-size: 1.1rem !important;
   font-weight: 600 !important;
 }
 
 /* Slider tick/min/max/current value text */
 section[data-testid="stSidebar"] div[data-baseweb="slider"] span,
 section[data-testid="stSidebar"] div[data-baseweb="slider"] div {
-  font-size: 1.35rem !important;
+  font-size: 1rem !important;
 }
 
 /* Selectbox visible text */
 section[data-testid="stSidebar"] div[data-baseweb="select"] span,
 section[data-testid="stSidebar"] div[data-baseweb="select"] div {
-  font-size: 1.35rem !important;
+  font-size: 1rem !important;
 }
 
 /* Checkbox text */
 section[data-testid="stSidebar"] .stCheckbox label p,
 section[data-testid="stSidebar"] .stCheckbox label span {
-  font-size: 1.38rem !important;
+  font-size: 1.35rem !important;
 }
 
 </style>
@@ -1699,11 +1699,11 @@ with st.sidebar:
                 st.selectbox("Explanation scope", DIM_VALUES["scope"], index=DIM_VALUES["scope"].index(DEFAULTS["scope"]))
             )
 
-        with st.expander("⭐ Ranking preference (accessibility)", expanded=True):
+        with st.expander("⭐ Preference (ranking)", expanded=True):
             st.caption("This does not hide tools. It only changes ordering.")
             prefs["accessibility"] = _to_internal(
                 st.selectbox(
-                    "Audience / accessibility (ranking only)",
+                    "Expertise level",
                     DIM_VALUES["accessibility"],
                     index=DIM_VALUES["accessibility"].index(DEFAULTS["accessibility"]),
                 )
