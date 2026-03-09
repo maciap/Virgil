@@ -52,8 +52,7 @@ from toolkits.attention_rollout import AttentionRollout
 from toolkits.gradient_similarity import GradientSimilarityPlugin
 from toolkits.nmf import EccoNMF
 from toolkits.compare_tokens import EccoTokenRankingCompare
-
-
+from toolkits.polyjuice import PolyjuiceCounterfactualClassifier
 import tempfile
 import os
 from pyvis.network import Network
@@ -197,6 +196,8 @@ def get_plugins():
 
     plugin41 = EccoTokenRankingCompare()
 
+    plugin42 = PolyjuiceCounterfactualClassifier()
+
 
     return {
         plugin1.id: plugin1,
@@ -247,7 +248,9 @@ def get_plugins():
 
         plugin39.id : plugin39, 
         plugin40.id : plugin40,
-        plugin41.id : plugin41  
+        plugin41.id : plugin41, 
+        
+        plugin42.id : plugin42  
     }
 
 
@@ -372,9 +375,6 @@ def render_compare_view(anchor_item: Dict[str, Any], other_items: List[Dict[str,
     render_section("Limitations", limitations)
 
 
-# ─────────────────────────────────────────────────────────────────────────────
-# _render_outputs  –  unified dispatcher used by col_run AND compare panels
-# ─────────────────────────────────────────────────────────────────────────────
 
 def _render_outputs(outputs: Dict[str, Any], selected_item: Dict[str, Any] | None, key_suffix: str = ""):
     """
@@ -1060,6 +1060,116 @@ def _render_outputs(outputs: Dict[str, Any], selected_item: Dict[str, Any] | Non
             selected_item=selected_item,
             figs={f"{_make_prefix(selected_item, outputs.get('plugin','unknown'))}_cca_heatmap.png": fig2},
         )
+
+
+
+
+    elif plugin_tag == "polyjuice_counterfactual_classifier":
+
+        _sentence = outputs.get("sentence", "")
+        _template = outputs.get("template") or ""
+
+        def _clean_cf_text(text: str) -> str:
+            if "[SEP]" not in text:
+                return text.strip()
+            
+            # Everything before [SEP] contains: "{original} <|perturb|> [{ctrl}] {template_or_original}"
+            # Everything after [SEP] contains the fills
+            before_sep = text.split("[SEP]", 1)[0]
+            after_sep = text.split("[SEP]", 1)[1]
+            fills = [f.strip() for f in after_sep.split("[ANSWER]") if f.strip()]
+            if not fills:
+                return text.strip()
+
+            # Extract the template part (after the control code bracket)
+            # format: "{sentence} <|perturb|> [{ctrl}] {template}"
+            if "<|perturb|>" in before_sep:
+                template_part = re.sub(r".*<\|perturb\|>\s*\[[^\]]+\]\s*", "", before_sep).strip()
+                if "[BLANK]" in template_part:
+                    result = template_part
+                    for fill in fills:
+                        result = result.replace("[BLANK]", fill, 1)
+                    return result.strip()
+
+            # No [BLANK] in template — the fill IS the rewrite
+            return fills[0]
+
+
+        st.subheader("Result")
+
+        with st.expander("ℹ️ How to read counterfactual results", expanded=True):
+            st.write(
+                "- A counterfactual explanation is a modified version of the input that changes the classifier's prediction.\n"
+                "- We first generate candidate rewrites with Polyjuice.\n"
+                "- We then run the classifier again on each candidate.\n"
+                "- Only candidates that flip the original label are shown as counterfactual explanations.\n"
+                "- Higher similarity means the rewritten sentence stays closer to the original text."
+            )
+
+        st.write(f"**Classifier:** {outputs.get('classifier_model', 'NA')}")
+        st.write(f"**Counterfactual generator:** {outputs.get('counterfactual_model', 'NA')}")
+        st.write(f"**Control code:** {outputs.get('control_code', 'NA')}")
+        st.write(f"**Original text:** {_sentence}")
+
+        orig = outputs.get("original_prediction", {}) or {}
+        st.markdown("### Original prediction")
+        c1, c2 = st.columns(2)
+        with c1:
+            st.metric("Predicted label", str(orig.get("label", orig.get("idx", "NA"))))
+        with c2:
+            st.metric("Confidence", f"{float(orig.get('confidence', 0.0)):.3f}")
+
+        cfs = outputs.get("counterfactuals", []) or []
+        if not cfs:
+            st.warning("No label-flipping counterfactuals found. Try increasing the number of generated candidates or changing the control code.")
+        else:
+            st.markdown("### Label-flipping counterfactuals")
+
+            rows = []
+            for i, cf in enumerate(cfs, 1):
+                rows.append({
+                    "rank": i,
+                    "counterfactual": _clean_cf_text(cf.get("text", "")),
+                    "new_label": cf.get("new_label", "NA"),
+                    "new_score": float(cf.get("new_score", 0.0)),
+                    "similarity": float(cf.get("similarity", 0.0)),
+                })
+            st.dataframe(pd.DataFrame(rows), use_container_width=True)
+
+            for i, cf in enumerate(cfs[:5], 1):
+                with st.container(border=True):
+                    st.markdown(f"**CF {i}**")
+                    st.write(_clean_cf_text(cf.get("text", "")))
+                    d1, d2 = st.columns(2)
+                    with d1:
+                        st.metric("New label", str(cf.get("new_label", "NA")))
+                    with d2:
+                        st.metric("Similarity", f"{float(cf.get('similarity', 0.0)):.3f}")
+
+        all_cands = outputs.get("all_candidates", []) or []
+        if all_cands:
+            with st.expander("All generated candidates", expanded=False):
+                rows = []
+                for i, cand in enumerate(all_cands, 1):
+                    pred = cand.get("prediction", {}) or {}
+                    rows.append({
+                        "rank": i,
+                        "counterfactual": _clean_cf_text(cand.get("counterfactual", "")),
+                        "label": pred.get("label", pred.get("idx", "NA")),
+                        "confidence": float(pred.get("confidence", 0.0)),
+                        "similarity": float(cand.get("similarity", 0.0)),
+                        "label_flipped": bool(cand.get("label_flipped", False)),
+                    })
+                st.dataframe(pd.DataFrame(rows), use_container_width=True)
+
+        params = outputs.get("params", None)
+        if params:
+            with st.expander("Parameters", expanded=False):
+                st.json(params, expanded=False)
+
+        render_downloads(outputs, selected_item=selected_item)
+            
+
 
     elif plugin_tag == "attention_rollout" and outputs.get("token_scores"):
         st.subheader("Result")

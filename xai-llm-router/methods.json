@@ -1192,6 +1192,9 @@
       "name": "Polyjuice",
       "task_input": ["classification"],
       "access_arch": {"access": ["black_box"], "arch": ["all"]},
+       "plugin_routing": [
+      { "task": "classification", "arch": "all", "plugin_id": "polyjuice_counterfactual_classifier" }
+      ],
       "target_scope": "local",
       "description": {
         "overview": "Polyjuice is a transformer-based counterfactual generation framework. It uses a fine-tuned GPT-2 model with perturbation control codes to generate fluent and diverse textual variants of an input. These counterfactuals are evaluated on a target classifier to analyze prediction changes.",
@@ -1204,6 +1207,7 @@
      "The method is model agnostic", 
      "Explanations are intuitive"],
       "limitations": ["The unit (or subset of input) that can be targeted to generate a counterfactual is not obvious", 
+      "As a general-purpose controlled paraphrase model, it not classifier-aware in classification", 
     "The control codes used to guide generation and fine-tuning may be subject to biases"],
       "research_applications": [
         {
