@@ -248,6 +248,7 @@ class _CaptumClassifierBase(ToolkitPlugin):
                 type="number",
                 required=False,
                 help="Input will be truncated to this length.",
+                default=64,
             ),
             FieldSpec(
                 key="merge_subwords",

@@ -34,7 +34,8 @@ class FieldSpec:
     required: bool = True
     options: Optional[List[str]] = None
     help: str = ""
-
+    default: Optional[Any] = None  # optional convenience
+    
 
 class ToolkitPlugin:
     id: str
@@ -127,6 +128,7 @@ class DirectLogitAttribution(ToolkitPlugin):
                 label="Input text",
                 type="textarea",
                 help="We compute DLA for this text (no generation required).",
+                default="The movie was good",
             ),
             FieldSpec(
                 key="max_length",

@@ -19,7 +19,7 @@ class FieldSpec:
     required: bool = True
     options: Optional[List[str]] = None
     help: str = ""
-
+    default: Optional[Any] = None  # optional convenience
 
 def _pretty_token(tok: str) -> str:
     # transformer-lens style tokens: "Ġ" indicates leading space
@@ -117,6 +117,7 @@ class SAEFeatureExplorer:
                 "select",
                 options=["float32", "bfloat16", "float16"],
                 help="float32 is safest; bf16 is a good speed/memory tradeoff on modern GPUs.",
+                default="float32",
             ),
             FieldSpec(
                 "device",
@@ -130,18 +131,21 @@ class SAEFeatureExplorer:
                 "Input text",
                 "textarea",
                 help="We will run the model, take the SAE hook activations, and encode them to sparse features.",
+                default="The movie was good",
             ),
             FieldSpec(
                 "position_index",
                 "Token position (-1 = last token)",
                 "number",
                 help="Which token position to inspect (0-based). -1 means last token.",
+                default=-1,
             ),
             FieldSpec(
                 "top_k",
                 "Top-k features to show",
                 "number",
                 help="How many SAE features to display.",
+                default=3,
             ),
             FieldSpec(
                 "per_token",

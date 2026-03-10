@@ -18,6 +18,7 @@ class FieldSpec:
     required: bool = True
     options: Optional[List[str]] = None
     help: str = ""
+    default: Optional[Any] = None  # optional convenience
 
 
 class ToolkitPlugin:
@@ -57,6 +58,7 @@ class AlibiAnchorsText(ToolkitPlugin):
                 label="Input sentence",
                 type="textarea",
                 help="Text to explain.",
+                default="The movie was good"
             ),
             FieldSpec(
                 key="threshold",
@@ -64,6 +66,7 @@ class AlibiAnchorsText(ToolkitPlugin):
                 type="number",
                 required=False,
                 help="Default 0.95 (higher = slower).",
+                default=0.95
             ),
         ]
 

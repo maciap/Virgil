@@ -20,6 +20,7 @@ class FieldSpec:
     required: bool = True
     options: Optional[List[str]] = None
     help: str = ""
+    default: Optional[Any] = None
 
 
 class ToolkitPlugin:
@@ -88,6 +89,7 @@ class BertVizAttention(ToolkitPlugin):
                 label="Input text",
                 type="textarea",
                 help="Sentence to visualize attention for.",
+                default="The movie was good"
             ),
             FieldSpec(
                 key="view",
@@ -102,6 +104,7 @@ class BertVizAttention(ToolkitPlugin):
                 type="number",
                 required=False,
                 help="Input will be truncated to this length (try 64–256).",
+                default=64
             ),
             FieldSpec(
                 key="use_attention_mask",
