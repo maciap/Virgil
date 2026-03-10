@@ -326,8 +326,7 @@
       "description": {
         "overview": "GradientSHAP combines integrated gradients with randomized baselines to approximate Shapley-value attributions via gradient estimates.",
         "main_functionalities": [
-          "Sample multiple baselines and integrate gradients",
-          "Approximate Shapley-value attributions via gradient estimates"
+          "Compute token-level attribution scores"
         ]
       },
       "strengths": [
@@ -370,6 +369,7 @@
     {
       "name": "Feature Ablation",
       "task_input": ["classification", "generation"],
+      "accessibility": "non experts",
       "access_arch": { "access": ["black_box"], "arch": ["all"] },
       "plugin_routing": [
         { "task": "classification", "arch": "all", "plugin_id": "captum_featureablation_classifier" },
@@ -379,7 +379,7 @@
       "description": {
         "overview": "Feature Ablation measures output change when input tokens/features are removed or replaced with a baseline, estimating importance by deletion impact.",
         "main_functionalities": [
-          "Compute attribution scores"
+          "Compute token-level attribution scores"
         ]
       },
       "strengths": [
@@ -452,15 +452,15 @@
           "year": 2023,
           "source": "ArXiv",
           "url": "https://arxiv.org/html/2512.09730v1", 
-          "note": "Introduces the Interpreto toolkits which also implements Kernel SHAP."
+          "note": "Introduces the Interpreto toolkits which also implements Occlusion."
         }
       ],
       "typical_cost": "high",
       "implementation": "https://github.com/FOR-sight-ai/interpreto"
     },
     {
-  "name": "SHAP (Shapley Value Sampling)",
-  "task_input": ["classification"],
+  "name": "Shapley Value Sampling",
+  "task_input": ["classification", "generation"],
   "access_arch": { "access": ["black_box"], "arch": ["all"] },
   "plugin_routing": [
     { "task": "classification", "arch": "all", "plugin_id": "captum_shapleyvaluesampling_classifier" }
@@ -468,9 +468,9 @@
   "target_scope": "local",
   "accessibility": "non experts",
   "description": {
-    "overview": "Shapley Value Sampling approximates SHAP attributions by Monte Carlo sampling of token coalitions and averaging each token’s marginal contribution to the target output.",
+    "overview": "Shapley Value Sampling approximates SHAP attributions by Monte Carlo sampling of feature coalitions, averaging each feature's marginal contribution to the model's prediction across sampled subsets.",
     "main_functionalities": [
-      "Compute local attributions"
+      "Compute token-level attribution scores"
     ]
   },
   "strengths": [
@@ -517,9 +517,9 @@
       "target_scope": "local",
       "accessibility": "non experts",
       "description": {
-        "overview": "TokenSHAP adapts Shapley-value attribution to autoregressive language models by treating input tokens as players in a cooperative game and approximating their marginal contributions to generated token probabilities via Monte Carlo sampling. TokenSHAP provides local explanation of LLM behaviour. The tool supports the computation, visualization, and benchmarking of TokenSHAP explanations, offering users an intuitive yet theoretically robust framework for understanding token importance in prompts.",
+        "overview": " TokenSHAP adapts Shapley values from cooperative game theory to attribute importance scores to individual tokens or substrings in an input prompt. It uses and ad-hoc Monte Carlo sampling strategy for computational efficiency.",
         "main_functionalities": [
-          "Compute local Shapley-based attributions for a predictor", " Visualization and benchmarking of explanations"
+          "Compute token-level attribution scores"
         ]
       },
       "strengths": [
@@ -554,12 +554,12 @@
     },
     {
       "name": "Kernel SHAP",
-      "task_input": ["classification"],
+      "task_input": ["classification", "generation"],
       "access_arch": {"access": ["black_box"], "arch": ["all"]},
       "plugin_routing": [
         { "task": "classification", "arch": "all", "plugin_id": "captum_kernelshap_classifier" }
        ],
-      "target_scope": "all",
+      "target_scope": "local",
       "accessibility":"non experts",
       "description": {
         "overview": "Kernel SHAP is a method that relies on a weighted linear regression to compute attributions. Attributions correspond to both Shapley values from game theory and coefficients from a local linear regression.",
@@ -608,7 +608,7 @@
       "description": {
         "overview": "Based on the theoretical framework of sensitivity analysis via Sobol indices, they measure both individual (first-order) and interaction (higher-order) effects of features on model outputs.",
         "main_functionalities": [
-          "Compute local attributions", "Visualization and benchmarking of local sensitivity scores"
+          "Compute token-level attribution scores"
         ]
       },
       "strengths": ["Theoretically grounded in sensitivity analysis", 
@@ -618,7 +618,7 @@
         {
           "used_in":  "Look at the Variance! Efficient Black-box Explanations with Sobol-based Sensitivity Analysis", 
           "type": "paper",
-          "year": 2017,
+          "year": 2021,
           "source": "NeurIPS",
           "url": "https://proceedings.neurips.cc/paper/2021/file/da94cbeff56cfda50785df477941308b-Paper.pdf",
           "note": "Introduces the Sobol tool."
