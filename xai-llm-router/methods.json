@@ -1034,7 +1034,7 @@
         "overview": "Attention Rollout accounts for the full flow of information through a transformer by recursively multiplying attention matrices across layers. This produces a single aggregated attention score for any pair of tokens, capturing indirect dependencies that single-layer attention weights miss.",   
         "main_functionalities": [
           "Aggregate attention weights across heads and layers",
-          "Compute token-to-token relevance scores via attention product"
+          "Compute token-to-token relevance scores"
         ]
       },
       "strengths": [
@@ -1078,7 +1078,7 @@
     "overview": "Leveraging flow-network ideas from graph theory, Attention Flow represents tokens across transformer layers as nodes connected by attention-weighted edges and estimates token-to-token influence by computing maximum flow through this layered network.",
     "main_functionalities": [
           "Aggregate attention weights across heads and layers",
-          "Compute token-to-token relevance scores via attention product"
+          "Compute token-to-token relevance scores"
         ]
   },
   "strengths": [
@@ -1111,7 +1111,7 @@
   "target_scope": "local",
   "accessibility": "non experts",
   "description": { 
-   "overview": "ALTI quantifies how contextual information is mixed across transformer layers by modeling token-to-token interactions within each attention block and aggregating them to produce input attribution scores.",
+   "overview": "ALTI quantifies how contextual information is mixed across transformer layers by modeling token-to-token interactions within each attention block and aggregating them to produce attribution scores.",
       "main_functionalities": [
       "Quantifies token-to-token interaction within each layer",
       "Computes token-level local attribution scores"
@@ -1122,7 +1122,7 @@
     "It can provide more robust and faithful explanations than baselines such as Integrated Gradients and Attention Rollout"
   ],
   "limitations": [
-    "Inherits the lack of faithfulness of attention-based explanations (attention may not reflect true importance)",
+    "Assumes that attention can be used as an explanation",
     "Ignores MLPs", 
      "Ignores the classifier on top of the transformer and hence cannot provide explanations for each of the output classes"
 ],
@@ -1142,7 +1142,8 @@
      {
       "name": "LIT Counterfactual Generator",
       "task_input": ["classification"],
-      "access_arch": {"access": ["black_box"], "arch": ["all"]},
+      "accessibility" :"non experts",
+      "access_arch": {"access": ["white_box"], "arch": ["all"]},
       "target_scope": "local",
       "description": {
         "overview": "The tool supports counterfactual generation techniques to provide behavioral analysis through systematic input manipulation. The idea is to create modified versions of the original input by substituting, removing, or adding tokens and then observing how the model's predictions change in response to these perturbations.  In particular, new inputs can be generated either manually through edits, or with a range of automatic counterfactual generators, such as backtranslation, nearest-neighbor retrieval, word substitutions, or adversarial attacks like HotFlip.",
@@ -1168,7 +1169,7 @@
           "used_in": "Paraphrasing with Bilingual Parallel Corpora",
           "type": "paper",
           "year": 2005,
-          "source": "Proceedings of the 43rd Annual Meeting of the Association for Computational Linguistics (ACL’05)",
+          "source": "Proceedings of the 43rd Annual Meeting of the Association for Computational Linguistics (ACL)",
           "url": "https://dl.acm.org/doi/10.3115/1219840.1219914",
           "note": "Discusses backtranslation which LIT can leverage to generate counterfactual inputs."
         }, 
@@ -1176,7 +1177,7 @@
           "used_in": "Near-optimal Hashing Algorithms for Approximate Nearest Neighbor in High Dimensions",
           "type": "paper",
           "year": 2006,
-          "source": "47th annual IEEE symposium on foundations of computer science (FOCS’06)",
+          "source": "47th annual IEEE symposium on foundations of computer science (FOCS)",
           "url": "https://ieeexplore.ieee.org/document/4031381/",
           "note": "Discusses nearest-neighbor retrieval which LIT can leverage to generate counterfactual inputs."
         }, 
@@ -1195,6 +1196,7 @@
       {
       "name": "Polyjuice",
       "task_input": ["classification"],
+      "accessibility": "non experts",
       "access_arch": {"access": ["black_box"], "arch": ["all"]},
        "plugin_routing": [
       { "task": "classification", "arch": "all", "plugin_id": "polyjuice_counterfactual_classifier" }
@@ -1207,12 +1209,12 @@
           "Show the differences needed to alter the predictions of the model"
         ]
       },
-      "strengths": ["Generates fluent counterfactual inputs that tendo to be diverse and close to the actual inputs",
+      "strengths": ["Generates fluent counterfactual inputs that tend to be diverse and close to the actual inputs",
      "The method is model agnostic", 
      "Explanations are intuitive"],
       "limitations": ["The unit (or subset of input) that can be targeted to generate a counterfactual is not obvious", 
-      "As a general-purpose controlled paraphrase model, it not classifier-aware in classification", 
-    "The control codes used to guide generation and fine-tuning may be subject to biases"],
+      "Not classifier-aware: counterfactuals are generated without guidance from the target classifier decision boundary", 
+      "The control codes used to guide generation and fine-tuning may be subject to biases"],
       "research_applications": [
         {
           "used_in": "Polyjuice: Generating Counterfactuals for Explaining, Evaluating, and Improving Models",
@@ -1288,19 +1290,19 @@
 "More expressive than standard activation patching"],
       "limitations": ["Requires manual work, e.g., to creation of a dataset of corrupted inputs to collect activations from the “corrupted” run", 
                      "Patching interventions are computationally expensive, requiring multiple passes", 
-                      "Results are affected by design choices such as the creation of corrupted inputs or the chouce of the metric used to assess patching impact"
+                      "Results are affected by design choices such as the creation of corrupted inputs or the choice of the metric used to assess patching impact"
 ],
       "research_applications": [
         {
           "used_in": "Interpretability in the wild: a circuit for indirect object identification in gpt-2 small",
           "type": "paper",
-          "year": 2022,
-          "source": "arXiv",
-          "url": "https://arxiv.org/abs/2404.15255",
+          "year": 2023,
+          "source": "International Conference on Learning Representations (ICLR)",
+          "url": "https://openreview.net/pdf?id=NpsVSN6o4ul",
           "note": "Introduces path-constrained activation patching."
         }, 
         {
-          "used_in": "Localizing Model Behavior with Path Patching",
+          "used_in": "Localizing model behavior with path patching",
           "type": "paper",
           "year": 2023,
           "source": "arXiv",
@@ -1321,19 +1323,20 @@
     },
     {
   "name": "Attribution Patching (AtP) and AtP*",
+  "accessibility": "experts", 
   "task_input": ["generation"],
   "access_arch": {"access": ["white_box"], "arch": ["decoder"]},
-  "target_scope": "local",
+  "target_scope": "global",
   "description": {
     "overview": "Attribution Patching (AtP) is a fast, gradient-based first-order approximation to activation patching: it estimates the effect of patching an activation by computing the inner product between the activation difference (clean−corrupted) and the gradient of a behavior metric with respect to that activation. AtP* is a refined variant designed to reduce the approximation quality of AtP in attention-saturated and cancellation-heavy settings while preserving scalability.", 
     "main_functionalities": [
-      "Efficienlty compute an importance score per component (e.g., attention head or MLP) which approximates causal activation patching" 
+      "Efficiently compute an importance score per component (e.g., attention head or MLP) which approximates causal activation patching" 
     ]
   },
   "strengths": [
     "Scalable and efficient",
-    "As an approximaiton of the expensive but causal and reliable activation patching, AtP can serve as a *pre-filter* to focus expensive causal interventions (activation/path patching) on a small candidate set",
-    "Can be useful to discover small computational subgraphs responsbile for a given behavior (i.e., circuits)"
+    "As an approximation of the expensive but causal and reliable activation patching, AtP can serve as a *pre-filter* to focus expensive causal interventions (activation/path patching) on a small candidate set",
+    "Can be useful to discover small computational subgraphs responsible for a given behavior (i.e., circuits)"
   ],
   "limitations": [
     "Approximate, not strictly causal: it is a local linearization and can disagree with true activation patching when effects are highly non-linear or large, particularly for standard AtP",
@@ -1342,7 +1345,7 @@
   ],
   "research_applications": [
     {
-      "used_in": "Attribution Patching: Activation Patching At Industrial Scale",
+      "used_in": "Attribution patching: activation patching at industrial scale",
       "type": "blog",
       "year": 2024,
       "source": "Neel Nanda blog",
@@ -1374,8 +1377,7 @@
     ]
   },
   "strengths": [
-    "Produces intuitive explanations by identifying limited edits to the input",
-    "Highlights causal evidence by identifying changes that directly alter the model output"
+    "Produces intuitive explanations by identifying limited edits to the input that alter the output"
   ],
   "limitations": [
     "Can be very computationally expensive, requiring fine-tuning and multiple passes"  ,
@@ -1416,20 +1418,21 @@
           "used_in": "Transformer FFN layers build predictions by promoting vocabulary-space concepts",
           "type": "paper",
           "year": 2022,
-          "source": "arXiv",
-          "url": "https://arxiv.org/abs/2203.14680",
+          "source": "Proceedings of the 2022 Conference on Empirical Methods in Natural Language Processing",
+          "url": "https://aclanthology.org/2022.emnlp-main.3.pdf",
           "note": "Introduces vocabulary-space FFN decomposition."
         },
         {
-          "used_in": "LM-Debugger: Inspection and Intervention tool",
+          "used_in": "LM-Debugger: inspection and intervention tool",
           "type": "paper",
           "year": 2022,
-          "source": "arXiv",
-          "url": "https://arxiv.org/abs/2204.12130",
-          "note": "Uses vocabulary-space analysis for Transformer debugging."
+          "source": "Proceedings of the 2022 Conference on Empirical Methods in Natural Language Processing: System Demonstrations",
+          "url": "https://aclanthology.org/2022.emnlp-demos.2.pdf",
+          "note": "Uses vocabulary-space analysis for debugging transformers and intervening to steer their outputs."
         }
       ],
-      "typical_cost": "medium"
+      "typical_cost": "medium", 
+      "implementation": "https://github.com/mega002/lm-debugger"
     },
     {
   "name": "Training Data Influence (TracIn)",
@@ -1441,9 +1444,9 @@
     { "task": "generation", "arch": "encdec", "plugin_id": "tracin_influence_encdec" }
   ],
   "target_scope": "local",
-  "accessibility": "experts",
+  "accessibility": "mid experts",
   "description": {
-    "overview": "TracIn estimates the influence of a training example on a specific test prediction by approximating how stochastic gradient descent updates changed the test loss during training. Concretely, at multiple saved training checkpoints, it computes the dot product between the gradient of the loss on the training example and the gradient of the loss on the test example, and sums these gradient-alignment scores (weighted by the learning rate) across checkpoints.", 
+    "overview": "Estimates the influence of a training example on a specific test prediction by approximating how stochastic gradient descent updates changed the test loss during training. Concretely, at multiple saved training checkpoints, it computes the dot product between the gradient of the loss on the training example and the gradient of the loss on the test example, and sums these gradient-alignment scores (weighted by the learning rate) across checkpoints.", 
     "main_functionalities": [
       "Compute training data attribution (or influence) scores", 
       "Influence can be computed on all model parameters or restricted to selected layers (e.g., only the final layer) to reduce computational cost and memory usage."
@@ -1458,7 +1461,7 @@
   ],
   "research_applications": [
     {
-      "used_in": "Estimating Training Data Influence by Tracing Gradient Descent",
+      "used_in": "Estimating training data influence by tracing gradient descent",
       "type": "paper",
       "year": 2020,
       "source": "Proceedings of the 34th International Conference on Neural Information Processing Systems (NeurIPS)",
@@ -1466,7 +1469,7 @@
       "note": "Introduces TracIn."
     },
     {
-      "used_in": "TracIn: A Simple Method to Estimate Training Data Influence",
+      "used_in": "TracIn: A simple method to estimate training data influence",
       "type": "blog",
       "year": 2021,
       "source": "Google Research Blog",
@@ -1474,7 +1477,7 @@
       "note": "High-level explanation and intuition for gradient-alignment influence scores."
     },
     {
-      "used_in": "Analyzing the Use of Influence Functions for Instance-Specific Data Filtering in Neural Machine Translation",
+      "used_in": "Analyzing the use of influence functions for instance-specific data filtering in leural machine translation",
       "type": "paper",
       "year": 2022,
       "source": "Proceedings of the Seventh Conference on Machine Translation",
@@ -1490,7 +1493,7 @@
       "plugin_id": "bertviz_attention",
       "accessibility":"mid experts",
       "task_input": ["classification", "generation"],
-      "access_arch": {"access": ["white_box"], "arch": ["encoder, encoder-decoder"]},
+      "access_arch": {"access": ["white_box"], "arch": ["all"]},
       "target_scope": "local",
       "description": {
         "overview": "BertViz is a tool for visualizing self-attention in transformers at multiple scales. It provides views of individual heads, all heads, or neuron-level interactions.",
@@ -1506,7 +1509,7 @@
           "used_in": "A Multiscale Visualization of Attention in the Transformer Model",
           "type": "paper",
           "year": 2019,
-          "source": "arXiv",
+          "source": "Proceedings of the 57th Annual Meeting of the Association for Computational Linguistics: System Demonstrations",
           "url": "https://aclanthology.org/P19-3007/",
           "note": "Introduces BertViz tool and its views."
         }, 
@@ -1527,6 +1530,7 @@
       "task_input": ["generation"],
       "access_arch": {"access": ["white_box"], "arch": ["all"]},
       "target_scope": "local",
+      "accessibility": "mid experts",
       "description": {
         "overview": "exBERT (available at: https://exbert.vizhub.ai/client/exBERT.html) is a tool which provides a concise overview of attention (attention view) and the internal representations (corpus view).",
         "main_functionalities": [
@@ -1534,17 +1538,17 @@
           "Computes summary statistics summarizing internal representations for a given token"
         ]
       },
-       "strengths": ["Easy to access", 
+       "strengths": [
         "Useful to quickly test hypotheses on the internal representation of a specific token in a specific context", 
         "The tool can be easily accessed online at https://exbert.vizhub.ai/client/exBERT.html"
     ],
-      "limitations": ["Attention is known not to provide faithful explananations (see \"Attention is not Explanation\" in Further Readings section)", 
+      "limitations": ["Attention is known not to provide faithful explanations (see \"Attention is not Explanation\" in Further Readings section)", 
     "exBERT only provides statistics for a single token, considering a small number of neighbours, yielding no insights on global behaviors"],
       "research_applications": [
         {
           "used_in": "exBERT: A Visual Analysis Tool to Explore Learned Representations in Transformer Models",
           "type": "paper",
-          "year": 2019,
+          "year": 2020,
           "source": "Proceedings of the 58th Annual Meeting of the Association for Computational Linguistics: System Demonstrations",
           "url": "https://aclanthology.org/2020.acl-demos.22.pdf",
           "note": "Presents exBERT interactive tool."
@@ -1569,10 +1573,10 @@
       "access_arch": {"access": ["white_box"], "arch": ["all"]},
       "target_scope": "global",
       "description": {
-        "overview": "Sparse Autoencoders (SAEs) train a larger, sparse latent space to reconstruct model activations with the goal of disentangling highly-polysemnatic features into more monosemantic features. Each sparse unit aims to capture a semantically meaningful concept.",
+        "overview": "Sparse Autoencoders (SAEs) train a larger, sparse latent space to reconstruct model activations with the goal of disentangling highly-polysemantic features into more monosemantic features. Each sparse unit aims to capture a semantically meaningful concept.",
         "main_functionalities": [
           "Enable discovery of human-interpretable features", 
-          "Facilitates investigation of the causual role of discovered features via ablation"
+          "Facilitates investigation of the causal role of discovered features via ablation"
         ]
       },
       "strengths": [
@@ -1586,16 +1590,24 @@
         "In training, there is a trade-off between reconstruction quality and sparsity"
       ],
       "research_applications": [
+         {
+          "used_in": "Sparse autoencoders find highly interpretable features in language models",
+          "type": "paper",
+          "year": 2024,
+          "source": "Proceedings of the International Conference on Learning Representations (ICLR)",
+          "url": "https://proceedings.iclr.cc/paper_files/paper/2024/file/1fa1ab11f4bd5f94b2ec20e794dbfa3b-Paper-Conference.pdf",
+          "note": "Empirically demonstrates that SAEs trained on language model activations yield highly interpretable and monosemantic features."
+        }, 
         {
-          "used_in": "Towards Monosemanticity: Decomposing LMs with Dictionary Learning",
+          "used_in": "Towards monosemanticity: decomposing language models with dictionary learning",
           "type": "paper",
           "year": 2023,
-          "source": "ArXiv (Anthropic)",
-          "url": "https://arxiv.org/abs/2306.09194",
+          "source": "Transformer Circuits blog",
+          "url": "https://transformer-circuits.pub/2023/monosemantic-features",
           "note": "Introduces large-scale SAEs for discovering monosemantic features."
         },
         {
-          "used_in": "Toy Models of Superposition",
+          "used_in": "Toy models of superposition",
           "type": "paper",
           "year": 2022,
           "source": "Transformer Circuits blog",
@@ -1603,17 +1615,10 @@
           "note": "Explains the superposition hypothesis and role of sparse features."
         }, 
         {
-          "used_in": "Sparse Autoencoders Find Highly Interpretable Features in Language Models",
-          "type": "paper",
-          "year": 2024,
-          "source": "Proceedings of the International Conference on Learning Representations (ICLR)",
-          "url": "https://proceedings.iclr.cc/paper_files/paper/2024/file/1fa1ab11f4bd5f94b2ec20e794dbfa3b-Paper-Conference.pdf",
-          "note": "Explains the superposition hypothesis and role of sparse features."
-        }, 
-        {
           "used_in": "Neuronpedia",
           "type": "Web-hosted resource",
           "year": 2024,
+          "source": "Web platform",
           "url": "https://www.neuronpedia.org/",
           "note": "Neuronpedia is a platform for exploring and interpreting internal features of neural networks by visualizing Sparse Autoencoders (SAE) features, showing where those learned directions in model activations fire and what patterns or concepts they represent."
         }
