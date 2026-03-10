@@ -702,19 +702,17 @@
       "description": {
         "overview": "LIME (Local Interpretable Model-agnostic Explanations) fits a simple surrogate model around a specific instance by sampling perturbations. The surrogate weights on features explain the local prediction.",
         "main_functionalities": [
-          "Compute local attributions"
+          "Compute token-level attribution scores"
         ]
       },
       "strengths": [
         "Simple and intuitive",
         "Widely-used across different domains"
-        
       ],
       "limitations": [
-        "Can be computationally expensive",
-        "Highly sensitive to design choices (perturbation strategy, similarity kernel/width, number of samples, surrogate regularization), which can change explanations substantially",
-
-        "Explanations sensitive to sampling and kernel choices"
+        "While popular across different domains, not tailored to natural language",
+        "Can be computationally expensive", 
+        "Highly sensitive to design choices (perturbation strategy, similarity kernel/width, number of samples, surrogate regularization), which can change explanations substantially"
       ],
       "research_applications": [
         {
@@ -738,7 +736,7 @@
           "type": "paper",
           "year": 2023,
           "source": "Proceedings of the 17th Conference of the European Chapter of the Association for Computational Linguistics: System Demonstrations",
-          "url": "https://dl.acm.org/doi/10.1145/2939672.2939778",
+          "url": "https://aclanthology.org/2023.eacl-demo.29/",
           "note": "Introduces the ferret toolkit which leverages feature attribution approaches like LIME to support the interpretation of individual model predictions."
         }, 
         {
@@ -764,13 +762,14 @@
      {
       "name": "Anchors",
       "plugin_id": "alibi_anchors_text",
+      "accessibility": "mid experts",
       "task_input": ["classification"],
-      "access_arch": {"access": ["black_box"], "arch": ["transformer_general"]},
+      "access_arch": {"access": ["black_box"], "arch": ["all"]},
       "target_scope": "local",
       "description": {
-        "overview": "Anchors identifies a set of words or feature conditions (an 'anchor') that fix a model’s prediction locally. It generates IF-THEN rules guaranteeing the prediction with high precision.",
+        "overview": "Anchors identifies a set of words or conditions (an 'anchor') that fix predictions locally.",
         "main_functionalities": [
-          "Find IF-THEN rules combining input tokens whose presence anchors the prediction"
+          "Find IF-THEN rules combining input tokens whose presence guarantee the prediction with high precision"
         ]
       },
       "strengths": [
@@ -817,6 +816,7 @@
       "task_input": ["generation"],
       "access_arch": {"access": ["white_box"], "arch": ["decoder"]},
       "target_scope": "local",
+      "accessibility":"mid experts",
       "description": {
         "overview": "Direct Logit Attribution (DLA) projects each model component’s contribution onto the target token’s logit in the unembedding space. Positive contributions push the logit up (toward the token), negatives push it down.",
         "main_functionalities": [
@@ -829,8 +829,8 @@
         "Helps locate where the prediction is being written in the model"
       ],
       "limitations": [
-        "Not causal: large contribution might be overridden later",
-        "Ignores possbile interactions (softmax competition, nonlinear effects)",
+        "Not causal: large contribution might be erased later",
+        "Ignores possibile interactions (softmax competition, nonlinear effects)",
         "Depends on normalization placement (affects interpretability)"
       ],
       "research_applications": [
@@ -843,7 +843,7 @@
           "note": "Discusses Direct Logit Attribution as a diagnostic method."
         },
         {
-          "used_in": "TransformerLens ActivationCache.decompose_resid",
+          "used_in": "TransformerLens Documentation",
           "type": "docs",
           "year": 2023,
           "source": "TransformerLens",
@@ -876,6 +876,7 @@
       "task_input": ["generation"],
       "access_arch": {"access": ["white_box"], "arch": ["decoder"]},
       "target_scope": "local",
+      "accessibility": "mid experts",
       "description": {
         "overview": "Logit Lens projects each intermediate hidden state through the model’s output head to view predicted token probabilities at each layer. It tracks how the model’s top prediction evolves through the layers.",
         "main_functionalities": [
@@ -902,18 +903,18 @@
           "note": "Introduces the logit lens idea for GPT."
         },
         {
-          "used_in": "Information Flow of Transformers (EMNLP 2023 Findings)",
+          "used_in": "Information Flow of Transformers",
           "type": "paper",
           "year": 2023,
-          "source": "ACL Anthology",
+          "source": "Findings of the Association for Computational Linguistics: EMNLP 2023",
           "url": "https://aclanthology.org/2023.findings-emnlp.939.pdf",
-          "note": "Applies logit lens to study information flow."
+          "note": "Applies logit lens to study information flow in a forward pass."
         },
         {
-          "used_in": "What Language Do Non-English LLMs Think In? (ACL 2025 Findings)",
+          "used_in": "What Language Do Non-English LLMs Think In?",
           "type": "paper",
-          "year": 2025,
-          "source": "ACL Anthology",
+          "year": 2025, 
+          "source": "Findings of the Association for Computational Linguistics (ACL 2025)",
           "url": "https://aclanthology.org/2025.findings-acl.1350.pdf",
           "note": "Uses logit lens to detect latent language signals."
         }
@@ -930,12 +931,12 @@
       "description": {
         "overview": "Probing assesses what information is encoded in a model’s internal representations by training simple, and often linear, classifiers (or probes) on activations.",
         "main_functionalities": [
-          "It measures whether specific linguistic or semantic properties can be decoded at a certain location within the transformer",
-          "It allows to test hypotheses on what information the model has stored in different locations"
+          "Measures whether specific linguistic or semantic properties can be decoded at a certain location within the transformer"
         ]
       },
       "strengths": [
         "Probing is fast and easy-to-implement, given a dataset of activations", 
+        "Allows to test hypotheses on what information the model has stored in different locations",
         "Can uncover interesting directions in the activation space, paving the way for activation steering"
       ],
       "limitations": [
@@ -966,22 +967,24 @@
       "implementation": "https://github.com/AIRI-Institute/Probing_framework/tree/main"
     },
     {
-      "name": "Layer-wise Relevance Propagation (LRP)",
+      "name": "Layer-wise Relevance Propagation (LRP) and AttnLRP",
       "task_input": ["classification", "generation"],
       "access_arch": {"access": ["white_box"], "arch": ["all"]},
       "target_scope": "local",
+      "accessibility":"mid experts",
       "description": {
-        "overview": "LRP redistributes the prediction score backward through the network to the inputs, assigning relevance scores via fixed propagation rules. In propagation, it ensures relevance conservation (inputs sum to output)",
+        "overview": "LRP redistributes the prediction score backward through the network to the inputs, assigning relevance scores via fixed propagation rules. In propagation, it ensures relevance conservation (inputs sum to output). AttnLRP is a variant designed to properly handle the attention mechanism.",
         "main_functionalities": [
-          "Computes attributions for the input token as well as at any layer"
+          "Computes attributions for the input tokens as well as at any layer"
         ]
       },
       "strengths": [
         "Theoretically grounded propagation rules enforce conservation (inputs sum to output)",
-        "Inuitive and efficient"
+        "Intuitive and efficient"
       ],
       "limitations": [
-        "Not straightforward to implement for different models (requires layer-specific rules)"
+        "Not straightforward to implement for different models (requires layer-specific rules)", 
+        "Not tailored to natural language"
       ],
       "research_applications": [
           {
@@ -997,7 +1000,7 @@
           "type": "paper",
           "year": 2024,
           "source": "Proceedings of the 41st International Conference on Machine Learning (ICML)",
-          "url": "",
+          "url": "https://proceedings.mlr.press/v235/achtibat24a.html",
           "note": "Extends the Layer-wise Relevance Propagation attribution method to handle attention layers."
         },
         {
@@ -1026,9 +1029,9 @@
       "task_input": ["classification", "generation"],
       "access_arch": {"access": ["white_box"], "arch": ["all"]},
       "target_scope": "local",
-      "accessibility":"non experts",
+      "accessibility":"mid experts",
       "description": {
-        "overview": "Late layers often show homogenous and hence uninformative attention patterns because they become more contextualized. Attention rollout addresses this by tracking down attention weights all the way back to the input layer. In particular, Attention Rollout aggregates multi-head self-attention across layers by multiplying attention matrices and outputs a single attention score for any pair of tokens.",   
+        "overview": "Attention Rollout accounts for the full flow of information through a transformer by recursively multiplying attention matrices across layers. This produces a single aggregated attention score for any pair of tokens, capturing indirect dependencies that single-layer attention weights miss.",   
         "main_functionalities": [
           "Aggregate attention weights across heads and layers",
           "Compute token-to-token relevance scores via attention product"
@@ -1036,7 +1039,7 @@
       },
       "strengths": [
         "Efficient: uses existing attention weights (no backprop required)",
-        "Intuitive:  at the implementation level, the method boilds down to multiplying attention matrices across layers.",
+        "Intuitive:  at the implementation level, the method boils down to multiplying attention matrices across layers.",
         "Provides intuitive visualization of attention dependencies"
         ],
        "limitations": [
@@ -1048,8 +1051,8 @@
           "used_in": "Quantifying Attention Flow in Transformers",
           "type": "paper",
           "year": 2020,
-          "source": "arXiv",
-          "url": "https://arxiv.org/abs/2005.00928",
+          "source": "Proceedings of the 58th Annual Meeting of the Association for Computational Linguistics (ACL)",
+          "url": "https://aclanthology.org/2020.acl-main.385.pdf",
           "note": "Introduces the Attention Rollout method."
         }, 
         {
@@ -1057,7 +1060,7 @@
           "type": "paper",
           "year": 2025,
           "source": "arXiv",
-          "url": "missing",
+          "url": "https://arxiv.org/abs/2505.10515",
           "note": "Describes PnPXAI toolkit, which implements several explainers, including Attention Rollout."
         }
       ],
@@ -1070,12 +1073,13 @@
   "task_input": ["classification", "generation"],
   "access_arch": {"access": ["white_box"], "arch": ["all"]},
   "target_scope": "local",
-  "accessibility": "non experts",
+  "accessibility": "mid experts",
   "description": { 
     "overview": "Leveraging flow-network ideas from graph theory, Attention Flow represents tokens across transformer layers as nodes connected by attention-weighted edges and estimates token-to-token influence by computing maximum flow through this layered network.",
     "main_functionalities": [
-      "Estimate input token contribution to a target token via flow-based propagation"
-    ]
+          "Aggregate attention weights across heads and layers",
+          "Compute token-to-token relevance scores via attention product"
+        ]
   },
   "strengths": [
     "Theoretically grounded in graph theory",
@@ -1088,14 +1092,14 @@
     "More computationally expensive than the alternative Attention Rollout method"
   ],
   "research_applications": [
-    {
-      "used_in": "Quantifying Attention Flow in Transformers",
-      "type": "paper",
-      "year": 2020,
-      "source": "arXiv",
-      "url": "https://arxiv.org/abs/2005.00928",
-      "note": "Introduces the Attention Flow method and compares it to Attention Rollout."
-    }
+      {
+        "used_in": "Quantifying Attention Flow in Transformers",
+        "type": "paper",
+        "year": 2020,
+        "source": "Proceedings of the 58th Annual Meeting of the Association for Computational Linguistics (ACL)",
+        "url": "https://aclanthology.org/2020.acl-main.385.pdf",
+        "note": "Introduces the Attention Flow method."
+      }
   ],
   "typical_cost": "low", 
   "implementation": "https://github.com/samiraabnar/attention_flow"
