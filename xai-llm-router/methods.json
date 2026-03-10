@@ -12,9 +12,9 @@
       "target_scope": "local",
       "accessibility": "non experts",
       "description": {
-        "overview": "Integrated Gradients (IG) attributes a model’s prediction to input tokens by integrating gradients along a path from a baseline to the actual input. It produces per-token attributions for the target output.",
+        "overview": "Integrated Gradients (IG) attributes predictions to input tokens by integrating gradients along a path from a baseline to the actual input.",
         "main_functionalities": [
-          "Compute token-level attribution scores"
+          "Compute token-level attribution scores relative to a baseline"
         ]
       },
       "strengths": [
@@ -66,7 +66,7 @@
           "type": "paper",
           "year": 2023,
           "source": "Proceedings of the 17th Conference of the European Chapter of the Association for Computational Linguistics: System Demonstrations",
-          "url": "https://dl.acm.org/doi/10.1145/2939672.2939778",
+          "url": "https://aclanthology.org/2023.eacl-demo.29/",
           "note": "Introduces the ferret toolkit which leverages feature attribution approaches like Integrated Gradients to support explainability in text classification."
         }, 
         {
@@ -153,9 +153,9 @@
       "target_scope": "local",
       "accessibility": "non experts",
       "description": {
-        "overview": "Saliency computes the gradient of the output with respect to each input embedding, producing token-level attribution scores.",
+        "overview": "Saliency attributes predictions to input tokens by computing the gradient of the output with respect to the input.",
         "main_functionalities": [
-          "Compute token importance as the magnitude of gradients of the output with respect to the input"
+          "Compute token-level attribution scores"
         ]
       },
       "strengths": [
@@ -207,7 +207,6 @@
       "implementation": "https://github.com/meta-pytorch/captum",
       "typical_cost": "low"
     },
-
     {
       "name": "Input×Gradient",
       "task_input": ["classification", "generation"],
@@ -220,9 +219,9 @@
       "target_scope": "local",
       "accessibility": "non experts",
       "description": {
-        "overview": "Input×Gradient multiplies each input embedding by its gradient, yielding token-level attribution scores.",
+        "overview": "Input×Gradient computes attribution scores by multiplying each input input embedding by its gradient.",
         "main_functionalities": [
-          "Compute contributions by combining input values with gradients"
+          "Compute token-level attribution scores"
         ]
       },
       "strengths": [
@@ -276,17 +275,18 @@
         { "task": "generation", "arch": "encdec", "plugin_id": "inseq_encdec_deeplift" }
       ],
       "target_scope": "local",
+      "accessibility":"non experts",
       "description": {
-        "overview": "DeepLIFT attributes the change in a model’s output to differences in input features relative to a chosen baseline by backpropagating activation differences using specific propagation rules.",
+        "overview": "DeepLIFT attributes the change in output to differences in input relative to a chosen baseline by backpropagating activation differences using specific propagation rules.",
         "main_functionalities": [
-          "Compute token attributions relative to a reference baseline"
+          "Compute token-level attribution scores relative to a reference baseline"
         ]
       },
       "strengths": [
         "Often faster than Integrated Gradients",
         "Handles cases of zero gradients (saturation) more robustly than raw-gradient tools",
-        "It satisfies additivity, a desirable property similar to completeness for Integrated Gradients"
-      ],
+        "It satisfies the summation-to-delta property, a desirable property similar to completeness for Integrated Gradients"
+      ],  
       "limitations": [
         "Baseline choice can affect attributions (like for Integrated Gradients)"
       ],
