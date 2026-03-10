@@ -1631,7 +1631,7 @@
       "plugin_id": "meta_transparency_graph",
       "task_input": ["generation"],
       "access_arch": {"access": ["white_box"], "arch": ["decoder"]},
-      "target_scope": "both",
+      "target_scope": "global",
        "accessibility": "experts",
       "description": {
         "overview": "Given a representation of a transformer as a computational graph, Information Flow Routes identifies a sparse computational subgraph that explains a model prediction. To this aim, it computes attributions for intermediate components and prunes low-contribution edges to reveal key information pathways.",
@@ -1652,18 +1652,18 @@
       ],
       "research_applications": [
         {
-          "used_in": "Information Flow Routes: Interpreting LMs at Scale",
+          "used_in": "Information flow routes: interpreting language models at scale",
           "type": "paper",
           "year": 2024,
-          "source": "EMNLP",
-          "url": "https://arxiv.org/abs/2404.07047",
+          "source": "Proceedings of the 2024 Conference on Empirical Methods in Natural Language Processing",
+          "url": "https://aclanthology.org/2024.emnlp-main.965/",
           "note": "Introduces the Information Flow Routes technique."
         },
         {
-          "used_in": "LM Transparency Tool (ACL 2024 Demo)",
+          "used_in": "LM transparency tool",
           "type": "paper",
           "year": 2024,
-          "source": "ACL Demo",
+          "source": "Proceedings of the 62nd Annual Meeting of the Association for Computational Linguistics (Volume 3: System Demonstrations)",
           "url": "https://aclanthology.org/2024.acl-demos.6.pdf",
           "note": "Presents a user interface leveraging Information Flow Routes."
         }
@@ -1673,12 +1673,12 @@
     }, 
      {
       "name": "Automatic Circuit DisCovery (ACDC)",
-      "task_input": ["generation", "classification"],
+      "task_input": ["generation"],
       "access_arch": {"access": ["white_box"], "arch": ["decoder"]},
-      "target_scope": "both",
+      "target_scope": "global",
       "accessibility": "experts",
       "description": {
-        "overview": "ACDC is a mechanistic interpretability method to automatize part of the workflow carried out to discover circuits responsible for a given task. In particular, researchers and practitioners are required to specify a metric describing the behavior of interest, a dataset of clean and corrupted inputs associated to the behavior of interest and the computational graph granularity ( (e.g. attention heads and MLP layers or individual neurons). Then, ACDC automatically uses patching to extract a subgraph (circuit) that is as concise as possibile while retaining the behavior of interest",
+        "overview": "Automatizes part of the workflow carried out to discover circuits responsible for a given task. In particular, researchers and practitioners are required to specify a metric describing the behavior of interest, a dataset of clean and corrupted inputs associated to the behavior of interest and the computational graph granularity ( (e.g. attention heads and MLP layers or individual neurons). Then, ACDC automatically uses patching to extract a subgraph (circuit) that is as concise as possibile while retaining the behavior of interest",
         "main_functionalities": [
        "Given a metric describing a behavior of interest, a clean and corrupted dataset and a representation of a transformer as a computational graph, ACDC uses patching to extract concise computational subgraphs (circuits) that are causally responsibile for the behavior of interest"
         ]
@@ -1706,7 +1706,7 @@
     }, 
     {
       "name": "Discretized Integrated Gradients",
-      "task_input": ["generation"],
+      "task_input": ["classification", "generation"],
       "access_arch": { "access": ["white_box"], "arch": ["all"] },
       "plugin_routing": [
         { "task": "generation", "arch": "decoder", "plugin_id": "inseq_decoder_discretized_ig" },
@@ -1715,9 +1715,9 @@
       "target_scope": "local",
       "accessibility": "non experts",
       "description": {
-        "overview": "Discretized Integrated Gradients extends IG to better account for the discrete nature of language model embeddings.",
+        "overview": "Discretized Integrated Gradients computes token-level attributions by integrating gradients along interpolation paths that respect the discrete structure of token embeddings, moving through actual embedding vectors rather than through continuous interpolations that may fall outside the embedding space.",
         "main_functionalities": [
-          "Token-level attribution"
+          "Computes token-level attribution scores"
         ]
       },
       "strengths": [
@@ -1731,10 +1731,10 @@
       ],
       "research_applications": [
         {
-          "used_in": "Discretized Integrated Gradients for Explaining Language Models",
+          "used_in": "Discretized integrated gradients for explaining language models",
           "type": "paper",
           "year": 2021,
-          "source": "EMNLP 2021",
+          "source": "Proceedings of the 2021 Conference on Empirical Methods in Natural Language Processing",
           "url": "https://aclanthology.org/2021.emnlp-main.805.pdf",
           "note": "Introduces Discretized Integrated Gradients."
         }
@@ -1746,6 +1746,7 @@
   "name": "PCA",
   "plugin_id": "embedding_pca_layers",
   "task_input": ["generation", "classification"],
+  "accessibility": "mid experts",
   "access_arch": {
     "access": ["white_box"],
     "arch": ["all"]
@@ -1766,7 +1767,7 @@
   ],
   "limitations": [
     "Captures only linear structure and may miss non-linear geometry",
-    "PCA of high-dimensional token embeddings misses a lot of important information and may destroy important semantic relationship",
+    "Can miss a lot of important information and may destroy important semantic relationship",
     "Visualization quality depends on token count and sentence length"
   ],
   "research_applications": [
@@ -1774,7 +1775,7 @@
       "used_in": "Visualizing LLM Latent Space Geometry Through Dimensionality Reduction",
       "type": "paper",
       "year": 2025,
-      "source": "arXiv: Visualizing LLM Latent Space Geometry Through Dimensionality Reduction",
+      "source": "arXiv",
       "url": "https://arxiv.org/abs/2511.21594",
       "note": "Applies PCA (and UMAP) to analyze latent state geometries and layerwise evolution in transformer models."
     },
@@ -1782,7 +1783,7 @@
       "used_in": "Examining Structure of Word Embeddings with PCA",
       "type": "paper",
       "year": 2019,
-      "source": "International Conference of Text, Speech and Dialogue (TSD 2019)",
+      "source": "International Conference of Text, Speech and Dialogue (TSD)",
       "url": "https://arxiv.org/abs/1906.00114",
       "note": "Uses PCA to compare and interpret the geometric structure of word embeddings from different models."
     },
@@ -1790,7 +1791,7 @@
       "used_in": "Learned Transformer Position Embeddings Have a Low-Dimensional Structure",
       "type": "paper",
       "year": 2024,
-      "source": "Proceedings of the 9th Workshop on Representation Learning for NLP (RepL4NLP 2024)",
+      "source": "Proceedings of the 9th Workshop on Representation Learning for NLP (RepL4NLP)",
       "url": "https://aclanthology.org/2024.repl4nlp-1.17.pdf",
       "note": "Applies PCA to analyze the dimensionality and structure of positional and word embeddings in BERT models. They find that positional embeddings have a low-dimensional structure, using only about 10% of the available dimensions."
     }
@@ -1801,15 +1802,18 @@
    {
   "name": "Linear CKA",
   "plugin_id": "linear_cka_layers",
+  "accessibility": "non experts",
+  "target_scope": "global", 
   "notes": "Representation similarity across layers using linear CKA.",
-  "task_input": ["general_NLP", "classification", "generation"],
-  "access_arch": { "access": "white_box", "arch": "all" },
+  "task_input": [ "classification", "generation"],
+  "access_arch": {
+    "access": ["white_box"],
+    "arch": ["all"]
+  },
   "description": {
     "overview": "Linear CKA (Centered Kernel Alignment) is a similarity measure that quantifies how similarly two sets of latent representations (e.g., neural network layer activations) encode information by comparing their centered linear kernels in a way that is invariant to isotropic scaling and orthogonal transformations.",
     "main_functionalities": [
-      "Extract hidden states for each layer",
-      "Compute linear CKA similarity matrix",
-      "Visualize similarities as a heatmap"
+      "Compute similarities between latent representations at different layers"
     ]
   },
   "strengths": [
@@ -1822,15 +1826,15 @@
   ],
   "research_applications": [
     {
-      "used_in": "Similarity of Neural Network Representations Revisited",
+      "used_in": "Similarity of neural network representations revisited",
       "type": "paper",
       "year": 2019,
-      "source": "Proceedings of the 36 th International Conference on Machine Learning (ICML 2019)",
+      "source": "Proceedings of the 36 th International Conference on Machine Learning (ICML)",
       "url": "https://proceedings.mlr.press/v97/kornblith19a/kornblith19a.pdf",
       "note": "Introduces the linear CKA measure for comparing neural network representations."
     }, 
     {
-    "used_in": "Fine-Tuned Transformers Show Clusters of Similar Representations Across Layers",
+    "used_in": "Fine-tuned transformers show clusters of dimilar representations across layers",
     "type": "paper",
     "year": 2021,
     "source": "Proceedings of the Fourth BlackboxNLP Workshop on Analyzing and Interpreting Neural Networks for NLP",
@@ -1845,7 +1849,8 @@
   "url": "https://aclanthology.org/2021.acl-demo.30.pdf",
   "note": "Introduces the Ecco toolkit for analyzing transformer language models. Includes implementation of CKA for comparing layer representations and studying representational similarity across model depth."
 }
-  ]
+], 
+"implementation": "https://github.com/jalammar/ecco"
 }, 
  {
   "name": "Non-negative Matrix Factorization (NMF)",
@@ -1860,8 +1865,7 @@
   "description": {
     "overview": "Matrix factorization approaches such as non-negative matrix factorization decompose activations into a concise set of patterns.",
     "main_functionalities": [
-      "Summarizes activation with a small number of factors",
-      "Factors can be intepreted much more easily than individual neurons"
+      "Summarizes activation with a small number of factors that can be interpreted much more easily than individual neurons"
       ]
   },
   "strengths": [
@@ -1880,7 +1884,7 @@
   "year": 2021,
   "source": "Proceedings of the 59th Annual Meeting of the Association for Computational Linguistics and the 11th International Joint Conference on Natural Language Processing: System Demonstrations",
   "url": "https://aclanthology.org/2021.acl-demo.30.pdf",
-  "note": "Introduces the Ecco toolkit for analyzing transformer language models. Includes implementation of CKA for comparing layer representations and studying representational similarity across model depth."
+  "note": "Introduces the Ecco toolkit for analyzing transformer language models. Includes implementation NMF for discovering features."
 }, 
   {
   "used_in": "Algorithms for Non-negative Matrix Factorization",
@@ -1904,14 +1908,14 @@
 {
   "name": "Token Ranking Comparison",
   "task_input": ["generation"],
-  "access_arch": { "access": "white_box", "arch": "decoder" },
+  "access_arch": { "access": ["white_box"], "arch": ["decoder"] },
   "plugin_routing": [
     { "task": "generation", "arch": "decoder", "plugin_id": "ecco_token_rank_compare" }
   ],
   "target_scope": "local",
   "accessibility": "non experts",
   "description": {
-    "overview": "Using the main idea underlying the logit lens, Token Ranking Comparison tracks how a model ranks selected tokens at a specific prompt position, allowing comparison of token preference trajectories under the model’s next-token distribution.",
+    "overview": "Token Ranking Comparison tracks how a model ranks selected tokens at a specific prompt position, allowing comparison of token preference trajectories under the model’s next-token distribution.",
     "main_functionalities": [
       "Inspect how token preference changes across layers"
     ]
@@ -1920,7 +1924,7 @@
     "Gives an intuitive view of the model’s relative preference between specific hypotheses (tokens)"
   ],
   "limitations": [
-    "Can compare vocubulary tokens and not all words (without modifications)",
+    "Can compare vacabulary tokens and not all words (without modifications)",
     "Ranks are relative and do not directly convey probability mass differences"
   ],
   "research_applications": [
@@ -1951,7 +1955,7 @@
     ]
   },
   "strengths": [
-    "Produces example-based explanations that are intuitive easy to inspect (nearest-neighbour style rationales)",
+    "Produces example-based explanations that are intuitive and easy to inspect (nearest-neighbour style rationales)",
     "Similarity is model-aware (based on how the model’s parameters would update), not just embedding distance"
     ],
   "limitations": [
@@ -1977,9 +1981,9 @@
     {
   "used_in": "Evaluation of Similarity-based Explanations",
   "type": "paper",
-  "year": 2023,
+  "year": 2021,
   "source": "International Conference on Learning Representations (ICLR)",
-  "url": "https://openreview.net/forum?id=H2R8f8nYl8",
+  "url": "https://openreview.net/forum?id=9uvhpyQwzM_",
   "note": "Systematically evaluates similarity-based explanation methods and analyzes how well retrieved examples align with model behavior."
 }
   ],
@@ -1987,14 +1991,15 @@
   "implementation": "https://docs.seldon.ai/alibi-explain/explanations/methods/similarity"
 },
 {
-  "name": "CCA",
+  "name": "CCA and SVCCA",
   "plugin_id": "cca_layers",
-  "notes": "Representation similarity across transformer layers using Canonical Correlation Analysis (CCA) via SVCCA-lib.",
+  "accessibility": "non experts",
+  "notes": "Representation similarity across transformer layers using Canonical Correlation Analysis (CCA).",
   "task_input": ["classification", "generation"],
-  "access_arch": { "access": "white_box", "arch": "all" },
+  "access_arch": { "access": ["white_box"], "arch": ["all"] },
   "target_scope": "global",
   "description": {
-    "overview": "Canonical Correlation Analysis (CCA) is a statistical method that measures the similarity between two sets of variables by finding pairs of linear combinations—one from each set—that are maximally correlated.",
+    "overview": "Canonical Correlation Analysis (CCA) is a statistical method that measures the similarity between two sets of variables by finding pairs of linear combinations—one from each set—that are maximally correlated. SVCCA is a variant that is fast and invariant to affine transforms",
     "main_functionalities": [
       "Computes similarity of latent representations across transformer layers"
     ]
@@ -2008,7 +2013,7 @@
   ],
   "research_applications": [
     {
-      "used_in": "Canonical Correlation Analysis",
+      "used_in": "Relations Between Two Sets of Variates",
       "type": "paper",
       "year": 1936,
       "source": "Biometrika",
@@ -2019,7 +2024,7 @@
       "used_in": "SVCCA: Singular Vector Canonical Correlation Analysis for Deep Learning Dynamics and Interpretability",
       "type": "paper",
       "year": 2017,
-      "source": "NeurIPS 2017",
+      "source": "Proceedings of the 31st Conference on Neural Information Processing Systems (NeurIPS)",
       "url": "https://arxiv.org/abs/1706.05806",
       "note": "Introduces SVCCA for analyzing representations in deep neural networks; foundational for representation similarity analysis in modern deep models."
     },
@@ -2027,7 +2032,7 @@
       "used_in": "Insights on Representational Similarity in Neural Networks with Canonical Correlation",
       "type": "paper",
       "year": 2018,
-      "source": "NeurIPS 2018",
+      "source": "Proceedings of the 31st Conference on Neural Information Processing Systems (NeurIPS)",
       "url": "https://arxiv.org/abs/1806.05759",
       "note": "Introduces Projection-Weighted CCA (PWCCA) and further analyzes representation similarity in deep networks."
     },
@@ -2035,7 +2040,7 @@
       "used_in": "BERT is Not an Interlingua and the Bias of Tokenization",
       "type": "paper",
       "year": 2019,
-      "source": "ACL 2019",
+      "source": "Proceedings of the 2nd Workshop on Deep Learning Approaches for Low-Resource NLP",
       "url": "https://aclanthology.org/D19-6106.pdf",
       "note": "Uses Canonical Correlation Analysis (CCA) to find that pretrained multilingual BERT does not learn a unified interlingual representation space. Instead, it partitions its internal representations by language."
     },
@@ -2063,7 +2068,8 @@
       "url": "https://aclanthology.org/2021.acl-demo.30.pdf",
       "note": "Introduces the Ecco toolkit for analyzing transformer language models. Implements CCA and SVCCA to study representational similarity across layers."
     }
-  ]
+  ], 
+  "implementation": "https://github.com/jalammar/ecco"
 }
   ]
 }
