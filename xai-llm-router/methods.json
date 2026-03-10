@@ -638,18 +638,18 @@
    {
       "name": "SmoothGrad",
       "task_input": ["generation","classification"],
-      "access_arch": {"access": ["black_box"], "arch": ["all"]},
+      "access_arch": {"access": ["white_box"], "arch": ["all"]},
       "target_scope": "local",
       "accessibility":"non experts",
       "description": {
         "overview": "Instead of using raw gradients to compute attributions, which can be unstable, SmoothGrad approximates a smoothing of the raw gradients based on a Gaussian kernel.",
         "main_functionalities": [
-          "Compute local attributions"
+          "Compute token-level attribution scores"
         ]
       },
       "strengths": ["More stable than attribution tools based on raw gradients", 
       "Reduces visual artifacts and sharp discontinuities in attributions, leading to explanations that are easier to interpret", 
-       "It can be viewed as a general procedure which computes an attribution map by averaging over multiple attribution maps of an arbitrary gradient-based attribution method with multiple noised input"],
+       "Can be viewed as a general procedure which computes an attribution map by averaging over multiple attribution maps of an arbitrary gradient-based attribution method with multiple noised input"],
       "limitations": ["More computationally demanding than attribution tools based on raw gradients, requiring multiple forward passes", 
     "Obtaining proper results requires carefully selecting the variance of the Gaussian noise", 
     "Not tailored to natural language"],
@@ -658,7 +658,7 @@
           "used_in": "SmoothGrad: removing noise by adding noise",
           "type": "paper",
           "year": 2017,
-          "source": "",
+          "source": "ArXiv",
           "url": "https://arxiv.org/pdf/1706.03825",
           "note": "Introduces the SmoothGrad tool."
         }, 
@@ -666,7 +666,7 @@
           "used_in": "Understanding Integrated Gradients with SmoothTaylor for Deep Neural Network Attribution",
           "type": "paper",
           "year": 2021,
-          "source": "",
+          "source": "ArXiv",
           "url": "https://arxiv.org/pdf/2004.10484",
           "note": "Introduces the TaylorGrad tool, a particular instance of SmoothGrad that bridges the gap between SmoothGrad and Integrated Gradients."
         }, 
@@ -687,7 +687,7 @@
           "note": "Describes PnPXAI toolkit, which implements several explainers, including SmoothGrad."
         }
       ],
-      "typical_cost": "missing", 
+      "typical_cost": "medium", 
       "implementation": "https://github.com/pkmr06/pytorch-smoothgrad"
     },
      {
