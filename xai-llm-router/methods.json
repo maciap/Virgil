@@ -446,14 +446,6 @@
         "Can be computationally expensive, requiring many forward passes"
       ],
       "research_applications": [
-        {
-          "used_in": "Visualizing and Understanding Convolutional Networks",
-          "type": "paper",
-          "year": 2014,
-          "source": "ECCV",
-          "url": "https://link.springer.com/chapter/10.1007/978-3-319-10590-1_53",
-          "note": "Popularizes occlusion analysis for CNNs."
-        }, 
          {
           "used_in": "Interpreto: An Explainability Library for Transformers",
           "type": "paper",
@@ -567,15 +559,7 @@
         "Results depend on masking/perturbation strategy, which may create out-of-distribution inputs",
         "Shapley values approximation may be unstable if enough Monte Carlo samples are not drawn"
 ],
-      "research_applications": [
-        {
-          "used_in": "A Unified Approach to Interpreting Model Predictions",
-          "type": "paper",
-          "year": 2017,
-          "source": "NeurIPS",
-          "url": "https://proceedings.neurips.cc/paper/2017/file/8a20a8621978632d76c43dfd28b67767-Paper.pdf",
-          "note": "Introduces SHAP (Lundberg & Lee, 2017)."
-        }, 
+      "research_applications": [ 
         {
           "used_in": "TokenSHAP: Interpreting Large Language Models with Monte Carlo Shapley Value Estimation",
           "type": "paper",
@@ -830,8 +814,8 @@
           "used_in": "A Sea of Words: Analysis of Anchors for Text",
           "type": "paper",
           "year": 2022,
-          "source": "arXiv",
-          "url": "https://arxiv.org/abs/2205.13789",
+          "source": "PMLR",
+          "url": "https://proceedings.mlr.press/v206/lopardo23a.html",
           "note": "Analyzes theoretical properties of Anchors for text classification."
         },
         {
@@ -1200,31 +1184,7 @@
           "source": "Proceedings of the 2020 Conference on Empirical Methods in Natural Language Processing: System Demonstrations (EMNLP)",
           "url": "https://doi.org/10.18653/v1/2020.emnlp-demos.15",
           "note": "Introduces the LIT toolkit with its counterfactual generator."
-        }, 
-        {
-          "used_in": "Paraphrasing with Bilingual Parallel Corpora",
-          "type": "paper",
-          "year": 2005,
-          "source": "Proceedings of the 43rd Annual Meeting of the Association for Computational Linguistics (ACL)",
-          "url": "https://dl.acm.org/doi/10.3115/1219840.1219914",
-          "note": "Discusses backtranslation which LIT can leverage to generate counterfactual inputs."
-        }, 
-        {
-          "used_in": "Near-optimal Hashing Algorithms for Approximate Nearest Neighbor in High Dimensions",
-          "type": "paper",
-          "year": 2006,
-          "source": "47th annual IEEE symposium on foundations of computer science (FOCS)",
-          "url": "https://ieeexplore.ieee.org/document/4031381/",
-          "note": "Discusses nearest-neighbor retrieval which LIT can leverage to generate counterfactual inputs."
-        }, 
-        {
-          "used_in": "HotFlip: White-Box Adversarial Examples for Text Classification",
-          "type": "paper",
-          "year": 2018,
-          "source": "Proceedings of the 56th Annual Meeting of the Association for Computational Linguistics (Volume 2: Short Papers)",
-          "url": "https://aclanthology.org/P18-2006.pdf",
-          "note": "Discusses HotFlip which LIT can leverage to generate counterfactual inputs."
-        }
+        },   
       ],
       "typical_cost": "high", 
       "implementation": "https://github.com/PAIR-code/lit"
@@ -1548,15 +1508,7 @@
           "source": "Proceedings of the 57th Annual Meeting of the Association for Computational Linguistics: System Demonstrations",
           "url": "https://aclanthology.org/P19-3007/",
           "note": "Introduces BertViz tool and its views."
-        }, 
-        {
-          "used_in": "Attention is not Explanation",
-          "type": "paper",
-          "year": 2019,
-          "source": "Proceedings of the 2019 Conference of the North American Chapter of the Association for Computational Linguistics: Human Language Technologies, Volume 1",
-          "url": "https://aclanthology.org/N19-1357.pdf",
-          "note": "Finds that attention patterns do not provide faithful explanations."
-        } 
+        }
       ],
       "typical_cost": "medium", 
       "implementation": "https://github.com/jessevig/bertviz"
