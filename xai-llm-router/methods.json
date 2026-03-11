@@ -3,7 +3,7 @@
     {
       "name": "Integrated Gradients (IG)",
       "task_input": ["classification", "generation"],
-      "access_arch": { "access": ["white_box"], "arch": ["all"] },
+      "access_arch": { "access": ["black_box", "white_box"], "arch": ["all"] },
       "plugin_routing": [
         { "task": "classification", "arch": "all", "plugin_id": "captum_ig_classifier" },
         { "task": "generation", "arch": "decoder", "plugin_id": "inseq_decoder_ig" },
@@ -92,7 +92,7 @@
     {
       "name": "Layer Integrated Gradients",
       "task_input": ["classification", "generation"],
-      "access_arch": { "access": ["white_box"], "arch": ["all"] },
+      "access_arch": { "access": ["black_box", "white_box"], "arch": ["all"] },
       "target_scope": "local",
       "accessibility": "mid experts",
       "plugin_routing": [
@@ -105,12 +105,12 @@
           "Enable analysis of intermediate representations in addition to providing local attribution scores"
         ]
       },
-      "strengths": [  "Like integrated gradients, provides theoretically grounded attributions satisfying axioms",
+      "strengths": [  "Like Integrated Gradients, provides theoretically grounded attributions satisfying axioms",
     "Enables interpretability of intermediate representations rather than input features",
     "More stable than raw gradient-based methods due to path integration",
     "Can be combined with token-level for finer-grained inspection"],
-      "limitations": [ "Like integrated gradients, sensitive to the choice of baseline/reference input" , 
-      "Like integrated gradients, it can be computationally expensive"
+      "limitations": [ "Like Integrated Gradients, sensitive to the choice of baseline/reference input" , 
+      "Like Integrated Gradients, it can be computationally expensive"
      ],
       "research_applications": [
          {
@@ -126,7 +126,7 @@
           "type": "docs",
           "year": 2023,
           "source": "Facebook AI Research",
-          "url": "https://captum.ai/api/layer_integrated_gradients.html",
+          "url": "https://captum.ai/api/layer.html#layer-integrated-gradients",
           "note": "Documents the layer-wise IG method in Captum."
         }, 
         {
@@ -136,6 +136,14 @@
           "source": "Facebook AI Research",
           "url": "https://captum.ai/tutorials/Llama2_LLM_Attribution",
           "note": "Tutorial where layer integrated gradients is leveraged to explain Llama2."
+        },
+        {
+          "used_in": "PnPXAI: A Universal XAI Framework",
+          "type": "paper",
+          "year": 2025,
+          "source": "arXiv",
+          "url": "https://arxiv.org/abs/2505.10515",
+          "note": "Describes PnPXAI toolkit, which implements several explainers, including Integrated Gradients."
         }
       ],
       "typical_cost": "medium", 
@@ -151,7 +159,7 @@
         { "task": "generation", "arch": "encdec", "plugin_id": "inseq_encdec_saliency" }
       ],
       "target_scope": "local",
-      "accessibility": "non experts",
+      "accessibility": "mid experts",
       "description": {
         "overview": "Saliency attributes predictions to input tokens by computing the gradient of the output with respect to the input.",
         "main_functionalities": [
@@ -175,7 +183,7 @@
           "used_in": "Deep Inside Convolutional Networks: Visualising Image Classification Models and Saliency Maps",
           "type": "paper",
           "year": 2014,
-          "source": "ICLR Workshop",
+          "source": "2nd International Conference on Learning Representations (ICLR) 2014, Workshop Track Proceedings",
           "url": "https://arxiv.org/pdf/1312.6034",
           "note": "Introduces the basic saliency/gradient method."
         },
@@ -186,6 +194,13 @@
           "source": "Facebook AI Research",
           "url": "https://captum.ai/api/saliency.html",
           "note": "Describes Saliency in Captum."
+        },
+        {
+          "used_in": "TransformerLens (GitHub)",
+          "type": "docs",
+          "year": 2022,
+          "url": "https://github.com/TransformerLensOrg/TransformerLens",
+          "note": "Introduces attribution tools like Saliency in the TransformerLens toolkit."
         },
         {
           "used_in": "Using Captum to Explain Generative Language Models",
@@ -210,7 +225,7 @@
     {
       "name": "Input×Gradient",
       "task_input": ["classification", "generation"],
-      "access_arch": { "access": ["white_box"], "arch": ["all"] },
+      "access_arch": { "access": ["black_box", "white_box"], "arch": ["all"] },
       "plugin_routing": [
         { "task": "classification", "arch": "all", "plugin_id": "captum_inputxgradient_classifier" },
         { "task": "generation", "arch": "decoder", "plugin_id": "inseq_decoder_input_x_gradient" },
@@ -266,7 +281,7 @@
     },
 
     {
-      "name": "DeepLIFT",
+      "name": "DeepLift",
       "task_input": ["classification", "generation"],
       "access_arch": { "access": ["white_box"], "arch": ["all"] },
       "plugin_routing": [
@@ -304,7 +319,7 @@
           "type": "docs",
           "year": 2023,
           "source": "Facebook AI Research",
-          "url": "https://captum.ai/api/deeplift.html",
+          "url": "https://captum.ai/api/deep_lift.html",
           "note": "Describes DeepLIFT in Captum."
         }
       ],
@@ -315,7 +330,7 @@
     {
       "name": "GradientSHAP",
       "task_input": ["classification", "generation"],
-      "access_arch": { "access": ["white_box"], "arch": ["all"] },
+      "access_arch": { "access": ["black_box", "white_box"], "arch": ["all"] },
       "plugin_routing": [
         { "task": "classification", "arch": "all", "plugin_id": "captum_gradientshap_classifier" },
         { "task": "generation", "arch": "decoder", "plugin_id": "inseq_decoder_gradient_shap" },
@@ -357,9 +372,9 @@
         {
           "used_in": "Interpreto: An Explainability Library for Transformers",
           "type": "paper",
-          "year": 2023,
+          "year": 2026,
           "source": "ArXiv",
-          "url": "https://arxiv.org/html/2512.09730v1",
+          "url": "https://arxiv.org/html/2512.09730v2",
           "note": "Introduces the Interpreto toolkits which also implements Gradient SHAP."
         }
       ],
@@ -369,7 +384,7 @@
     {
       "name": "Feature Ablation",
       "task_input": ["classification", "generation"],
-      "accessibility": "non experts",
+      "accessibility": "experts",
       "access_arch": { "access": ["black_box"], "arch": ["all"] },
       "plugin_routing": [
         { "task": "classification", "arch": "all", "plugin_id": "captum_featureablation_classifier" },
@@ -394,20 +409,12 @@
       ],
       "research_applications": [
         {
-          "used_in": "Global Explanation of Neural Networks via Feature Ablation",
-          "type": "paper",
-          "year": 2019,
-          "source": "ArXiv",
-          "url": "https://arxiv.org/abs/1806.03824",
-          "note": "Discusses feature ablation methods for model interpretability."
-        },
-        {
           "used_in": "Using Captum to Explain Generative Language Models",
           "type": "paper",
           "year": 2023,
           "source": "Proceedings of the 3rd Workshop for Natural Language Processing Open Source Software (NLP-OSS 2023)",
           "url": "https://aclanthology.org/2023.nlposs-1.19.pdf",
-          "note": "Introduces attribution tools like Saliency in the popular Captum toolkit."
+          "note": "Introduces attribution tools like Feature Ablation in the popular Captum toolkit."
         }
       ],
       "typical_cost": "high",
@@ -449,9 +456,9 @@
          {
           "used_in": "Interpreto: An Explainability Library for Transformers",
           "type": "paper",
-          "year": 2023,
+          "year": 2026,
           "source": "ArXiv",
-          "url": "https://arxiv.org/html/2512.09730v1", 
+          "url": "https://arxiv.org/html/2512.09730v2", 
           "note": "Introduces the Interpreto toolkits which also implements Occlusion."
         }
       ],
@@ -465,7 +472,7 @@
   "plugin_routing": [
     { "task": "classification", "arch": "all", "plugin_id": "captum_shapleyvaluesampling_classifier" }
   ],
-  "target_scope": "local",
+  "target_scope": ["local", "global"],
   "accessibility": "non experts",
   "description": {
     "overview": "Shapley Value Sampling approximates SHAP attributions by Monte Carlo sampling of feature coalitions, averaging each feature's marginal contribution to the model's prediction across sampled subsets.",
@@ -505,6 +512,34 @@
       "source": "Meta AI / Captum",
       "url": "https://captum.ai/api/shapley_value_sampling.html",
       "note": "API reference for Captum’s ShapleyValueSampling."
+    },
+    {
+      "used_in": "SAE Lens",
+      "type": "docs",
+      "year": 2024,
+      "url": "https://decoderesearch.github.io/SAELens/latest/",
+      "note": "Library to analyse sparse autoencoders and research mechanistic interpretability."
+    },
+    {
+      "used_in": "NNsight",
+      "type": "docs",
+      "year": 2024,
+      "url": "https://github.com/ndif-team/nnsight",
+      "note": "The nnsight package enables interpreting and manipulating the internals of deep learned models."
+    }, 
+    {
+      "used_in": "Saliency Library",
+      "type": "docs",
+      "year": 2023,
+      "url": "https://github.com/PAIR-code/saliency",
+      "note": "Framework-agnostic implementation for state-of-the-art saliency methods"
+    },
+    {
+      "used_in": "CircuitsVis",
+      "type": "docs",
+      "year": 2022,
+      "url": "https://github.com/TransformerLensOrg/CircuitsVis",
+      "note": "Mechanistic Interpretability Visualizations using React"
     }
   ],
   "typical_cost": "high",
@@ -555,11 +590,11 @@
     {
       "name": "Kernel SHAP",
       "task_input": ["classification", "generation"],
-      "access_arch": {"access": ["black_box"], "arch": ["all"]},
+      "access_arch": {"access": ["black_box", "white_box"], "arch": ["all"]},
       "plugin_routing": [
         { "task": "classification", "arch": "all", "plugin_id": "captum_kernelshap_classifier" }
        ],
-      "target_scope": "local",
+      "target_scope": ["local", "global"],
       "accessibility":"non experts",
       "description": {
         "overview": "Kernel SHAP is a method that relies on a weighted linear regression to compute attributions. Attributions correspond to both Shapley values from game theory and coefficients from a local linear regression.",
