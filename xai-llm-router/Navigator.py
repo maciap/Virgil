@@ -1569,29 +1569,35 @@ with st.sidebar:
         with st.expander("✅ Hard constraints (filters)", expanded=True):
             st.caption("These are *must-have*. Tools that don't satisfy these will be hidden.")
             hard["task"] = _to_internal(
-                st.selectbox("Task", DIM_VALUES["task"], index=DIM_VALUES["task"].index(DEFAULTS["task"]))
+                st.selectbox("Task", DIM_VALUES["task"], index=DIM_VALUES["task"].index(DEFAULTS["task"]), 
+                             help="Whether the focus is on text classification or generation")
             )
             hard["access"] = _to_internal(
-                st.selectbox("Model access", DIM_VALUES["access"], index=DIM_VALUES["access"].index(DEFAULTS["access"]))
+                st.selectbox("Model access", DIM_VALUES["access"], index=DIM_VALUES["access"].index(DEFAULTS["access"]), 
+                             help="Black box does not require access to the model internals, while white box does")
             )
             hard["arch"] = _to_internal(
-                st.selectbox("Architecture", DIM_VALUES["arch"], index=DIM_VALUES["arch"].index(DEFAULTS["arch"]))
+                st.selectbox("Architecture", DIM_VALUES["arch"], index=DIM_VALUES["arch"].index(DEFAULTS["arch"]), 
+                             help="Which architectures are supported")
             )
             hard["scope"] = _to_internal(
-                st.selectbox("Explanation scope", DIM_VALUES["scope"], index=DIM_VALUES["scope"].index(DEFAULTS["scope"]))
+                st.selectbox("Explanation scope", DIM_VALUES["scope"], index=DIM_VALUES["scope"].index(DEFAULTS["scope"]), 
+                help="Whether the focus is on explaining a single input of many")
             )
 
         with st.expander("⭐ Preference (ranking)", expanded=True):
             st.caption("This does not hide tools. It only changes ordering.")
             prefs["accessibility"] = _to_internal(
-                st.selectbox(
-                    "Expertise level",
-                    DIM_VALUES["accessibility"],
-                    index=DIM_VALUES["accessibility"].index(DEFAULTS["accessibility"]),
+            st.selectbox(
+                "Expertise level",
+                DIM_VALUES["accessibility"],
+                index=DIM_VALUES["accessibility"].index(DEFAULTS["accessibility"]),
+                 help="Refers to the expertise needed to understand the explanation."
                 )
-            )
-
-        st.info("Tip: If a tool appears but doesn't match your level of expertise, it's because that is just a preference.")
+                )
+            st.caption("ℹ️ Refers to the expertise needed to understand the explanation, not the explainabilty method. Methods that do not require any knowledge of the transformer model are accessible to non experts,  methods for mid experts require basic knowledge of the transformer model and methods for mid experts require advanced knowledge of the transformer model.")
+            #
+            st.info("Tip: If a tool appears but doesn't match your level of expertise, it's because that is just a preference.")
 
     else:
         user_text = st.text_area(
