@@ -86,7 +86,8 @@
           "note": "Introduces the LIT toolkit which implements Integrated Gradients."
         } 
       ],
-      "typical_cost": "medium"
+      "typical_cost": "medium",
+      "implementation": "https://github.com/meta-pytorch/captum"
     },
 
     {
