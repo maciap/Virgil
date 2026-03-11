@@ -55,6 +55,7 @@ import html as _html
 
 
 _NODE_RE = re.compile(r"^(X0|A|M|I)(\d+)?_(\d+)$")  # X0_3 OR A6_3 etc.
+_render_downloads_call_counter = 0
 
 
 def get_theme_mode() -> str:
@@ -331,6 +332,8 @@ def render_downloads(
     outputs: Dict[str, Any],
     selected_item: Dict[str, Any] | None = None,
     figs: Dict[str, Any] | None = None,
+    key_suffix: str = ""
+
 ):
     """
     Shows an expander with download buttons:
@@ -341,10 +344,17 @@ def render_downloads(
     """
     if not outputs:
         return
+    
+
+    global _render_downloads_call_counter
+    _render_downloads_call_counter += 1
+    call_id = _render_downloads_call_counter  
 
     plugin = outputs.get("plugin", "unknown")
     stamp = _now_stamp()
     prefix = _make_prefix(selected_item, plugin)
+    _k = f"{call_id}_{prefix}_{plugin}_{stamp}_{key_suffix}"
+  
 
     extra_files: Dict[str, bytes] = {}
     # always include raw JSON in the ZIP
@@ -358,6 +368,7 @@ def render_downloads(
             file_name=f"{prefix}_{plugin}_{stamp}.json",
             mime="application/json",
             use_container_width=True,
+            key=f"{_k}_json",
         )
 
         # --- Captum attributions -> CSV
@@ -373,6 +384,8 @@ def render_downloads(
                 file_name=fn,
                 mime="text/csv",
                 use_container_width=True,
+                key=f"{_k}_attr_csv"
+
             )
 
         # --- DLA components -> CSV
@@ -388,6 +401,9 @@ def render_downloads(
                 file_name=fn,
                 mime="text/csv",
                 use_container_width=True,
+                key=f"{_k}_comps_csv"
+
+
             )
 
         # --- Logit lens layers -> flattened CSV
@@ -415,6 +431,9 @@ def render_downloads(
                     file_name=fn,
                     mime="text/csv",
                     use_container_width=True,
+                    key=f"{_k}_ll_csv",
+
+
                 )
 
         # --- BertViz HTML
@@ -429,6 +448,8 @@ def render_downloads(
                 file_name=fn,
                 mime="text/html",
                 use_container_width=True,
+                key=f"{_k}_html"
+                
             )
 
         # --- Figures -> PNG (also added to ZIP)
@@ -443,6 +464,7 @@ def render_downloads(
                         file_name=fname,
                         mime="image/png",
                         use_container_width=True,
+                        key=f"{_k}_fig_{fname}"
                     )
                 except Exception:
                     pass
@@ -461,6 +483,7 @@ def render_downloads(
                 file_name=f"{prefix}_{plugin}_{stamp}.zip",
                 mime="application/zip",
                 use_container_width=True,
+                key=f"{_k}_zip"
             )
 
 
@@ -561,6 +584,7 @@ def render_captum_result(outputs: Dict[str, Any], selected_item: Dict[str, Any] 
         outputs,
         selected_item=selected_item,
         figs={f"{_make_prefix(selected_item, outputs.get('plugin','unknown'))}_attribution_plot.png": fig},
+        key_suffix=key_suffix
     )
 
 

@@ -78,6 +78,7 @@ class PolyjuiceCounterfactualClassifier(ToolkitPlugin):
                 label="Input sentence",
                 type="textarea",
                 help="Text for which to generate counterfactual explanations. Example: The movie was great.",
+                default="The movie was great"
             ),
             FieldSpec(
                 key="template",
@@ -85,7 +86,7 @@ class PolyjuiceCounterfactualClassifier(ToolkitPlugin):
                 type="text",
                 required=False,
                 help="Use [BLANK] where Polyjuice should fill in. Example: The movie was [BLANK].",
-                default="",
+                default="The movie was [BLANK]",
             ),
             FieldSpec(
                 key="control_code",
@@ -94,7 +95,7 @@ class PolyjuiceCounterfactualClassifier(ToolkitPlugin):
                 options=self.DEFAULT_CONTROLS,
                 required=False,
                 help="Generation control code used by Polyjuice.",
-                default="negation",
+                default="lexical",
             ),
             FieldSpec(
                 key="num_return_sequences",
@@ -102,7 +103,7 @@ class PolyjuiceCounterfactualClassifier(ToolkitPlugin):
                 type="number",
                 required=False,
                 help="How many candidates to generate.",
-                default=8,
+                default=3,
             ),
             FieldSpec(
                 key="max_new_tokens",
@@ -110,7 +111,7 @@ class PolyjuiceCounterfactualClassifier(ToolkitPlugin):
                 type="number",
                 required=False,
                 help="Maximum tokens the model may generate.",
-                default=40,
+                default=20,
             ),
         ]
 

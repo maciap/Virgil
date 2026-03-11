@@ -426,7 +426,6 @@ def render_compare_view(anchor_item: Dict[str, Any], other_items: List[Dict[str,
     render_section("Limitations", limitations)
 
 
-
 def _render_outputs(outputs: Dict[str, Any], selected_item: Dict[str, Any] | None, key_suffix: str = ""):
     """
     Routes plugin outputs to the correct renderer block.
@@ -1592,10 +1591,10 @@ with st.sidebar:
                 "Expertise level",
                 DIM_VALUES["accessibility"],
                 index=DIM_VALUES["accessibility"].index(DEFAULTS["accessibility"]),
-                 help="Refers to the expertise needed to understand the explanation."
+                 help="Refers to the expertise needed to understand the explanation, not the explainabilty method. Methods that do not require any knowledge of the transformer model are accessible to non experts,  methods for mid experts require basic knowledge of the transformer model and methods for mid experts require advanced knowledge of the transformer model."
                 )
                 )
-            st.caption("ℹ️ Refers to the expertise needed to understand the explanation, not the explainabilty method. Methods that do not require any knowledge of the transformer model are accessible to non experts,  methods for mid experts require basic knowledge of the transformer model and methods for mid experts require advanced knowledge of the transformer model.")
+            st.caption("ℹ️ Refers to the expertise needed to understand the explanation.")
             #
             st.info("Tip: If a tool appears but doesn't match your level of expertise, it's because that is just a preference.")
 
@@ -1626,8 +1625,8 @@ with st.sidebar:
                 index=DIM_VALUES["accessibility"].index(DEFAULTS["accessibility"]),
             )
 
-        temperature = st.slider("Text model temperature", 0.2, 1.5, 0.7, 0.05)
-        show_text_prefs = st.checkbox("Show predicted preferences", value=True)
+        #temperature = st.slider("Text model temperature", 0.2, 1.5, 0.7, 0.05)
+        #show_text_prefs = st.checkbox("Show predicted preferences", value=True)
 
     st.markdown("<div style='height: 2rem;'></div>", unsafe_allow_html=True)
     st.markdown("---")
@@ -1878,7 +1877,7 @@ with col_recs:
 
             acc = (item.get("meta", {}) or {}).get("accessibility", "") or item.get("accessibility", "")
             if acc and acc not in ("NA", "missing"):
-                st.caption(f"🎓 Accessibility: {acc.title()}")
+                st.caption(f"🎓 Expertise level: {acc.title()}")
 
 
             cA, cB = st.columns([1, 1], gap="medium")
