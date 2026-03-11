@@ -213,10 +213,10 @@
         {
           "used_in": "Interpreto: An Explainability Library for Transformers",
           "type": "paper",
-          "year": 2023,
+          "year": 2026,
           "source": "ArXiv",
-          "url": "https://arxiv.org/html/2512.09730v1",
-          "note": "Introduces the Interpreto toolkit which also implements Saliency."
+          "url": "https://arxiv.org/html/2512.09730v2",
+          "note": "Introduces the Interpreto toolkits which also implements Gradient SHAP."
         }
       ],
       "implementation": "https://github.com/meta-pytorch/captum",
@@ -262,10 +262,10 @@
         {
           "used_in": "Interpreto: An Explainability Library for Transformers",
           "type": "paper",
-          "year": 2023,
+          "year": 2026,
           "source": "ArXiv",
-          "url": "https://arxiv.org/html/2512.09730v1",
-          "note": "Introduces the Interpreto toolkits which also implements Input×Gradient."
+          "url": "https://arxiv.org/html/2512.09730v2",
+          "note": "Introduces the Interpreto toolkits which also implements Gradient SHAP."
         },
         {
           "used_in": "PnPXAI: A Universal XAI Framework",
@@ -617,10 +617,10 @@
         {
           "used_in": "Interpreto: An Explainability Library for Transformers",
           "type": "paper",
-          "year": 2023,
+          "year": 2026,
           "source": "ArXiv",
-          "url": "https://arxiv.org/html/2512.09730v1", 
-          "note": "Introduces the Interpreto toolkits which also implements Kernel SHAP."
+          "url": "https://arxiv.org/html/2512.09730v2",
+          "note": "Introduces the Interpreto toolkits which also implements Gradient SHAP."
         }, 
         {
           "used_in": "PnPXAI: A Universal XAI Framework",
@@ -661,10 +661,10 @@
         {
           "used_in": "Interpreto: An Explainability Library for Transformers",
           "type": "paper",
-          "year": 2023,
+          "year": 2026,
           "source": "ArXiv",
-          "url": "https://arxiv.org/html/2512.09730v1", 
-          "note": "Introduces the Interpreto toolkits which also implements Kernel SHAP."
+          "url": "https://arxiv.org/html/2512.09730v2",
+          "note": "Introduces the Interpreto toolkits which also implements Gradient SHAP."
         }
       ],
       "typical_cost": "missing", 
@@ -708,10 +708,10 @@
         {
           "used_in": "Interpreto: An Explainability Library for Transformers",
           "type": "paper",
-          "year": 2023,
+          "year": 2026,
           "source": "ArXiv",
-          "url": "https://arxiv.org/html/2512.09730v1", 
-          "note": "Introduces the Interpreto toolkits which also implements Kernel SHAP."
+          "url": "https://arxiv.org/html/2512.09730v2",
+          "note": "Introduces the Interpreto toolkits which also implements Gradient SHAP."
         }, 
          {
           "used_in": "PnPXAI: A Universal XAI Framework",
@@ -761,10 +761,10 @@
           {
           "used_in": "Interpreto: An Explainability Library for Transformers",
           "type": "paper",
-          "year": 2023,
+          "year": 2026,
           "source": "ArXiv",
-          "url": "https://arxiv.org/html/2512.09730v1",
-          "note": "Introduces the Interpreto toolkit which also implements Saliency."
+          "url": "https://arxiv.org/html/2512.09730v2",
+          "note": "Introduces the Interpreto toolkits which also implements Gradient SHAP."
         },
         {
           "used_in": "ferret: a Framework for Benchmarking Explainers on Transformers",
