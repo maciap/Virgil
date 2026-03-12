@@ -96,8 +96,6 @@ from Navigator_utils import (
     _render_plugin_form_keyed,
 )
 from Navigator_styles import apply_styles
-
-
 import html
 import re
 import streamlit.components.v1 as components
@@ -106,17 +104,14 @@ import streamlit.components.v1 as components
 
 def get_theme_mode() -> str:
     manual = st.session_state.get("manual_theme_mode", "auto")
-
     if manual in ("light", "dark"):
         return manual
-
     try:
         detected = getattr(st.context.theme, "type", None)
         if detected in ("light", "dark"):
             return detected
     except Exception:
         pass
-
     return "dark"
 
 
@@ -170,18 +165,8 @@ def get_theme_colors(mode: str | None = None) -> dict:
         "axis_fill": "#9CA3AF",
     }
 
-
-
-
 _NODE_RE = re.compile(r"^(X0|A|M|I)(\d+)?_(\d+)$")  # X0_3 OR A6_3 etc.
-
-import os
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
-print(os.getcwd())
-
-
-
-
 
 @st.cache_resource
 def get_plugins():
@@ -191,28 +176,18 @@ def get_plugins():
     plugin4 = AlibiAnchorsText()
     plugin5 = DirectLogitAttribution()
     plugin6 = SAEFeatureExplorer()
-
-    # --- Inseq (existing IG) ---
     plugin7 = InseqDecoderIG_HTTP()
     plugin8 = InseqEncDecIG_HTTP()
-
-    # --- Inseq new methods ---
     plugin15 = InseqDecoderGradientSHAP_HTTP()
     plugin16 = InseqEncDecGradientSHAP_HTTP()
-
     plugin17 = InseqDecoderDeepLIFT_HTTP()
     plugin18 = InseqEncDecDeepLIFT_HTTP()
-
     plugin19 = InseqDecoderInputXGradient_HTTP()
     plugin20 = InseqEncDecInputXGradient_HTTP()
-
     plugin21 = InseqDecoderLIME_HTTP()
     plugin22 = InseqEncDecLIME_HTTP()
-
     plugin23 = InseqDecoderDiscretizedIG_HTTP()
     plugin24 = InseqEncDecDiscretizedIG_HTTP()
-
-    # --- Others ---
     plugin9 = MetaTransparencyGraph()
     plugin10 = CaptumSaliencyClassifierAttribution()
     plugin11 = CaptumDeepLiftClassifierAttribution()
@@ -220,8 +195,6 @@ def get_plugins():
     plugin13 = LinearCKALayers()
     plugin14 = CCALayers()
     plugin25 = AttentionRollout()
-
-
     plugin26 = CaptumInputXGradientClassifierAttribution()
     plugin27 = CaptumGradientShapClassifierAttribution()
     plugin28 = CaptumOcclusionClassifierAttribution()
@@ -229,24 +202,15 @@ def get_plugins():
     plugin30 = CaptumNoiseTunnelSaliencyClassifierAttribution()
     plugin31 = CaptumNoiseTunnelIGClassifierAttribution()
     plugin32 = CaptumNoiseTunnelInputXGradClassifierAttribution()
-
     plugin33 = ProbingBinaryExamples()
-    
     plugin34 = CaptumLimeClassifierAttribution()
     plugin35 = CaptumKernelShapClassifierAttribution()
-
     plugin36 = CaptumShapleyValueSamplingClassifierAttribution()
-
     plugin37 = TracInInfluenceClassifier()
-
     plugin38 = GradientSimilarityPlugin() 
-
     plugin39 = CaptumLayerIntegratedGradientsClassifierAttribution()  
-
     plugin40 = EccoNMF()
-
     plugin41 = EccoTokenRankingCompare()
-
     plugin42 = PolyjuiceCounterfactualClassifier()
 
 
@@ -257,7 +221,6 @@ def get_plugins():
         plugin4.id: plugin4,
         plugin5.id: plugin5,
         plugin6.id: plugin6,
-
         plugin7.id: plugin7,
         plugin8.id: plugin8,
         plugin15.id: plugin15,
@@ -270,7 +233,6 @@ def get_plugins():
         plugin22.id: plugin22,
         plugin23.id: plugin23,
         plugin24.id: plugin24,
-
         plugin9.id: plugin9,
         plugin10.id: plugin10,
         plugin11.id: plugin11,
@@ -278,8 +240,6 @@ def get_plugins():
         plugin13.id: plugin13,
         plugin14.id: plugin14,
         plugin25.id: plugin25,
-
-
         plugin26.id: plugin26,
         plugin27.id: plugin27,
         plugin28.id: plugin28,
@@ -287,40 +247,28 @@ def get_plugins():
         plugin30.id: plugin30,
         plugin31.id: plugin31,
         plugin32.id: plugin32,
-
         plugin33.id: plugin33, 
-
         plugin34.id: plugin34,
         plugin35.id: plugin35, 
         plugin36.id: plugin36, 
-
         plugin37.id: plugin37, 
         plugin38.id: plugin38, 
-
         plugin39.id : plugin39, 
         plugin40.id : plugin40,
         plugin41.id : plugin41, 
-        
         plugin42.id : plugin42  
-    }
-
-
+}
 PLUGINS = get_plugins()
-
 UI_TO_INTERNAL = {
     "all": "NA"
 }
-
 INTERNAL_TO_UI = {
     "NA": "all"
 }
-
 def _to_internal(v: str) -> str:
     return UI_TO_INTERNAL.get(v, v)
-
 def _to_ui(v: str) -> str:
     return INTERNAL_TO_UI.get(v, v)
-
 def _dict_to_ui(d: Dict[str, str]) -> Dict[str, str]:
     return {k: _to_ui(v) for k, v in d.items()}
 
@@ -343,10 +291,6 @@ DEFAULTS = {
 HARD_DIMS = ["task", "access", "arch", "scope"]
 PREF_DIMS = ["accessibility"]
 
-
-# -------------------------
-# Compare view renderer
-# -------------------------
 def _compare_key(item: Dict[str, Any]) -> str:
     """
     Unique key for compare/selection even if plugin_id is missing.
@@ -374,7 +318,7 @@ def render_compare_view(anchor_item: Dict[str, Any], other_items: List[Dict[str,
     st.markdown("---")
     st.subheader("🔍 Comparison")
 
-    # ---- Metadata ----
+    # Metadata
     rows = []
     anchor_k = _compare_key(anchor_item)
     for it in items:
@@ -396,7 +340,7 @@ def render_compare_view(anchor_item: Dict[str, Any], other_items: List[Dict[str,
     st.markdown("### Metadata")
     st.dataframe(pd.DataFrame(rows), use_container_width=True)
 
-    # ---- helpers ----
+    # helpers 
     def main_funcs(it: Dict[str, Any]) -> List[str]:
         desc = it.get("description", {}) or {}
         mf = desc.get("main_functionalities", []) or []
@@ -463,7 +407,7 @@ def _render_outputs(outputs: Dict[str, Any], selected_item: Dict[str, Any] | Non
             st.write(
                 "- Interactive attention visualization from BertViz.\n"
                 "- Shows attention patterns by layer/head.\n"
-                "- Attention ≠ importance, but it's useful for inspection/debugging."
+                "- Attention ≠ importance, but it's useful for inspection."
             )
         st.write(f"**Model:** {outputs.get('model', 'NA')}")
         st.write(f"**View:** {outputs.get('view', 'NA')}")
@@ -477,7 +421,6 @@ def _render_outputs(outputs: Dict[str, Any], selected_item: Dict[str, Any] | Non
                 "- **Anchors** are IF-THEN style rules (a set of words/spans) that 'lock in' the model prediction locally.\n"
                 "- **Precision**: estimated probability the model keeps the same prediction when the anchor holds.\n"
                 "- **Coverage**: how often the anchor applies under the perturbation distribution.\n"
-                "- Anchors are **black-box**: they only need your model's `predict_fn`."
             )
 
         st.write(f"**Model:** {outputs.get('model', 'NA')}")
@@ -543,10 +486,10 @@ def _render_outputs(outputs: Dict[str, Any], selected_item: Dict[str, Any] | Non
         st.subheader("Result")
         with st.expander("ℹ️ How to read Logit Lens", expanded=True):
             st.write(
-                "- **Logit lens** projects the hidden state at each layer into the vocabulary space.\n"
+                "- **Logit lens** projects latent representations (residual stream) at each layer into the vocabulary space.\n"
                 "- For a chosen **token position**, it shows which tokens each layer 'leans toward' predicting.\n"
                 "- It is a **diagnostic / mechanistic** view: useful for debugging and understanding representation evolution.\n"
-                "- We use **auto-faithful normalization**: if the model has a final LayerNorm, we apply it to intermediate layers "
+                "- We use the following normalization strategy: if the model has a final LayerNorm, we apply it to intermediate layers "
                 "**but not to the final layer**."
             )
 
@@ -610,10 +553,9 @@ def _render_outputs(outputs: Dict[str, Any], selected_item: Dict[str, Any] | Non
         st.subheader("Result")
         with st.expander("ℹ️ How to read Direct Logit Attribution (DLA)", expanded=True):
             st.write(
-                "- **DLA** decomposes a single **target logit** into contributions from transformer components.\n"
+                "- **DLA** decomposes a single **target logit** into contributions from transformer components (e.g. attention heads, MLPs).\n"
                 "- Each component output vector is projected onto the **unembedding direction** of the target token.\n"
                 "- Positive values push the model *toward* the target token; negative values push it *away*.\n"
-                "- This is a **linear diagnostic** view (not fully causal): it ignores softmax coupling and other nonlinear interactions."
             )
 
         st.write(f"**Model:** {outputs.get('model', 'NA')}")
@@ -672,8 +614,8 @@ def _render_outputs(outputs: Dict[str, Any], selected_item: Dict[str, Any] | Non
         st.subheader("Result")
         with st.expander("ℹ️ How to read Sparse Autoencoders (SAELens + Neuronpedia)", expanded=True):
             st.write(
-                "- A **Sparse Autoencoder (SAE)** learns a set of directions (called **features**) in a model's hidden activations.\n"
-                "- For each token position, the SAE **encodes** the model activation into a sparse vector of **feature activations**.\n"
+                "- A **Sparse Autoencoder (SAE)** learns a set of directions (called **features**) in a model's internal representations.\n"
+                "- The SAE **encodes** the model activation into a sparse vector of ** activations**.\n"
                 "- Each row in **Top activating SAE features** is:\n"
                 "  - **feature_id**: the index of a learned feature (a latent direction)\n"
                 "  - **activation**: how strongly that feature is present at the selected token position\n\n"
@@ -731,10 +673,10 @@ def _render_outputs(outputs: Dict[str, Any], selected_item: Dict[str, Any] | Non
             st.markdown("### Per-token top features (k=5)")
             st.json(outputs.get("per_token_top", [])[:20])
 
-        # Downloads before embeds (embeds aren't downloadable anyway)
+        # Downloads before embeds 
         render_downloads(outputs, selected_item=selected_item, figs=figs)
 
-        # --- Neuronpedia integration (Level 1) ---
+        # Neuronpedia integration
         print("neuronpedia") 
         np_out = outputs.get("neuronpedia", {}) or {}
         if np_out.get("enabled") and np_out.get("feature_urls"):
@@ -838,12 +780,12 @@ def _render_outputs(outputs: Dict[str, Any], selected_item: Dict[str, Any] | Non
 
     elif plugin_tag == "embedding_pca_layers" and outputs.get("projected"):
         st.subheader("Result")
-        # --- explainer ---
+        #  explainer 
         with st.expander("ℹ️ How to read this PCA view", expanded=True):
             st.write(
-                "- We project each token's vector into PCA space.\n"
-                "- **Single basis**: PCA is fit once (default: last layer) and reused → plots are comparable across layers.\n"
-                "- **Per-layer basis**: PCA is fit separately per layer → shows within-layer structure but axes are not comparable.\n"
+                "- We project each token internal representation into PCA space.\n"
+                "- **Single basis**: PCA is fit once (default: last layer) and reused → results are comparable across layers.\n"
+                "- **Per-layer basis**: PCA is fit separately per layer → shows within-layer structure but results are not directly comparable.\n"
                 "- Tokens are labeled by their tokenizer output; subword tokens may look like 'Ġword' (GPT-2) or '##ing' (BERT).\n"
                 "- In 3D, labels can be occluded; hover always shows token strings."
             )
@@ -909,9 +851,7 @@ def _render_outputs(outputs: Dict[str, Any], selected_item: Dict[str, Any] | Non
                 show_3d = st.checkbox("Show interactive 3D (drag)", value=True, key=f"pca_layers__show_3d_{key_suffix or id(outputs)}")
 
 
-            # -------------------------
             # 2D scatter (matplotlib)
-            # -------------------------
             fig = plt.figure()
             plt.scatter(df["pc1"].values, df["pc2"].values, s=int(point_size))
             plt.xlabel("PC1")
@@ -988,7 +928,7 @@ def _render_outputs(outputs: Dict[str, Any], selected_item: Dict[str, Any] | Non
 
                     st.plotly_chart(fig3d, use_container_width=True)
 
-            # ✅ Downloads (2D plot as PNG; JSON always available via render_downloads)
+            # Downloads 
             figs_to_download = {
                 f"{_make_prefix(selected_item, outputs.get('plugin','unknown'))}_pca_layer_{layer_idx}_2d.png": fig
             }
@@ -1020,8 +960,6 @@ def _render_outputs(outputs: Dict[str, Any], selected_item: Dict[str, Any] | Non
             with st.expander("Token indices used (index:token)", expanded=False):
                 st.code(" ".join([f"{i}:{toks[i]}" for i in used if 0 <= i < len(toks)]))
 
-       
-
         M = np.array(outputs["cka_matrix"], dtype=float)
         labels = outputs.get("layer_labels", [str(i) for i in range(M.shape[0])])
 
@@ -1044,7 +982,7 @@ def _render_outputs(outputs: Dict[str, Any], selected_item: Dict[str, Any] | Non
         with st.expander("Matrix values", expanded=False):
             st.dataframe(df, use_container_width=True)
 
-        # --- Hidden matplotlib heatmap (for download only) ---
+        # Hidden matplotlib heatmap (for download only) 
         fig2 = plt.figure()
         plt.imshow(M, vmin=0.0, vmax=1.0, cmap="viridis")
         plt.xticks(range(len(labels)), labels, rotation=45, ha="right")
@@ -1066,7 +1004,7 @@ def _render_outputs(outputs: Dict[str, Any], selected_item: Dict[str, Any] | Non
             st.write(
                 "- **CCA** measures linear similarity between two representation sets (token vectors) from different layers.\n"
                 "- Values are in **[0, 1]** (higher = more similar).\n"
-                "- We compute it via Google's SVCCA `cca_core.get_cca_similarity` and return **mean canonical correlation**.\n"
+                "- We compute it via SVCCA nd return **mean canonical correlation**.\n"
                 "- Because SVCCA-CCA requires `neurons < tokens`, we SVD-reduce the neuron dimension to `tokens-1` when needed.\n"
                 "- Layer labels: **emb** = embedding output, **Lk** = transformer block k."
             )
@@ -1126,10 +1064,7 @@ def _render_outputs(outputs: Dict[str, Any], selected_item: Dict[str, Any] | Non
         )
 
 
-
-
     elif plugin_tag == "polyjuice_counterfactual_classifier":
-
         _sentence = outputs.get("sentence", "")
         _template = outputs.get("template") or ""
 
@@ -1137,16 +1072,12 @@ def _render_outputs(outputs: Dict[str, Any], selected_item: Dict[str, Any] | Non
             if "[SEP]" not in text:
                 return text.strip()
             
-            # Everything before [SEP] contains: "{original} <|perturb|> [{ctrl}] {template_or_original}"
-            # Everything after [SEP] contains the fills
             before_sep = text.split("[SEP]", 1)[0]
             after_sep = text.split("[SEP]", 1)[1]
             fills = [f.strip() for f in after_sep.split("[ANSWER]") if f.strip()]
             if not fills:
                 return text.strip()
 
-            # Extract the template part (after the control code bracket)
-            # format: "{sentence} <|perturb|> [{ctrl}] {template}"
             if "<|perturb|>" in before_sep:
                 template_part = re.sub(r".*<\|perturb\|>\s*\[[^\]]+\]\s*", "", before_sep).strip()
                 if "[BLANK]" in template_part:
@@ -1155,7 +1086,6 @@ def _render_outputs(outputs: Dict[str, Any], selected_item: Dict[str, Any] | Non
                         result = result.replace("[BLANK]", fill, 1)
                     return result.strip()
 
-            # No [BLANK] in template — the fill IS the rewrite
             return fills[0]
 
 
@@ -1267,7 +1197,7 @@ def _render_outputs(outputs: Dict[str, Any], selected_item: Dict[str, Any] | Non
         with st.expander("ℹ️ How to read NMF (Ecco)", expanded=True):
             st.markdown(
                 """
-            - **Rows = factors**: each row is a pattern discovered in the model's activations.
+            - **Rows = factors**: each row is a pattern discovered in the model's internal representations.
             - **Tokens = input words** from the sentence.
 
             **Default view:**  
@@ -1301,7 +1231,7 @@ def _render_outputs(outputs: Dict[str, Any], selected_item: Dict[str, Any] | Non
             """
             - The table shows how the model's **preference for specific tokens** changes across transformer layers.
 
-            - We select a **position in the prompt** and inspect the model's hidden representation at that point.  
+            - We select a **position in the prompt** and inspect the model's representations at that point.  
             That representation determines the model's **probability distribution over the next token**.
 
             - For each **layer**, we project the hidden state into the vocabulary space and check **where the watched tokens appear in the ranking** of possible next tokens.
@@ -1347,7 +1277,7 @@ def _render_outputs(outputs: Dict[str, Any], selected_item: Dict[str, Any] | Non
                 "- **Macro F1**: harmonic mean of precision and recall, averaged across classes.\n"
                 "- The **confusion matrix** shows how many positives/negatives were correctly or incorrectly predicted.\n\n"
                 "⚠️ **Important:** This demo uses a small number of examples (e.g., 30 vs 30 by default). "
-                "While useful for experimentation, robust scientific conclusions require substantially larger datasets.\n"
+                "While useful for demonstration, robust scientific conclusions require substantially larger datasets.\n"
                 "Small datasets may lead to unstable or over-optimistic estimates."
             )
 
@@ -1462,11 +1392,11 @@ def _render_outputs(outputs: Dict[str, Any], selected_item: Dict[str, Any] | Non
 
         with st.expander("ℹ️ How to read Similarity-Based Explanations", expanded=True):
             st.markdown(
-                """
-        - We compute **parameter gradients** of the loss for the **test instance** and each **training example**.
-        - We rank training examples by **similarity between gradient vectors** (dot / cosine / asym-dot).
-        - The top examples are the **nearest neighbors** under this gradient-similarity notion.
-                """
+            """
+            - We compute **parameter gradients** of the loss for the **test instance** and each **training example**.
+            - We rank training examples by **similarity between gradient vectors** (dot / cosine / asym-dot).
+            - The top examples are the **nearest neighbors** under this gradient-similarity notion, which are provided as explanations.
+            """
             )
 
         pred = outputs.get("prediction", {})
@@ -1507,7 +1437,7 @@ def _render_outputs(outputs: Dict[str, Any], selected_item: Dict[str, Any] | Non
         render_downloads(outputs, selected_item=selected_item)
 
 
-### UI 
+# UI 
 st.set_page_config(page_title="Language Model Explainability Navigator 🧭", layout="wide")
 
 # ---- Session state (important fixes) ----
@@ -1524,15 +1454,14 @@ if "last_outputs" not in st.session_state:
 
 # Compare holds "other" tools only (max 2)
 if "compare_keys" not in st.session_state:
-    st.session_state["compare_keys"] = []          # list[str]
+    st.session_state["compare_keys"] = []         
 if "compare_items" not in st.session_state:
-    st.session_state["compare_items"] = {}         # key -> item dict
+    st.session_state["compare_items"] = {}         
 
-# keep if you still use it elsewhere
 if "compare_outputs" not in st.session_state:
     st.session_state["compare_outputs"] = {}
 
-# per-panel output store for the compare run section (anchor + compare tools)
+# per-panel output store for the compare run section 
 if "_compare_run_outputs" not in st.session_state:
     st.session_state["_compare_run_outputs"] = {}
 
@@ -1544,9 +1473,7 @@ with col2:
     st.image("images/logo_app.png", width=220)
 
 
-# -------------------------
 # Sidebar: hard constraints vs preferences
-# -------------------------
 with st.sidebar:
 
     
@@ -1625,9 +1552,6 @@ with st.sidebar:
                 index=DIM_VALUES["accessibility"].index(DEFAULTS["accessibility"]),
             )
 
-        #temperature = st.slider("Text model temperature", 0.2, 1.5, 0.7, 0.05)
-        #show_text_prefs = st.checkbox("Show predicted preferences", value=True)
-
     st.markdown("<div style='height: 2rem;'></div>", unsafe_allow_html=True)
     st.markdown("---")
     theme_choice = st.radio(
@@ -1639,7 +1563,6 @@ with st.sidebar:
 
 
 THEME = get_theme_colors()
-
 
 if THEME["mode"] == "light":
     st.markdown("""
@@ -1752,9 +1675,7 @@ except Exception as e:
     st.error(f"Failed to load methods.json: {e}")
     st.stop()
 
-# -------------------------
 # Compute recommendations
-# -------------------------
 recommended: List[Dict[str, Any]] = []
 excluded: List[Dict[str, Any]] = []
 
@@ -1853,9 +1774,7 @@ else:
                 }
             )
 
-# -------------------------
 # Layout (3 columns)
-# -------------------------
 col_spacer, col_recs, col_run = st.columns([0.2, 1.4, 1.8], gap="large")
 
 # Column 2: Recommendations
@@ -1888,14 +1807,11 @@ with col_recs:
                     st.session_state["selected_key"] = item_key
                     st.session_state["selected_plugin_id"] = item.get("plugin_id")  # may be None
                     st.session_state["last_outputs"] = None
-                    # reset compare run outputs when anchor changes
                     st.session_state["_compare_run_outputs"] = {}
 
-                    # ensure anchor isn't in compare list
                     st.session_state["compare_keys"] = [k for k in st.session_state["compare_keys"] if k != item_key]
                     st.session_state["compare_items"].pop(item_key, None)
 
-            # Add-to-compare should ONLY APPEAR after first selection (no disabled/transparent buttons)
             with cB:
                 anchor_key = st.session_state.get("selected_key")
                 if anchor_key and (item_key != anchor_key):
@@ -1928,7 +1844,6 @@ with col_run:
         render_selected_tool_card(selected_item)
 
         st.markdown("<div style='height:0.75rem'></div>", unsafe_allow_html=True)
-        # If the selected tool has no runnable plugin, stop here (still comparable!)
         if not selected_plugin_id:
             st.info("This tool is not runnable in the UI.")
         else:
@@ -1950,9 +1865,6 @@ with col_run:
                 if outputs:
                     _render_outputs(outputs, selected_item)
 
-    # ─────────────────────────────────────────────────────────────────────
-    # Compare section
-    # ─────────────────────────────────────────────────────────────────────
     st.markdown("---")
 
     anchor_item = st.session_state.get("selected_item")
@@ -1972,14 +1884,12 @@ with col_run:
         if not other_items:
             st.info("Add up to 2 other tools from the left to compare.")
         else:
-            # ── Metadata comparison (unchanged) ──────────────────────────
             render_compare_view(anchor_item, other_items)
 
-            # ── Run & compare results ─────────────────────────────────────
             st.markdown("---")
             st.subheader("▶ Run & compare results")
             st.caption(
-                "Each panel is independent. Fill in inputs and hit **▶ Run** per tool. "
+                "Each panel is independent. Fill in inputs and hit **▶ Run** per method. "
                 "Results appear directly below each panel."
             )
 
@@ -2019,7 +1929,7 @@ with col_run:
                         render_result_fn=_render_outputs,
                     )
 
-            # ── Footer controls ───────────────────────────────────────────
+            
             st.markdown("<div style='height:1rem'></div>", unsafe_allow_html=True)
             c1, c2, c3 = st.columns([1, 1, 2], gap="medium")
             with c1:

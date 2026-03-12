@@ -4,21 +4,16 @@ import io
 import zipfile
 from datetime import datetime
 from typing import Any, Dict, List, Tuple
-
 import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
 import streamlit.components.v1 as components
-
-
 from text_to_score import rank_methods
-#from toolkits.captum_classifier import CaptumClassifierAttribution
 from toolkits.captum_classifier_methods import (
     CaptumIGClassifierAttribution,
     CaptumSaliencyClassifierAttribution,
     CaptumDeepLiftClassifierAttribution,
 )
-
 from toolkits.bertviz_attention import BertVizAttention
 from toolkits.logit_lens import LogitLens
 from toolkits.alibi_anchors_text import AlibiAnchorsText
@@ -36,18 +31,14 @@ from toolkits.inseq_proxy_http import (
 )
 from toolkits.meta_transparency import MetaTransparencyGraph  # adjust import path
 from toolkits.attention_rollout import AttentionRollout
-
 import tempfile
 import os
 from pyvis.network import Network
-
 from toolkits.PCAViz import EmbeddingPCALayers
 import plotly.express as px
 import plotly.graph_objects as go
 from toolkits.linear_cka import LinearCKALayers
-
 from toolkits.cca_layers import CCALayers
-
 import html
 import re
 import streamlit.components.v1 as components
@@ -56,7 +47,6 @@ import html as _html
 
 _NODE_RE = re.compile(r"^(X0|A|M|I)(\d+)?_(\d+)$")  # X0_3 OR A6_3 etc.
 _render_downloads_call_counter = 0
-
 
 def get_theme_mode() -> str:
     manual = st.session_state.get("manual_theme_mode", "auto")
@@ -69,8 +59,6 @@ def get_theme_mode() -> str:
     except Exception:
         pass
     return "dark"
-
-
 
 def get_theme_colors(mode: str | None = None) -> dict:
     mode = mode or get_theme_mode()
@@ -121,10 +109,6 @@ def get_theme_colors(mode: str | None = None) -> dict:
         "label_fill": "#E5E7EB",
         "axis_fill": "#9CA3AF",
     }
-
-
-
-
 
 def _parse_node(node_id: str):
     m = _NODE_RE.match(node_id)
@@ -240,7 +224,7 @@ def captum_method_explainer_text(algo: str, params: Dict[str, Any]) -> str:
             "- **What it is**: Saliency uses the **gradient of the target logit w.r.t. the input embeddings**.\n"
             "- **Interpretation**: high magnitude means the label score is **sensitive** to that token.\n"
             "- **Caveat**: gradients can be **noisy** and sometimes saturate; saliency is fast but less stable than IG.\n"
-            "- **Tip**: if results look spiky, try IG (more stable) or average over multiple runs/seeds.\n"
+            "- **Tip**: if results look spiky, try another method like Integrated Gradient (more stable) or average over multiple runs/seeds.\n"
         )
 
     if algo == "DeepLift":
@@ -291,11 +275,8 @@ def render_token_highlight(
         if t in ("[CLS]", "[SEP]", "[PAD]"):
             continue
 
-        # normalize into [0,1]
         a = min(1.0, abs(float(s)) / (max_abs + 1e-9))
 
-        # Use RGBA so we can modulate alpha (intensity)
-        # Positive => blue-ish, Negative => red-ish
         if s >= 0:
             bg = f"rgba(37, 99, 235, {0.08 + 0.55*a:.3f})"   # blue
         else:
@@ -361,7 +342,6 @@ def render_downloads(
     extra_files[f"{prefix}_{plugin}_{stamp}.json"] = _to_json_bytes(outputs)
 
     with st.expander("⬇️ Download results", expanded=False):
-        # --- Raw JSON (always)
         st.download_button(
             "Download raw outputs (JSON)",
             data=_to_json_bytes(outputs),
@@ -371,7 +351,7 @@ def render_downloads(
             key=f"{_k}_json",
         )
 
-        # --- Captum attributions -> CSV
+        # attributions -> CSV
         if outputs.get("attributions"):
             df_attr = pd.DataFrame(outputs["attributions"])
             csv_bytes = df_attr.to_csv(index=False).encode("utf-8")
@@ -388,7 +368,7 @@ def render_downloads(
 
             )
 
-        # --- DLA components -> CSV
+        # DLA components -> CSV
         if outputs.get("plugin") == "direct_logit_attribution" and outputs.get("components"):
             df_comps = pd.DataFrame(outputs["components"])
             csv_bytes = df_comps.to_csv(index=False).encode("utf-8")
@@ -406,7 +386,7 @@ def render_downloads(
 
             )
 
-        # --- Logit lens layers -> flattened CSV
+        # Logit lens layers -> flattened CSV
         if outputs.get("plugin") == "logit_lens" and outputs.get("layers"):
             rows = []
             for layer_i, layer_obj in enumerate(outputs["layers"]):
@@ -436,7 +416,7 @@ def render_downloads(
 
                 )
 
-        # --- BertViz HTML
+        # BertViz HTML
         if outputs.get("plugin") == "bertviz_attention" and outputs.get("html"):
             html_bytes = outputs["html"].encode("utf-8")
             fn = f"{prefix}_{plugin}_{stamp}.html"
@@ -452,7 +432,7 @@ def render_downloads(
                 
             )
 
-        # --- Figures -> PNG (also added to ZIP)
+        # Figures -> PNG (also added to ZIP)
         if figs:
             for fname, fig in figs.items():
                 try:
@@ -469,7 +449,7 @@ def render_downloads(
                 except Exception:
                     pass
 
-        # --- Everything ZIP
+        #  Everything ZIP
         if extra_files:
             zbuf = io.BytesIO()
             with zipfile.ZipFile(zbuf, "w", zipfile.ZIP_DEFLATED) as z:
@@ -575,9 +555,9 @@ def render_captum_result(outputs: Dict[str, Any], selected_item: Dict[str, Any] 
     if show_highlight:
         render_token_highlight(
             tokens=df_plot["token"].tolist(),
-            scores=df_plot["attr_norm"].tolist(),  # already normalized to [-1, 1]
+            scores=df_plot["attr_norm"].tolist(),  
             title="🖍️ Highlighted text (by attribution)",
-            max_abs=1.0,  # because attr_norm is normalized
+            max_abs=1.0,  
         )
 
     render_downloads(
@@ -589,7 +569,6 @@ def render_captum_result(outputs: Dict[str, Any], selected_item: Dict[str, Any] 
 
 
 def _to_node_id(n: Any) -> str:
-    # pyvis node ids must be str/int; make it stable
     return str(n)
 
 
@@ -706,13 +685,10 @@ def render_meta_flow_pyvis(outputs: Dict[str, Any]):
         # value influences thickness in pyvis
         net.add_edge(src, dst, value=max(0.1, abs(w)), title=f"weight={w:.4g}")
 
-    # Basic layout tuning
     net.repulsion(node_distance=170, central_gravity=0.1, spring_length=140, spring_strength=0.04, damping=0.25)
 
-    # Render to HTML and embed
     html_out = net.generate_html()
 
-    # Make it more streamlit-friendly (avoid external fetches if possible)
     components.html(html_out, height=760, scrolling=True)
 
 
@@ -738,9 +714,7 @@ def _make_prefix(selected_item: Dict[str, Any] | None, plugin_name: str) -> str:
     return method or "result"
 
 
-# -------------------------
 # Helpers
-# -------------------------
 def norm_list(x):
     if x is None:
         return []
@@ -832,17 +806,12 @@ def score(prefs: Dict[str, str], m: Dict[str, Any]) -> Tuple[int, List[str], Lis
         return -1, [], [f"🎓 accessibility unknown (tool has {tool_acc})"]
 
     # Map: best -> 2, middle -> 1, worst -> 0
-    # (or any scale you prefer)
     if tool_acc == order[0]:
         return 2, [f"🎓 accessibility match ({tool_acc})"], []
     if tool_acc == order[1]:
         return 1, [f"🎓 accessibility mid ({tool_acc})"], []
     return 0, [], [f"🎓 accessibility lower priority (tool has {tool_acc})"]
 
-
-# -------------------------
-# Plugin form rendering
-# -------------------------
 
 def _render_plugin_form_keyed(plugin, prefix: str) -> dict:
     """
@@ -1020,10 +989,6 @@ def render_compare_run_panel(
     if outputs:
         render_result_fn(outputs, item, key_suffix=panel_key)
 
-
-# -------------------------
-# Selected tool card
-# -------------------------
 
 def _first_non_na(*vals):
     for v in vals:
