@@ -70,9 +70,81 @@ Virgil builds on top of several excellent open-source resources. :contentReferen
 ---
 
 ## Installation
+Virgil requires **two separate Python environments** to manage dependency conflicts.
 
-### Option 1 — standard environment
+### 1. Clone the repository
+
 ```bash
-python -m venv .venv
-source .venv/bin/activate
-pip install -r requirements_new.txt
+git clone https://github.com/maciap/Virgil.git
+cd Virgil
+```
+
+### 2. Create the environments
+
+Virgil was tested with **Python 3.12**.
+
+```bash
+conda create -n virgil-main python=3.12.10 -y
+conda create -n virgil-inseq python=3.12.10 -y
+```
+
+### 3. Install dependencies
+
+Install the main application dependencies:
+
+```bash
+conda activate virgil-main
+pip install -r requirements_fix.txt
+```
+
+Install the dependencies required for generation-based explainability methods:
+
+```bash
+conda activate virgil-inseq
+pip install -r xai-inseq-requirements.txt
+```
+
+---
+
+## Running Virgil
+
+Virgil runs two services simultaneously:
+
+- **Inseq API service** (generation explainability backend)
+- **Streamlit interface** (main application)
+
+### 1. Start the Inseq service
+
+In a terminal:
+
+```bash
+conda activate virgil-inseq
+python -m uvicorn inseq_service.app:app --host 0.0.0.0 --port 8001 --log-level info
+```
+
+### 2. Start the Streamlit interface
+
+Open a second terminal and run:
+
+```bash
+conda activate virgil-main
+streamlit run Navigator.py
+```
+
+### 3. Open the application
+
+Will open automatically, or go to: 
+```
+http://localhost:8501
+```
+
+The Virgil interface should now be available locally.
+
+#### Notes
+
+- The Inseq backend runs on **port 8001**.
+- The Streamlit interface runs on **port 8501**.
+- Both services must be running simultaneously for everything to function properly.
+
+---
+
