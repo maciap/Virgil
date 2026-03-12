@@ -1,6 +1,6 @@
 # 1. Define paths
-$VENV_PATH = "C:\Users\marti\XAI4LLMsMetaToolkit\xai-llm-router\mynev4\Scripts\Activate.ps1"
-$APP_DIR   = "C:\Users\marti\XAI4LLMsMetaToolkit\xai-llm-router"
+$VENV_PATH = "C:\Users\marti\XAI4LLMsMetaToolkit\Virgil\mynev4\Scripts\Activate.ps1"
+$APP_DIR   = "C:\Users\marti\XAI4LLMsMetaToolkit\Virgil"
 
 # 2. Env vars
 $env:INSEQ_URL = "http://127.0.0.1:8001"
