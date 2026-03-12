@@ -729,7 +729,7 @@
           "year": 2026,
           "source": "ArXiv",
           "url": "https://arxiv.org/html/2512.09730v2",
-          "note": "Introduces the Interpreto toolkits which also implements Gradient SHAP."
+          "note": "Introduces the Interpreto toolkits which also implements LIME."
         },
         {
           "used_in": "ferret: a Framework for Benchmarking Explainers on Transformers",
@@ -753,7 +753,7 @@
           "year": 2023,
           "source": "Proceedings of the 3rd Workshop for Natural Language Processing Open Source Software (NLP-OSS 2023)",
           "url": "https://aclanthology.org/2023.nlposs-1.19.pdf",
-          "note": "Introduces attribution tools like Saliency in the popular Captum toolkit."
+          "note": "Introduces attribution tools like LIME in the popular Captum toolkit."
         }
       ],
       "typical_cost": "high", 
