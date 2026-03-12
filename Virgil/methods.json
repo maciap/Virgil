@@ -453,6 +453,14 @@
           "source": "ArXiv",
           "url": "https://arxiv.org/html/2512.09730v2", 
           "note": "Introduces the Interpreto toolkits which also implements Occlusion."
+        }, 
+          {
+          "used_in": "Visualizing and Understanding Convolutional Networks",
+          "type": "paper",
+          "year": 2014,
+          "source": "European Conference on Computer Vision (ECCV)",
+          "url": "https://doi.org/10.1007/978-3-319-10590-1_53", 
+          "note": "Introduces the Interpreto toolkits which also implements Occlusion."
         }
       ],
       "typical_cost": "high",
@@ -505,34 +513,6 @@
       "source": "Meta AI / Captum",
       "url": "https://captum.ai/api/shapley_value_sampling.html",
       "note": "API reference for Captum’s ShapleyValueSampling."
-    },
-    {
-      "used_in": "SAE Lens",
-      "type": "docs",
-      "year": 2024,
-      "url": "https://decoderesearch.github.io/SAELens/latest/",
-      "note": "Library to analyse sparse autoencoders and research mechanistic interpretability."
-    },
-    {
-      "used_in": "NNsight",
-      "type": "docs",
-      "year": 2024,
-      "url": "https://github.com/ndif-team/nnsight",
-      "note": "The nnsight package enables interpreting and manipulating the internals of deep learned models."
-    }, 
-    {
-      "used_in": "Saliency Library",
-      "type": "docs",
-      "year": 2023,
-      "url": "https://github.com/PAIR-code/saliency",
-      "note": "Framework-agnostic implementation for state-of-the-art saliency methods"
-    },
-    {
-      "used_in": "CircuitsVis",
-      "type": "docs",
-      "year": 2022,
-      "url": "https://github.com/TransformerLensOrg/CircuitsVis",
-      "note": "Mechanistic Interpretability Visualizations using React"
     }
   ],
   "typical_cost": "high",
@@ -1634,7 +1614,7 @@
   "limitations": [
     "Introduces an approximation error: the transcoder does not perfectly replicate the original MLP, which can limit the faithfulness of derived explanations (there is a trade-off between sparsity and approximation quality)",
     "Training transcoders for large models is computationally expensive",
-    "Interpreting transcoder features still requires human inspection (e.g., via top activations), like for Sparse Autoencoders",
+    "Interpreting transcoder features still requires human inspection (e.g., via top activations), like for Sparse Autoencoders"
   ],
   "research_applications": [
     {
@@ -1644,7 +1624,7 @@
       "source": "Proceedings of the 38th Conference on Neural Information Processing Systems (NeurIPS)",
       "url": "https://proceedings.neurips.cc/paper_files/paper/2024/file/2b8f4db0464cc5b6e9d5e6bea4b9f308-Paper-Conference.pdf",
       "note": "Introduces transcoders as sparse, interpretable replacements for MLP sublayers and demonstrates their use for circuit-level analysis in transformer language models."
-    },
+    }
   ],
   "typical_cost": "high",
   "implementation": " https://github.com/jacobdunefsky/transcoder_circuits/"
