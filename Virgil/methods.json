@@ -385,7 +385,7 @@
     {
       "name": "Feature Ablation",
       "task_input": ["classification", "generation"],
-      "accessibility": "experts",
+      "accessibility": "non experts",
       "access_arch": { "access": ["black_box"], "arch": ["all"] },
       "plugin_routing": [
         { "task": "classification", "arch": "all", "plugin_id": "captum_featureablation_classifier" },
