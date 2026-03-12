@@ -65,7 +65,7 @@ Virgil builds on top of several excellent open-source resources. :contentReferen
 - [Neuronpedia](https://github.com/hijohnnylin/neuronpedia) — feature dashboards and interpretability tooling
 - [Ecco](https://github.com/jalammar/ecco) — explanation methods for transformer-based language models 
 - [TransformerLens](https://github.com/TransformerLensOrg/TransformerLens) — mechanistic interpretability for transformer-based language models
-- [LLM Transparency Tool] (https://github.com/facebookresearch/llm-transparency-tool) mechanistic interpretability for transformer-based language models
+- [LLM Transparency Tool](https://github.com/facebookresearch/llm-transparency-tool) mechanistic interpretability for transformer-based language models
 ---
 
 ## Installation
