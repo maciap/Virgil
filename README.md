@@ -1,61 +1,65 @@
-# XAI4LLMsMetaToolkit
+<p align="center">
+  <img src="xai-llm-router/images/logo_app.png" alt="Virgil logo" width="180"/>
+</p>
+
+<h1 align="center">Virgil</h1>
+<p align="center">
+  <strong>Your Language Model Explainability Navigator</strong>
+</p>
+
+<p align="center">
+  Discover, compare, and run explainability methods for transformer-based language models.
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/Python-3.12-blue" alt="Python">
+  <img src="https://img.shields.io/badge/Framework-Streamlit-ff4b4b" alt="Streamlit">
+  <img src="https://img.shields.io/badge/Status-Active-success" alt="Status">
+</p>
+
+---
+
+## Overview
+
+> There are many explainability tools for language models, but it is often unclear  
+> which method fits a specific need, what level of expertise it requires,  
+> and how to actually run it in practice.
 
 
-🚀 A tool designed to help practitioners with XAI for LLMs. 
+**Virgil** is an interactive interface for **explainable AI for transformer-based language models**.
 
-💻 Tested on Windows. 
+It is designed to help practitioners and researchers, regardless of their level of expertise, to:
+- discover suitable explainability methods for their needs,
+- easily access the salient characteristics of the different methods, 
+- compare methods side by side,
+- run selected methods through a unified interface.
+---
+
+<p align="center">
+  <img src="images/virgil_screenshot.png" alt="Virgil screenshot" width="1000"/>
+</p>
+
+---
 
 
-### Developer Instructions
+## Libraries and projects used
 
-* Activate environment: 
+Virgil builds on top of several excellent open-source resources. :contentReference[oaicite:1]{index=1}
 
+- [Captum](https://captum.ai/) — explainability for PyTorch
+- [BertViz](https://github.com/jessevig/bertviz) — attention visualization
+- [Alibi](https://alibi.readthedocs.io/en/latest/) — miscellaneous explanation methods
+- [Inseq](https://inseq.org/) — explainability for text generation
+- [SAELens](https://github.com/decoderesearch/SAELens) — sparse autoencoder analysis
+- [Neuronpedia](https://github.com/hijohnnylin/neuronpedia) — feature dashboards and interpretability tooling
+- [Ecco](https://github.com/jalammar/ecco) — explanation methods for transformer-based language models 
+- [TransformerLens](https://github.com/TransformerLensOrg/TransformerLens) — mechanistic interpretability for transformer-based language models 
+---
+
+## Installation
+
+### Option 1 — standard environment
 ```bash
 python -m venv .venv
 source .venv/bin/activate
-pip install -r requirements_new.txt (requirements_new.txt actually contains all the libraries Martino uses) 
-```
-
-and 
-
-```bash
-pip install -r xai-inseq-requirements.txt (for inseq envioronment) 
-```
-
-
-* Run:
-```python
-streamlit run app.py
-```
-
-In Windows (power shell), to the app, Martino runs: 
-```bash
-.\run_all2.ps1
-```
-Which automatically runs all! 
-And we need two envioronments to handle conflicting dependenices. Martino uses a conda envioronment with "xai-inseq-requirements.txt" and a virtual envioronment with "requirements_new.txt". 
-
-
-
-#### Currently supported plugins
-* IG (Captum)
-* DeepLift (Captum)
-* Saliency (Captum)
-* Logit lens (mechanistic interpretability)
-* Direct Logit Attribution (mechanistic interpretability)
-* BertViz (visualization of attention patterns)
-* Anchors (Alibi)
-* Sparse Autoencoders (The coolest)
-* Integrated Gradients for Text Generation (Seq2Seq) in Encoder Decoder architecture (Inseq)
-* Integrated Gradients for Text Generation (Seq2Seq) in Decoder architecture (Inseq)
-* Information flow routes - LLM transparency tool (also very cool)
-* PCA Embedding Vizualization (cool) 
-* Linear CKA
-* CCA
-* And more (see toolkits/)
-
-#### TODO 
-
-* Update and adjust current entries methods.json (containing all the methods that can be recommended)
-* Add more runnable tools
-* Understand how to deploy and make the code package that can be contributed 
+pip install -r requirements_new.txt
