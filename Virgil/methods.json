@@ -740,7 +740,7 @@
           "note": "Introduces the ferret toolkit which leverages feature attribution approaches like LIME to support the interpretation of individual model predictions."
         }, 
         {
-          "used_in": "InterpretML: {A} Unified Framework for Machine Learning Interpretability",
+          "used_in": "InterpretML: A Unified Framework for Machine Learning Interpretability",
           "type": "paper",
           "year": 2019,
           "source": "ArXiv",
