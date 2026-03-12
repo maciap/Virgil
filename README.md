@@ -17,6 +17,8 @@
   <img src="https://img.shields.io/badge/Status-Active-success" alt="Status">
 </p>
 
+
+
 ---
 
 ## Overview
@@ -35,12 +37,20 @@ It is designed to help practitioners and researchers, regardless of their level 
 - run selected methods through a unified interface.
 ---
 
+
+## Try Virgil Online
+
+You can try Virgil directly in your browser via Hugging Face Spaces:
+
+[![Hugging Face Space](https://img.shields.io/badge/🤗%20HuggingFace-Space-yellow)](https://huggingface.co/spaces/XAI4LLMs/Virgil)
+
+
+
 <p align="center">
   <img src="xai-llm-router/images/light_mode_screenshot.jpg" alt="Virgil screenshot" width="1000"/>
 </p>
 
 ---
-
 
 ## Libraries and projects used
 
