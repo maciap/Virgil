@@ -818,7 +818,7 @@
       "target_scope": "local",
       "accessibility":"mid experts",
       "description": {
-        "overview": "Direct Logit Attribution (DLA) projects each model component’s contribution onto the target token’s logit in the unembedding space. Positive contributions push the logit up (toward the token), negatives push it down.",
+        "overview": "Direct Logit Attribution (DLA) projects the contribution of each model component to the logit space contribution onto a target token logit. Positive contributions push the logit up (toward the token), negatives push it down.",
         "main_functionalities": [
           "Compute signed contributions of model components to a chosen next-token prediction"
         ]
