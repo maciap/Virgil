@@ -1615,6 +1615,41 @@
       "implementation": "https://github.com/decoderesearch/SAELens"
     },
     {
+  "name": "Transcoders",
+  "task_input": ["generation", "classification"],
+  "access_arch": { "access": ["white_box"], "arch": ["all"] },
+  "target_scope": "global",
+  "accessibility": "experts",
+  "description": {
+    "overview": "Transcoders replace MLP sublayers in a transformer with a sparse, interpretable approximation: a wide feed-forward network with a sparse bottleneck trained to mimic the original MLP's input-output behavior. Each feature in the bottleneck can be interpreted as a localized, human-readable computation. Unlike Sparse Autoencoders, which reconstruct activations, transcoders learn to approximate the MLP's functional mapping from input to output.",
+    "main_functionalities": [
+      "Enable decomposition of MLP computations into human-intrerpretable features",
+      "Support circuit-level analysis by providing a sparse computational graph over transcoder features"
+    ]
+  },
+  "strengths": [
+    "Find circuits  that neatly factorize into input-dependent and input-invariant term", 
+    "Can give smaller circuits than Sparse Autoencoders"
+  ],
+  "limitations": [
+    "Introduces an approximation error: the transcoder does not perfectly replicate the original MLP, which can limit the faithfulness of derived explanations (there is a trade-off between sparsity and approximation quality)",
+    "Training transcoders for large models is computationally expensive",
+    "Interpreting transcoder features still requires human inspection (e.g., via top activations), like for Sparse Autoencoders",
+  ],
+  "research_applications": [
+    {
+      "used_in": "Transcoders Find Interpretable LLM Feature Circuits",
+      "type": "paper",
+      "year": 2024,
+      "source": "Proceedings of the 38th Conference on Neural Information Processing Systems (NeurIPS)",
+      "url": "https://proceedings.neurips.cc/paper_files/paper/2024/file/2b8f4db0464cc5b6e9d5e6bea4b9f308-Paper-Conference.pdf",
+      "note": "Introduces transcoders as sparse, interpretable replacements for MLP sublayers and demonstrates their use for circuit-level analysis in transformer language models."
+    },
+  ],
+  "typical_cost": "high",
+  "implementation": " https://github.com/jacobdunefsky/transcoder_circuits/"
+},   
+    {
       "name": "Information Flow Routes",
       "plugin_id": "meta_transparency_graph",
       "task_input": ["generation"],
