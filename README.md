@@ -44,6 +44,7 @@ You can try Virgil directly in your browser via Hugging Face Spaces:
 
 [![Hugging Face Space](https://img.shields.io/badge/🤗%20HuggingFace-Space-yellow)](https://huggingface.co/spaces/XAI4LLMs/Virgil)
 
+---
 
 
 <p align="center">
