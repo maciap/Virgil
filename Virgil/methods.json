@@ -929,7 +929,7 @@
       "access_arch": {"access": ["white_box"], "arch": ["all"]},
       "target_scope": "global",
       "description": {
-        "overview": "Probing assesses what information is encoded in a model’s internal representations by training simple, and often linear, classifiers (or probes) on activations.",
+        "overview": "Probing assesses what information is encoded in a model’s internal representations by training simple, and often linear, classifiers (or probes) on internal representations.",
         "main_functionalities": [
           "Measures whether specific linguistic or semantic properties can be decoded at a certain location within the transformer"
         ]
@@ -1211,7 +1211,7 @@
       "target_scope": "global", 
       "accessibility": "experts",
       "description": {
-        "overview": "Activation patching studies which components of a model are responsible for a behavior by replacing internal activations. In particular, activations from a “clean” run are copied into a “corrupted” run (or vice-versa)", 
+        "overview": "Activation patching studies which components of a model are responsible for a behavior by replacing internal activations. In particular, activations from a “clean” run are copied into a “corrupted” run (or vice-versa) to assess the impact of the intervention", 
         "main_functionalities": [
           "Identify computational paths that are important for a behavior of the model of interest",
           "Identify critical components"
