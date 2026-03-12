@@ -62,13 +62,13 @@ with col_left:
 
     st.markdown(
         """
-The landscape of explainability (XAI) for large language models is **fragmented** and **fast-moving**.
+The landscape of explainability for language models is **fragmented** and **fast-moving**.
 New methods, studies, and taxonomies appear rapidly, but *navigating* them is difficult, especially for newcomers.
 
 Like Dante at the beginning of the *Divine Comedy*, one can feel lost in a dark forest not for lack of paths,
 but for lack of orientation. Virgil does not create the road; he acts as a guide through it.
 
-This app acts as a **guide** in the forest of LLM explainability methods.
+This app acts as a **guide** in the forest of language model explainability methods.
         """
     )
 
@@ -88,7 +88,7 @@ This app acts as a **guide** in the forest of LLM explainability methods.
 with col_right:
     st.image("images/logo_app.png", use_container_width=True)
     st.markdown(
-        "<div class='small-muted'>A structured navigator for selecting and comparing LLM explainability tools.</div>",
+        "<div class='small-muted'>A structured navigator for selecting and comparing language model explainability methods.</div>",
         unsafe_allow_html=True,
     )
 
@@ -150,7 +150,7 @@ with tab3:
     st.markdown(
         """
 This app aims to support **both**:
-- **Users with limited expertise** in LLMs/XAI, by lowering the entry barrier and providing guided navigation.
+- **Users with limited expertise** in explainability methods for language models, by lowering the entry barrier and providing guided navigation.
 - **Experienced practitioners**, by offering a structured way to search, justify, and compare tools in their toolbox.
         """
     )
@@ -159,7 +159,7 @@ This app aims to support **both**:
     st.markdown(
         """
 It can also be useful for:
-- **Teaching** XAI for LLMs (conceptual map + trade-offs).
+- **Teaching** explainability for language models (conceptual map + trade-offs).
 - **Workshops / onboarding** in labs or companies.
 - **Methodological discussions** in interdisciplinary teams (ML + domain experts).
  """
@@ -189,4 +189,4 @@ If you’re using the Navigator in a paper, consider citing it.
         )
 
 st.markdown("---")
-st.caption("LLM Explainability Navigator 🧭 — About page")
+st.caption("Language Model Explainability Navigator 🧭 — About page")

@@ -1184,7 +1184,7 @@
           "source": "Proceedings of the 2020 Conference on Empirical Methods in Natural Language Processing: System Demonstrations (EMNLP)",
           "url": "https://doi.org/10.18653/v1/2020.emnlp-demos.15",
           "note": "Introduces the LIT toolkit with its counterfactual generator."
-        },   
+        }   
       ],
       "typical_cost": "high", 
       "implementation": "https://github.com/PAIR-code/lit"
@@ -1561,7 +1561,7 @@
       "access_arch": {"access": ["white_box"], "arch": ["all"]},
       "target_scope": "global",
       "description": {
-        "overview": "Sparse Autoencoders (SAEs) train a larger, sparse latent space to reconstruct model activations with the goal of disentangling highly-polysemantic features into more monosemantic features. Each sparse unit aims to capture a semantically meaningful concept.",
+        "overview": "Sparse Autoencoders (SAEs) train a larger, sparse latent space to reconstruct model interal representations (activations) with the goal of disentangling highly-polysemantic features into more monosemantic features. Each sparse unit aims to capture a semantically meaningful concept.",
         "main_functionalities": [
           "Enable discovery of human-interpretable features", 
           "Facilitates investigation of the causal role of discovered features via ablation"
@@ -1851,13 +1851,14 @@
   ],
   "accessibility": "experts", 
   "description": {
-    "overview": "Matrix factorization approaches such as non-negative matrix factorization decompose activations into a concise set of patterns.",
+    "overview": "Matrix factorization approaches such as non-negative matrix factorization decompose interal representations into a concise set of patterns.",
     "main_functionalities": [
-      "Summarizes activation with a small number of factors that can be interpreted much more easily than individual neurons"
+      "Summarizes latent representations (activations) with a small number of factors (features) that can be interpreted much more easily than individual neurons"
       ]
   },
   "strengths": [
     "Unlike several alternative matrix-factorization approaches, NMF enforces non-negativity, thus avoiding cancellation effects and highlighting semantic clusters", 
+    "Enables discovery of human-interpretable features", 
     "Fast algorithms to compute NMF exist"
   ],
   "limitations": [
