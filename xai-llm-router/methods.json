@@ -1851,7 +1851,7 @@
   ],
   "accessibility": "experts", 
   "description": {
-    "overview": "Matrix factorization approaches such as non-negative matrix factorization decompose interal representations into a concise set of patterns.",
+    "overview": "Matrix factorization approaches such as non-negative matrix factorization decompose internal representations into a concise set of patterns.",
     "main_functionalities": [
       "Summarizes latent representations (activations) with a small number of factors (features) that can be interpreted much more easily than individual neurons"
       ]
