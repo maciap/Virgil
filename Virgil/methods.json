@@ -585,7 +585,7 @@
           "year": 2026,
           "source": "ArXiv",
           "url": "https://arxiv.org/html/2512.09730v2",
-          "note": "Introduces the Interpreto toolkits which also implements Gradient SHAP."
+          "note": "Introduces the Interpreto toolkits which also implements Kernel SHAP."
         }, 
         {
           "used_in": "PnPXAI: A Universal XAI Framework",
