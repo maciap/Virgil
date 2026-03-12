@@ -76,7 +76,7 @@ Virgil requires **two separate Python environments** to manage dependency confli
 
 ```bash
 git clone https://github.com/maciap/Virgil.git
-cd Virgil
+cd Virgil/Virgil
 ```
 
 ### 2. Create the environments
