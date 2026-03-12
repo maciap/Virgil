@@ -1374,7 +1374,7 @@
   "implementation": "https://github.com/allenai/mice"
     }, 
     {
-      "name": "MLP update decomposition",
+      "name": "MLP Update Decomposition",
       "task_input": ["generation"],
       "access_arch": {"access": ["white_box"], "arch": ["decoder"]},
       "target_scope": "local",
