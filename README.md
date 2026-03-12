@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="xai-llm-router/images/logo_app.png" alt="Virgil logo" width="180"/>
+  <img src="Virgil/images/logo_app.png" alt="Virgil logo" width="180"/>
 </p>
 
 <h1 align="center">Virgil</h1>
@@ -48,7 +48,7 @@ You can try Virgil directly in your browser via Hugging Face Spaces:
 
 
 <p align="center">
-  <img src="xai-llm-router/images/light_mode_screenshot.jpg" alt="Virgil screenshot" width="1000"/>
+  <img src="Virgil/images/light_mode_screenshot.jpg" alt="Virgil screenshot" width="1000"/>
 </p>
 
 ---
