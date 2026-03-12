@@ -36,7 +36,7 @@ It is designed to help practitioners and researchers, regardless of their level 
 ---
 
 <p align="center">
-  <img src="images/light_mode_screenshot.jpg" alt="Virgil screenshot" width="1000"/>
+  <img src="xai-llm-router/images/light_mode_screenshot.jpg" alt="Virgil screenshot" width="1000"/>
 </p>
 
 ---
