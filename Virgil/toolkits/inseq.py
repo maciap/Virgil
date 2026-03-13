@@ -126,6 +126,10 @@ class _InseqBase(ToolkitPlugin):
         else:
             out = m.attribute(text, **kwargs)
 
+        print("method.key ", self.method_key) 
+        print("MEthod ID ", METHOD_ID)
+        print("out ", out) 
+
         return {
             "plugin": self.id,
             "model": model_name,
@@ -207,8 +211,93 @@ class InseqDecoderDiscretizedIG(_InseqBase):
     arch = "decoder"
     method_key = "discretized_ig"
 
+    def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
+        import torch
+
+        model_name = (inputs.get("model_name") or "").strip() or "arnir0/Tiny-LLM"
+        text = (inputs.get("sentence") or "").strip()
+        if not text:
+            raise ValueError("Text is empty.")
+
+        max_new_tokens = _to_int(inputs.get("max_new_tokens"), 5)
+        n_steps = _to_int(inputs.get("n_steps"), 100)
+
+        m = self._load(model_name)  # HuggingfaceDecoderOnlyModel
+
+        # Tokenize, generate, decode — all via m directly
+        tok_inputs = m.tokenizer(text, return_tensors="pt").to(m.device)
+        with torch.no_grad():
+            generated = m.model.generate(
+                **tok_inputs,
+                max_new_tokens=max_new_tokens,
+                do_sample=False,
+            )
+
+        prompt_len = tok_inputs["input_ids"].shape[1]
+        #target = m.tokenizer.decode(
+        #    generated[0][prompt_len:], skip_special_tokens=True
+        #)
+        target = m.tokenizer.decode(
+            generated[0], skip_special_tokens=True  
+        )
+
+
+        if not target.strip():
+            raise ValueError(
+                "Model generated an empty target — try a longer prompt or increase max_new_tokens."
+            )
+
+        out = m.attribute(text, target, n_steps=n_steps, show_progress=False)
+
+        return {
+            "plugin": self.id,
+            "model": model_name,
+            "device": str(m.device),
+            "text": text,
+            "target": target,
+            "method": METHOD_ID[self.method_key],
+            "params": {"n_steps": n_steps, "max_new_tokens": max_new_tokens},
+            "out": out.show(display=False, return_html=True),
+        }
+
+
 class InseqEncDecDiscretizedIG(_InseqBase):
     id = "inseq_encdec_discretized_ig"
     name = "Discretized Integrated Gradients - EncoderDecoder (Inseq)"
     arch = "encdec"
     method_key = "discretized_ig"
+
+    def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
+        import torch
+
+        model_name = (inputs.get("model_name") or "").strip() or "Helsinki-NLP/opus-mt-en-fr"
+        text = (inputs.get("sentence") or "").strip()
+        if not text:
+            raise ValueError("Text is empty.")
+
+        n_steps = _to_int(inputs.get("n_steps"), 100)
+
+        m = self._load(model_name)  # HuggingfaceEncoderDecoderModel
+
+        tok_inputs = m.tokenizer(text, return_tensors="pt").to(m.device)
+        with torch.no_grad():
+            generated = m.model.generate(**tok_inputs, do_sample=False)
+
+        target = m.tokenizer.decode(generated[0], skip_special_tokens=True)
+        
+
+        if not target.strip():
+            raise ValueError("Model generated an empty target.")
+
+        out = m.attribute(text, target, n_steps=n_steps, show_progress=False)
+
+        return {
+            "plugin": self.id,
+            "model": model_name,
+            "device": str(m.device),
+            "text": text,
+            "target": target,
+            "method": METHOD_ID[self.method_key],
+            "params": {"n_steps": n_steps},
+            "out": out.show(display=False, return_html=True),
+        }

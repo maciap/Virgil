@@ -1475,7 +1475,7 @@
         "overview": "BertViz is a tool for visualizing self-attention in transformers at multiple scales. It provides views of individual heads, all heads, or neuron-level interactions.",
         "main_functionalities": [
           "Visualize attention patterns between tokens across layers and heads",
-          "Provide multiple interactive views (head-level, model-level, neuron-level)"
+          "Provide multiple interactive views (head-level, model-level)"
         ]
       },
       "strengths": ["Easy to access", "Intuitive visualizations", "Can focus on a specific attention head or provide a complete view of all attention heads in the model" ],
