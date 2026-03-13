@@ -1,6 +1,6 @@
 ## Methods
 
-▶️ = runnable in the app
+▶️ = Also supports in-app running on custom examples 
 
 - ▶️ Integrated Gradients (IG)
 - ▶️ Layer Integrated Gradients
@@ -22,7 +22,7 @@
 - ▶️ Probing
 - Layer-wise Relevance Propagation (LRP) and AttnLRP
 - ▶️ Attention Rollout
-- ▶️ Attention Flow
+-  Attention Flow
 - Aggregation of Layer-wise Token-to-token Interactions (ALTI)
 - LIT Counterfactual Generator
 - ▶️ Polyjuice
@@ -45,4 +45,3 @@
 - ▶️ Token Ranking Comparison
 - ▶️ Similarity-Based Explanations
 - ▶️ CCA / SVCCA
-- 
