@@ -152,3 +152,15 @@ The Virgil interface should now be available locally.
 
 ---
 
+## Running with Docker
+The Dockerfile provided in the repo clones the repo and sets everything. Just create a new folder, copy the Dockerfile into it, and in that folder do the following:
+
+- Build the image:
+```bash
+docker build -t virgil .
+```
+- Run the container:
+```bash
+docker run -p 8501:8501 virgil
+```
+The app should be running and reachable at http://localhost:8501.
