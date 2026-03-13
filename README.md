@@ -37,6 +37,7 @@ It is designed to help practitioners and researchers, regardless of their level 
 - run selected methods through a unified interface.
 ---
 
+See the full list of methods in [List of Methods](full_list_of_methods.md).
 
 ## Try Virgil Online
 
@@ -52,6 +53,9 @@ You can try Virgil directly in your browser via Hugging Face Spaces:
 </p>
 
 ---
+
+## Full landscape of methods in Virgil 
+
 
 ## Libraries and projects used
 
