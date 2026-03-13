@@ -1149,7 +1149,7 @@ def render_selected_tool_card(selected_item: Dict[str, Any]):
     strengths = selected_item.get("strengths", []) or []
     limitations = selected_item.get("limitations", []) or []
     apps = selected_item.get("research_applications", []) or []
-    impl = selected_item.get("implementation")
+    impl = selected_item.get("implementation")      
 
     with st.container(border=True):
         st.markdown(
@@ -1260,3 +1260,17 @@ def render_selected_tool_card(selected_item: Dict[str, Any]):
         else:
             with st.expander("📚 Further Reading", expanded=False):
                 st.caption("No further reading for this method.")
+        
+        if name == "Attention Flow":
+            st.write("**Example visuals**")
+            st.write("*Source*:")
+            st.write("Samira Abnar and Willem Zuidema. 2020. Quantifying Attention Flow in Transformers. In Proceedings of the 58th Annual Meeting of the Association for Computational Linguistics, pages 4190–4197, Online. Association for Computational Linguistics.")
+            st.image(os.path.join("images", "attention_flow_1.png"))
+            st.write("Embedding attentions")
+            st.image(os.path.join("images", "attention_flow_2.png"))
+            st.write("Attention flow")
+        elif name == "Automatic Circuit DisCovery (ACDC)":
+            st.write("**Example visuals**")
+            st.write("*Source*:")
+            st.write("Arthur Conmy, Augustine N. Mavor-Parker, Aengus Lynch, Stefan Heimersheim and Adrià Garriga-Alonso, 2023. Towards Automated Circuit Discovery for Mechanistic Interpretability. In proc. Advances in Neural Information Processing Systems 36 (NeurIPS).")
+            st.image(os.path.join("images", "automatic_circuit_discovery_fig1.png"))
