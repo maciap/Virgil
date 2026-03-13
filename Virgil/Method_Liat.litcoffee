@@ -1,0 +1,48 @@
+## Methods
+
+▶️ = runnable in the app
+
+- ▶️ Integrated Gradients (IG)
+- ▶️ Layer Integrated Gradients
+- ▶️ Saliency
+- ▶️ Input×Gradient
+- ▶️ DeepLift
+- ▶️ GradientSHAP
+- ▶️ Feature Ablation
+- ▶️ Occlusion
+- ▶️ Shapley Value Sampling
+- TokenSHAP
+- ▶️ Kernel SHAP
+- Sobol
+- SmoothGrad
+- ▶️ LIME
+- ▶️ Anchors
+- ▶️ Direct Logit Attribution
+- ▶️ Logit Lens
+- ▶️ Probing
+- Layer-wise Relevance Propagation (LRP) and AttnLRP
+- ▶️ Attention Rollout
+- ▶️ Attention Flow
+- Aggregation of Layer-wise Token-to-token Interactions (ALTI)
+- LIT Counterfactual Generator
+- ▶️ Polyjuice
+- Activation Patching
+- Path Patching
+- Attribution Patching (AtP / AtP*)
+- Minimal Contrastive Editing (MICE)
+- MLP Update Decomposition
+- ▶️ Training Data Influence (TracIn)
+- ▶️ Attention Visualization (BertViz)
+- exBERT
+- ▶️ Sparse Autoencoders
+- Transcoders
+- ▶️ Information Flow Routes
+- Automatic Circuit Discovery (ACDC)
+- ▶️ Discretized Integrated Gradients
+- ▶️ PCA
+- ▶️ Linear CKA
+- ▶️ Non-negative Matrix Factorization (NMF)
+- ▶️ Token Ranking Comparison
+- ▶️ Similarity-Based Explanations
+- ▶️ CCA / SVCCA
+- 
