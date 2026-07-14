@@ -58,6 +58,7 @@ import os
 from pyvis.network import Network
 
 from toolkits.PCAViz import EmbeddingPCALayers
+from toolkits.captum_loo import CaptumLOOGenerationAttribution
 import plotly.express as px
 import plotly.graph_objects as go
 from toolkits.linear_cka import LinearCKALayers
@@ -212,6 +213,7 @@ def get_plugins():
     plugin40 = EccoNMF()
     plugin41 = EccoTokenRankingCompare()
     plugin42 = PolyjuiceCounterfactualClassifier()
+    plugin43 = CaptumLOOGenerationAttribution()
 
 
     return {
@@ -255,8 +257,9 @@ def get_plugins():
         plugin38.id: plugin38, 
         plugin39.id : plugin39, 
         plugin40.id : plugin40,
-        plugin41.id : plugin41, 
-        plugin42.id : plugin42  
+        plugin41.id : plugin41,
+        plugin42.id : plugin42,
+        plugin43.id : plugin43
 }
 PLUGINS = get_plugins()
 UI_TO_INTERNAL = {
@@ -1433,6 +1436,49 @@ def _render_outputs(outputs: Dict[str, Any], selected_item: Dict[str, Any] | Non
 
         with st.expander("Parameters", expanded=False):
             st.json(outputs.get("params", {}), expanded=False)
+
+        render_downloads(outputs, selected_item=selected_item)
+
+    elif plugin_tag == "captum_loo_generation" and outputs.get("token_attr"):
+        st.subheader("Result")
+        with st.expander("ℹ️ How to read Leave-One-Out (LOO) / Erasure", expanded=True):
+            st.markdown(
+                """
+            - **Leave-One-Out (LOO)** removes one input token at a time and measures how much the model's likelihood for the **target continuation** changes.
+            - This is Captum's **FeatureAblation** applied per-token with no feature grouping — the simplest perturbation-based attribution, and the basis for more sophisticated methods like SHAP.
+            - **Rows** = target/output tokens being explained. **Columns** = input prompt tokens that were ablated.
+            - Higher values = removing that token changes the target's likelihood more, i.e. the token matters more for generating the target.
+                """
+            )
+
+        st.write(f"**Model:** {outputs.get('model','NA')}")
+        st.write(f"**Prompt:** {outputs.get('prompt','NA')}")
+        st.write(f"**Target continuation:** {outputs.get('target','NA')}")
+
+        input_tokens = outputs.get("input_tokens", []) or []
+        output_tokens = outputs.get("output_tokens", []) or []
+        M = np.array(outputs["token_attr"], dtype=float)  # [n_target, n_input]
+
+        if M.size:
+            fig = px.imshow(
+                M,
+                x=input_tokens,
+                y=output_tokens,
+                color_continuous_scale="viridis",
+                aspect="auto",
+                title="LOO / Erasure importance (rows=target tokens, cols=input tokens)",
+            )
+            fig.update_layout(height=420, margin=dict(l=10, r=10, t=60, b=10))
+            st.plotly_chart(fig, use_container_width=True)
+
+        render_token_highlight(
+            tokens=input_tokens,
+            scores=outputs.get("mean_per_input", []),
+            title="🖍️ Highlighted text (mean LOO importance across target tokens)",
+        )
+
+        with st.expander("Matrix values", expanded=False):
+            st.dataframe(pd.DataFrame(M, index=output_tokens, columns=input_tokens), use_container_width=True)
 
         render_downloads(outputs, selected_item=selected_item)
 

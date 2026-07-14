@@ -636,6 +636,44 @@
       "implementation": "https://github.com/FOR-sight-ai/interpreto"
     },
     {
+      "name": "Leave-One-Out (LOO) / Erasure",
+      "task_input": ["generation"],
+      "access_arch": {"access": ["white_box"], "arch": ["decoder"]},
+      "plugin_routing": [
+        { "task": "generation", "arch": "decoder", "plugin_id": "captum_loo_generation" }
+      ],
+      "target_scope": "local",
+      "accessibility": "non experts",
+      "description": {
+        "overview": "Leave-One-Out attribution estimates the importance of each input token by removing it one at a time and measuring the change in the model's likelihood for a target continuation. It is the special case of Captum's FeatureAblation with no feature grouping, and serves as a natural baseline for more sophisticated perturbation-based methods such as SHAP.",
+        "main_functionalities": [
+          "Compute per-token importance for a target generated continuation by single-token ablation"
+        ]
+      },
+      "strengths": [
+        "Simple and intuitive: directly measures the effect of removing each token",
+        "Model-agnostic (only requires forward passes)",
+        "Serves as the conceptual baseline for many other perturbation-based attribution methods"
+      ],
+      "limitations": [
+        "Cost scales linearly with input length (one forward pass per token)",
+        "Removing a single token can create out-of-distribution inputs",
+        "Ignores interaction effects between tokens (unlike Shapley-based methods)"
+      ],
+      "research_applications": [
+        {
+          "used_in": "Attention is not Explanation",
+          "type": "paper",
+          "year": 2019,
+          "source": "NAACL",
+          "url": "https://arxiv.org/abs/1902.10186",
+          "note": "Uses leave-one-out/erasure-style perturbation as a comparison baseline for attention-based explanations."
+        }
+      ],
+      "typical_cost": "medium",
+      "implementation": "https://github.com/meta-pytorch/captum"
+    },
+    {
       "name": "SmoothGrad",
       "task_input": ["generation","classification"],
       "access_arch": {"access": ["white_box"], "arch": ["all"]},

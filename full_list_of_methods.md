@@ -13,6 +13,7 @@
 - ▶️ Shapley Value Sampling
 - TokenSHAP
 - ▶️ Kernel SHAP
+- ▶️ Leave-One-Out (LOO) / Erasure
 - Sobol
 - SmoothGrad
 - ▶️ LIME

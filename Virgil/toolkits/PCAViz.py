@@ -69,9 +69,21 @@ def _detect_arch(model_name: str) -> str:
     if getattr(cfg, "is_decoder", False):
         return "decoder"
 
-    # Some models don't set is_decoder; use architectures/name heuristics
+    # Some models don't set is_decoder; use architectures/name heuristics.
+    # Covers both "...ForCausalLM" (Llama, GPT-Neo, ...) and "...LMHeadModel"
+    # (GPT-2, OpenAI GPT, TransfoXL, XLNet, ...) naming conventions.
     archs = [a.lower() for a in (getattr(cfg, "architectures", None) or [])]
-    if any("causallm" in a or "forcausallm" in a for a in archs):
+    if any("causallm" in a or "forcausallm" in a or "lmheadmodel" in a for a in archs):
+        return "decoder"
+
+    # Fallback: known decoder-only model_type values, for configs that don't
+    # expose an "architectures" field.
+    DECODER_ONLY_MODEL_TYPES = {
+        "gpt2", "gpt_neo", "gptj", "gpt_neox", "llama", "mistral", "mixtral",
+        "falcon", "bloom", "opt", "mpt", "phi", "phi3", "qwen2", "gemma",
+        "gemma2", "starcoder2", "persimmon", "codegen", "openai-gpt",
+    }
+    if getattr(cfg, "model_type", None) in DECODER_ONLY_MODEL_TYPES:
         return "decoder"
 
     # Otherwise default to encoder
