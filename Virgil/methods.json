@@ -1379,6 +1379,98 @@
       "implementation":"https://colab.research.google.com/github/neelnanda-io/TransformerLens/blob/main/demos/Attribution_Patching_Demo.ipynb"
     },
     {
+      "name": "Edge Attribution Patching with Integrated Gradients (EAP-IG)",
+      "task_input": ["generation"],
+      "access_arch": { "access": ["white_box"], "arch": ["decoder"] },
+      "target_scope": ["local", "global"],
+      "accessibility": "experts",
+      "description": {
+        "overview": "EAP-IG is a gradient-based circuit-discovery method that scores the causal importance of every edge (connection between attention heads and MLPs) in a transformer's computational graph using a small, fixed number of forward and backward passes. It extends Edge Attribution Patching (EAP) by averaging the loss gradient over several points along a straight-line interpolation between a clean and a corrupted input's activations (as in Integrated Gradients), instead of evaluating the gradient only at the clean input.",
+        "main_functionalities": [
+          "Computes an importance (attribution) score for every edge in a transformer's computational graph in a few forward/backward passes (default m=5 interpolation steps)",
+          "Mitigates EAP's 'zero-gradient' failure mode, where an important edge can be scored as unimportant because the gradient happens to be flat at the clean input",
+          "Supports arbitrary task metrics converted to a loss, including KL divergence between the patched and unpatched output distributions",
+          "Feeds a scored edge graph into a downstream circuit-selection step (thresholding or greedy edge selection) that yields a discrete sparse circuit"
+        ]
+      },
+      "strengths": [
+        "Mitigates the zero/near-zero gradient problem that affects plain EAP by sampling gradients at multiple interpolated points instead of one",
+        "Produces circuits that are as faithful as, or more faithful than, plain EAP circuits across most tested tasks",
+        "Needs only a few interpolation steps (m=5, sometimes m=3) to work well, so overhead over plain EAP is modest",
+        "Enables use of KL divergence as a universal loss, which is unusable with plain EAP because its single-point gradient collapses to zero under KL at the clean input",
+        "Edge-importance rankings correlate better with true activation-patching scores than EAP's rankings do",
+        "Adopted in later large-scale studies (e.g., tracking circuits across training and model scale) specifically for its faithful circuit-finding ability, and reported as the strongest single baseline in the MIB shared task on circuit localization"
+      ],
+      "limitations": [
+        "Does not consistently reduce absolute approximation error relative to true activation-patching scores compared to plain EAP",
+        "Its fixed, model-agnostic straight-line interpolation path still passes through regions of near-zero gradient (a 'saturation effect'), which a follow-up method (EAP-GP) was designed to address",
+        "Can find a circuit that is faithful at the cost of omitting important components with negative (inhibitory) contributions, so faithfulness alone does not guarantee completeness",
+        "As a gradient-based estimator it amplifies the intrinsic statistical variance of single-input causal-mediation scores, making discovered circuits sensitive to bootstrap resampling of the input dataset and to hyperparameter/aggregation choices, especially in larger models",
+        "Circuits can shift substantially when the same task is rephrased with different templates or when the probing dataset is resampled from the same distribution",
+        "About 5x slower than plain EAP, since it requires a gradient computation at each of the m interpolation steps"
+      ],
+      "research_applications": [
+        {
+          "used_in": "Have Faith in Faithfulness: Going Beyond Circuit Overlap When Finding Model Mechanisms",
+          "type": "paper",
+          "year": 2024,
+          "source": "Conference on Language Modeling (COLM)",
+          "url": "https://arxiv.org/abs/2403.17806",
+          "note": "Introduces EAP-IG."
+        },
+        {
+          "used_in": "EAP-GP: Mitigating Saturation Effect in Gradient-based Automated Circuit Identification",
+          "type": "paper",
+          "year": 2025,
+          "source": "arXiv",
+          "url": "https://arxiv.org/abs/2502.06852",
+          "note": "Identifies a 'saturation effect' in EAP-IG's fixed straight-line interpolation path and proposes EAP-GP, a model-dependent interpolation path that outperforms EAP-IG on faithfulness and precision/recall at higher runtime cost."
+        },
+        {
+          "used_in": "Mechanistic Interpretability as Statistical Estimation: A Variance Analysis of EAP-IG",
+          "type": "paper",
+          "year": 2025,
+          "source": "Proceedings of the 43rd International Conference on Machine Learning (ICML)",
+          "url": "https://arxiv.org/abs/2510.00845",
+          "note": "Analyzes EAP-IG as an approximate estimator of causal mediation analysis, showing it amplifies per-input variance and that resulting circuits are unstable under data resampling and hyperparameter choices."
+        },
+        {
+          "used_in": "Demystifying Variance in Circuit Discovery of LLMs",
+          "type": "paper",
+          "year": 2026,
+          "source": "arXiv",
+          "url": "https://arxiv.org/abs/2606.16920",
+          "note": "Calls EAP-IG the state-of-the-art faithfulness method but documents resampling and template-rephrasing variance in its circuits, and proves its integrated-gradients scoring rule violates 'additive order preservation'."
+        },
+        {
+          "used_in": "LLM Circuit Analyses Are Consistent Across Training and Scale",
+          "type": "paper",
+          "year": 2024,
+          "source": "Proceedings of the 38th Conference on Neural Information Processing Systems (NeurIPS)",
+          "url": "https://arxiv.org/abs/2407.10827",
+          "note": "Adopts EAP-IG as the circuit-finding method of choice to track circuit emergence and stability across 300B tokens of Pythia training and multiple model scales."
+        },
+        {
+          "used_in": "BlackboxNLP-2025 MIB Shared Task: Exploring Ensemble Strategies for Circuit Localization Methods",
+          "type": "paper",
+          "year": 2025,
+          "source": "Proceedings of the 8th BlackboxNLP Workshop (ACL)",
+          "url": "",
+          "note": "Reports EAP-IG (on input attributions) as the strongest single baseline method in the MIB circuit-localization shared task, and uses it to warm-start a more expensive ensembling approach."
+        },
+        {
+          "used_in": "PATCH: Mitigating PII Leakage in Language Models with Privacy-Aware Targeted Circuit PatcHing",
+          "type": "paper",
+          "year": 2026,
+          "source": "Findings of the Association for Computational Linguistics: EACL 2026",
+          "url": "",
+          "note": "Applies EAP-IG as the circuit-discovery mechanism to identify circuits responsible for PII leakage in fine-tuned language models, then edits those circuits to reduce leakage."
+        }
+      ],
+      "typical_cost": "medium",
+      "implementation": ["https://github.com/hannamw/eap-ig-faithfulness", "https://github.com/hannamw/eap-ig"]
+    },
+    {
       "name": "Minimal Contrastive Editing (MICE)",
       "task_input": ["classification"],
       "access_arch": {"access": ["black_box"], "arch": ["all"]},
@@ -1744,6 +1836,166 @@
       ],
       "typical_cost": "high",
       "implementation": "https://github.com/ArthurConmy/Automatic-Circuit-Discovery"
+    },
+    {
+      "name": "Edge Pruning",
+      "task_input": ["generation"],
+      "access_arch": { "access": ["white_box"], "arch": ["decoder"] },
+      "target_scope": "global",
+      "accessibility": "experts",
+      "description": {
+        "overview": "Edge Pruning frames automated circuit discovery as a gradient-based optimization problem. It freezes the model's weights and learns a continuous relaxed binary mask (via the hard-concrete distribution and an L0-regularized Lagrangian sparsity objective) on every edge between components, using a modified 'disentangled residual stream' so each node can read a learned interpolation between clean and corrupted (counterfactual) activations. Thresholding the trained masks at the end yields a discrete sparse circuit.",
+        "main_functionalities": [
+          "Learns continuous edge masks (and a secondary node-activity mask to speed convergence to high sparsity) via gradient descent with L0/Lagrangian sparsity control",
+          "Replaces missing edges with counterfactual (corrupted-example) activations via interchange ablation, framing edge removal as a causal intervention",
+          "Produces one discrete edge-subgraph ('circuit') per task after thresholding the trained masks",
+          "Scales via model/data parallelism to multi-billion-parameter models"
+        ]
+      },
+      "strengths": [
+        "More faithful and better task-performing circuits than ACDC and EAP on standard tasks, especially at high sparsity",
+        "Scales efficiently to large datasets: fastest and most faithful of compared methods when using 100K examples",
+        "Perfectly recovers ground-truth circuits on small Tracr-compiled toy programs with known ground truth",
+        "Demonstrated to scale to a 13B-parameter model, finding circuits with under 0.04% of edges that match full-model performance",
+        "Independently confirmed by follow-up work as the most faithful baseline among edge-level circuit-discovery methods compared"
+      ],
+      "limitations": [
+        "At small dataset sizes, approximation-based methods like EAP are faster than Edge Pruning",
+        "Higher GPU memory requirements than EAP/ACDC, especially at scale",
+        "Even at very high sparsity, circuits in large models can still contain hundreds of edges, making full interpretation difficult",
+        "Perfect output faithfulness does not guarantee the circuit represents the true underlying computation",
+        "Requires an architectural modification (disentangled residual stream), increasing GPU memory footprint versus regular structured pruning",
+        "Follow-up work reports it as computationally expensive relative to alternatives: one comparison found it needs about 5x more memory and 8x more wall-clock time than a node-level pruning alternative at matched settings"
+      ],
+      "research_applications": [
+        {
+          "used_in": "Finding Transformer Circuits with Edge Pruning",
+          "type": "paper",
+          "year": 2024,
+          "source": "Proceedings of the 38th Conference on Neural Information Processing Systems (NeurIPS)",
+          "url": "",
+          "note": "Introduces Edge Pruning."
+        },
+        {
+          "used_in": "Discovering Transformer Circuits via a Hybrid Attribution and Pruning Framework",
+          "type": "paper",
+          "year": 2025,
+          "source": "Proceedings of the 39th Conference on Neural Information Processing Systems (NeurIPS)",
+          "url": "https://arxiv.org/abs/2510.03282",
+          "note": "Builds on Edge Pruning by using attribution patching to pre-filter edges and then applying Edge Pruning to the narrowed subgraph, cutting its runtime by 46% while matching its faithfulness; also uses it as a direct experimental baseline."
+        },
+        {
+          "used_in": "Multi-Granular Node Pruning for Causal Circuit Discovery",
+          "type": "paper",
+          "year": 2026,
+          "source": "Conference on Language Modeling (COLM)",
+          "url": "https://arxiv.org/abs/2512.10903",
+          "note": "Uses Edge Pruning as a primary baseline and critiques its edge-level formulation for coarse granularity, quadratic edge scaling, and memory/compute cost relative to their proposed node-level method."
+        }
+      ],
+      "typical_cost": "medium-high",
+      "implementation": "https://github.com/princeton-nlp/Edge-Pruning"
+    },
+    {
+      "name": "ModCirc",
+      "task_input": ["classification"],
+      "access_arch": { "access": ["white_box"], "arch": ["decoder"] },
+      "target_scope": "global",
+      "accessibility": "mid experts",
+      "description": {
+        "overview": "ModCirc discovers a task-agnostic vocabulary of 'modular circuits' in an LLM. For a set of training tasks (reformatted into a common multi-choice/single-token-output format), it finds each task's significant computational subgraph via causal tracing (edge attribution patching with integrated gradients), extracts subgraphs that are reused across tasks, partitions them into smaller modular subgraphs using an RL-trained graph neural network, and generates a natural-language functional interpretation for each modular circuit with an LLM. The resulting vocabulary of modular circuits and their cached interpretations can then be reused to interpret unseen tasks without rederiving explanations from scratch.",
+        "main_functionalities": [
+          "Unifies diverse language tasks into a common single-token-output format so circuit-discovery techniques apply uniformly",
+          "Identifies each task's significant computational subgraph via causal tracing (edge attribution patching + integrated gradients)",
+          "Finds reusable subgraphs shared across at least two tasks' circuits",
+          "Partitions reusable subgraphs into smaller modular circuits using an RL-trained graph neural network optimized for locality, composability, and globality",
+          "Generates a natural-language functional interpretation for each modular circuit using an LLM fed token-level activation heatmaps",
+          "Matches new tasks' circuits against the existing modular-circuit vocabulary to reuse cached interpretations"
+        ]
+      },
+      "strengths": [
+        "Provides cross-task, global interpretability by finding modular circuits shared across different tasks, rather than one-off task-specific circuits",
+        "Reduces the cost of circuit discovery via the EAP+IG approximation, and reduces the cost of interpretation by reusing cached functional interpretations instead of re-inspecting every node for every new task",
+        "Achieves notably higher reusability scores than tested baselines (random, frequent-random, clustering, activation-based) across several medical evaluation datasets",
+        "Demonstrated transferability: on GPT-2 Small, recovered 92% of the ground-truth Indirect Object Identification (IOI) circuit's components and 87.5% of a ground-truth acronym-detection circuit's nodes, with generated interpretations aligning with interpretations from prior manual analyses"
+      ],
+      "limitations": [
+        "The discovered modular-circuit vocabulary is limited by the scope and diversity of the training tasks used; functional aspects of the model not covered by those tasks may be missed",
+        "Evaluating consistency and reusability of circuits across tasks remains challenging, and current metrics may oversimplify how circuits are actually reused or adapted",
+        "The consistency criterion is not included in the RL training objective (only evaluated post hoc) because quantifying it requires costly LLM-prompting",
+        "Does not consistently outperform simpler baselines on the composability metric, due to its requirement to maintain connected partitions",
+        "Requires the target task's output to be reducible to a single token, so not all tasks are natively suitable without an LLM-based reformatting step"
+      ],
+      "research_applications": [
+        {
+          "used_in": "Towards Global-level Mechanistic Interpretability: A Perspective of Modular Circuits of Large Language Models",
+          "type": "paper",
+          "year": 2025,
+          "source": "Proceedings of the 42nd International Conference on Machine Learning (ICML)",
+          "url": "",
+          "note": "Introduces ModCirc."
+        },
+        {
+          "used_in": "From Circuit Evidence to Mechanistic Theory: An Inductive Logic Approach",
+          "type": "paper",
+          "year": 2026,
+          "source": "arXiv",
+          "url": "",
+          "note": "Cites ModCirc in related work as prior work moving toward global-level mechanistic interpretability through reusable modular circuits, contrasting its own approach of formalizing the representation layer itself; does not apply or extend ModCirc."
+        }
+      ],
+      "typical_cost": "medium",
+      "implementation": "https://github.com/YinhanHe123/ModCirc"
+    },
+    {
+      "name": "IBCircuit",
+      "task_input": ["generation"],
+      "access_arch": { "access": ["white_box"], "arch": ["decoder"] },
+      "target_scope": "global",
+      "accessibility": "experts",
+      "description": {
+        "overview": "IBCircuit is an end-to-end, gradient-optimized framework for discovering circuits in transformer language models based on the Information Bottleneck principle. It injects learnable-magnitude Gaussian noise into model components (attention heads, MLPs, and their inputs) via sigmoid-parameterized weights, training these weights jointly so the noised model's output stays close to the original model's output (low KL divergence) while minimizing the information retained from irrelevant components; after training, components with high learned weights (low injected noise) are thresholded into the final circuit.",
+        "main_functionalities": [
+          "Formulates circuit discovery as an Information Bottleneck optimization with tractable variational bounds on mutual information between the circuit, the full model, and the task output",
+          "Parameterizes each node or edge with a learnable weight controlling a Gaussian-noise gate on its activation",
+          "Trains all weights jointly end-to-end via gradient descent, using only the original pretrained model's own output as supervision, without needing hand-designed corrupted/counterfactual data",
+          "Forms the final discrete circuit by thresholding learned weights against an adaptively determined cap on circuit size",
+          "Supports both node-level and edge-level circuit parameterization"
+        ]
+      },
+      "strengths": [
+        "Task-agnostic: does not require hand-designing task-specific corrupted/counterfactual data, unlike activation-patching or ACDC-style methods",
+        "Enables simultaneous, holistic gradient-based optimization of all component weights together, rather than sequential per-component intervention as in patching methods",
+        "Identifies more faithful and minimal circuits than Subnetwork Probing, ACDC, and Attribution Patching baselines on standard circuit-discovery benchmarks",
+        "Demonstrated to scale to a 1.5B-parameter model, matching or beating gradient-attribution baselines with far fewer edges",
+        "In an independent downstream evaluation (circuit-guided pruning), IBCircuit-selected components retained the large majority of base task accuracy, landing in what the evaluators call the 'faithful-and-effective corner' relative to other methods"
+      ],
+      "limitations": [
+        "Underperforms ACDC on tasks lacking a single clearly-defined correct output token, and specifically at very high sparsity on such tasks",
+        "Requires manual tuning of the trade-off between circuit sparsity and faithfulness to the original model",
+        "In an independent 6-algorithm comparison on canonical circuit-head recovery, scored mid-field, clearly below gradient-attribution (EAP-family) methods",
+        "Trains its noise mask in a single batch, so its activation memory footprint grows with model size, which limited the model scale used in at least one independent benchmark comparison"
+      ],
+      "research_applications": [
+        {
+          "used_in": "IBCircuit: Towards Holistic Circuit Discovery with Information Bottleneck",
+          "type": "paper",
+          "year": 2025,
+          "source": "Proceedings of the 42nd International Conference on Machine Learning (ICML)",
+          "url": "",
+          "note": "Introduces IBCircuit."
+        },
+        {
+          "used_in": "CircuitKIT: Circuit Discovery, Evaluation, and Application Toolkit for Mechanistic Interpretability",
+          "type": "paper",
+          "year": 2026,
+          "source": "arXiv",
+          "url": "https://arxiv.org/abs/2607.19317",
+          "note": "Implements IBCircuit as a registered circuit-discovery algorithm and benchmarks it against EAP/EAP-IG/EAP-GP/ACDC/CD-T on canonical-circuit recovery, cross-model-family discovery, and downstream circuit-guided pruning, and documents its memory-scaling limitation."
+        }
+      ],
+      "typical_cost": "medium",
+      "implementation": "https://github.com/ivanniu/IBCircuit"
     },
     {
       "name": "Discretized Integrated Gradients",
@@ -2112,6 +2364,116 @@
         }
       ],
       "implementation": "https://github.com/jalammar/ecco"
+    },
+    {
+      "name": "Distributed Alignment Search (DAS)",
+      "task_input": ["classification", "generation"],
+      "access_arch": { "access": ["white_box"], "arch": ["all"] },
+      "target_scope": ["local", "global"],
+      "accessibility": "experts",
+      "notes": "DAS trains one shared alignment (a rotation of a hidden layer) via gradient descent over a set of examples, so the alignment itself is learned at the task/dataset level (global), but the underlying causal test — an interchange intervention swapping in a source example's subspace activations — is defined and evaluated on individual base/source input pairs (local).",
+      "description": {
+        "overview": "DAS finds a linear subspace of a neural network's hidden representation that aligns with a hypothesized interpretable high-level causal variable. It optimizes an orthogonal (rotation) matrix via gradient descent so that 'distributed interchange interventions' on that subspace — rotating the representation into the new basis, swapping in values from a source input for the target subspace only, then rotating back — produce the same counterfactual behavior as interventions on the corresponding variable in a symbolic high-level causal model. Unlike prior 'localist' causal-abstraction approaches that search over which individual neurons encode a concept, DAS allows concepts to be encoded as linear combinations of neurons.",
+        "main_functionalities": [
+          "Learns an orthogonal rotation matrix aligning disjoint subspaces of a layer's activations with variables of a hypothesized high-level causal model",
+          "Performs distributed interchange interventions and compares the resulting counterfactual output to the high-level causal model's prediction",
+          "Computes Interchange Intervention Accuracy (IIA) as a graded faithfulness metric for how well the alignment holds",
+          "Can be applied hierarchically ('Subspace DAS') to test whether an aligned subspace further decomposes into sub-representations"
+        ]
+      },
+      "strengths": [
+        "Finds alignments via gradient descent rather than the brute-force combinatorial search used by prior causal-abstraction methods, and empirically achieves higher IIA than both a brute-force search baseline and the closest localist alignment",
+        "Does not assume high-level variables map to disjoint groups of individual neurons, so it can find concepts distributed across neurons",
+        "Runtime is invariant to the number of alignment hypotheses tested, unlike brute-force search, whose cost explodes combinatorially",
+        "When interchange-intervention accuracy reaches 100%, this provides a formal guarantee, grounded in causal abstraction theory, that the identified causal structure is genuinely present in the model",
+        "Shown to reveal genuine internal structure: in one experiment, DAS found representations that could not be decomposed further into representations of individual entities, evidence the network implements an abstracted symbolic algorithm",
+        "Its scaled-up variant (Boundless DAS) shows alignments generalize robustly to unseen inputs, inserted irrelevant context, and alternate output formats"
+      ],
+      "limitations": [
+        "The original method still requires a manual search over the target subspace's dimensionality and location, which motivated a follow-up ('Boundless DAS') that learns the subspace size instead",
+        "Poor scalability to large models: the number of rotation-matrix parameters grows roughly with the square of representation size, becoming intractable for standard training infrastructure on large models",
+        "Requires a pre-specified (partial or complete) causal graph of the data-generating process, interchangeable high-level variables, and the ability to sample counterfactual base/source input pairs",
+        "Uses a linear (orthogonal) transformation, which may not be optimal if the aligning variable is represented on a non-linear sub-manifold",
+        "Gradient-descent optimization is not guaranteed to reach a global optimum, so multiple random seeds are typically run and the best result reported",
+        "A low interchange-intervention accuracy is not proof the causal structure is absent, since it could reflect a highly non-linear encoding that DAS's linear search misses",
+        "IIA is bounded by the underlying model's task accuracy, and can appear spuriously high in randomly-initialized networks, requiring random-baseline calibration checks"
+      ],
+      "research_applications": [
+        {
+          "used_in": "Finding Alignments Between Interpretable Causal Variables and Distributed Neural Representations",
+          "type": "paper",
+          "year": 2024,
+          "source": "Proceedings of the Third Conference on Causal Learning and Reasoning (CLeaR)",
+          "url": "",
+          "note": "Introduces DAS."
+        },
+        {
+          "used_in": "Causal Abstraction: A Theoretical Foundation for Mechanistic Interpretability",
+          "type": "paper",
+          "year": 2025,
+          "source": "Journal of Machine Learning Research (JMLR)",
+          "url": "",
+          "note": "Situates DAS within a broader causal-abstraction taxonomy as a 'modular feature learning' method and notes it has since been used to analyze causal mechanisms in a variety of deep learning models."
+        },
+        {
+          "used_in": "Interpretability at Scale: Identifying Causal Mechanisms in Alpaca",
+          "type": "paper",
+          "year": 2023,
+          "source": "Proceedings of the 37th Conference on Neural Information Processing Systems (NeurIPS)",
+          "url": "https://arxiv.org/abs/2305.08809",
+          "note": "Introduces Boundless DAS, which replaces DAS's remaining brute-force search over subspace dimensionality with learned boundary parameters, scaling DAS-style interchange interventions to a 7B-parameter instruction-tuned LLM."
+        },
+        {
+          "used_in": "CausalGym: Benchmarking causal interpretability methods on linguistic tasks",
+          "type": "paper",
+          "year": 2024,
+          "source": "Proceedings of the 62nd Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers)",
+          "url": "",
+          "note": "Benchmarks DAS alongside linear probing and other methods on a suite of linguistic tasks, finding DAS the most causally efficacious method tested, and uses it to study learning trajectories of two linguistic phenomena."
+        },
+        {
+          "used_in": "MIB: A Mechanistic Interpretability Benchmark",
+          "type": "paper",
+          "year": 2025,
+          "source": "Proceedings of the 42nd International Conference on Machine Learning (ICML)",
+          "url": "https://arxiv.org/abs/2504.13151",
+          "note": "Defines a causal-variable-localization benchmark track comparing featurization methods, including DAS and sparse autoencoders, finding that supervised DAS performs best among the methods tested."
+        },
+        {
+          "used_in": "HyperDAS: Towards Automating Mechanistic Interpretability with Hypernetworks",
+          "type": "paper",
+          "year": 2025,
+          "source": "International Conference on Learning Representations (ICLR)",
+          "url": "https://arxiv.org/abs/2503.10894",
+          "note": "Extends DAS with a transformer-based hypernetwork that automates its brute-force search step, automatically locating token positions and constructing concept features."
+        },
+        {
+          "used_in": "Model Alignment Search",
+          "type": "paper",
+          "year": 2025,
+          "source": "arXiv",
+          "url": "https://arxiv.org/abs/2501.06164",
+          "note": "Introduces Model Alignment Search, described as a combination of model stitching and DAS, built on DAS's formulation to transfer causal information between two different neural networks rather than within a single model."
+        },
+        {
+          "used_in": "Faithful Bi-Directional Model Steering via Distribution Matching and Distributed Interchange Interventions",
+          "type": "paper",
+          "year": 2026,
+          "source": "International Conference on Learning Representations (ICLR)",
+          "url": "https://arxiv.org/abs/2602.05234",
+          "note": "Builds on DAS's distributed interchange intervention mechanism, replacing its probability-maximization training objective with a distribution-matching objective to enable bi-directional, data-derived model steering."
+        },
+        {
+          "used_in": "One mechanism for many mental spaces: a shared router over a value slot in language models",
+          "type": "paper",
+          "year": 2026,
+          "source": "",
+          "url": "",
+          "note": "Trains a subspace using DAS to causally control which discourse space (e.g., counterfactual, belief, fictional, temporal) a value belongs to, and extends it to train per-readout subspaces and test cross-type transfer."
+        }
+      ],
+      "typical_cost": "medium",
+      "implementation": ["https://github.com/atticusg/InterchangeInterventions", "https://github.com/stanfordnlp/pyvene"]
     }
   ]
 }

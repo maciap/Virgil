@@ -30,6 +30,7 @@
 - Activation Patching
 - Path Patching
 - Attribution Patching (AtP / AtP*)
+- Edge Attribution Patching with Integrated Gradients (EAP-IG)
 - Minimal Contrastive Editing (MICE)
 - MLP Update Decomposition
 - ▶️ Training Data Influence (TracIn)
@@ -39,6 +40,9 @@
 - Transcoders
 - ▶️ Information Flow Routes
 - Automatic Circuit Discovery (ACDC)
+- Edge Pruning
+- ModCirc
+- IBCircuit
 - ▶️ Discretized Integrated Gradients
 - ▶️ PCA
 - ▶️ Linear CKA
@@ -46,3 +50,4 @@
 - ▶️ Token Ranking Comparison
 - ▶️ Similarity-Based Explanations
 - ▶️ CCA / SVCCA
+- Distributed Alignment Search (DAS)
