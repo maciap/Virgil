@@ -51,16 +51,16 @@
 - ▶️ Similarity-Based Explanations
 - ▶️ CCA / SVCCA
 - Distributed Alignment Search (DAS)
-- Activation Steering (ActAdd / CAA)
-- Attention-Head Ablation / Knockout
-- Tuned Lens
-- Patchscopes
+- ▶️ Activation Steering (ActAdd / CAA)
+- ▶️ Attention-Head Ablation / Knockout
+- ▶️ Tuned Lens
+- ▶️ Patchscopes
 - Causal Tracing
 - Input Marginalization
-- TCAV (Testing with Concept Activation Vectors)
+- ▶️ TCAV (Testing with Concept Activation Vectors)
 - Knowledge Neurons
 - Observable Propagation (ObProp)
-- LEACE / Concept Scrubbing
+- ▶️ LEACE / Concept Scrubbing
 - Causal Mediation Analysis
 - Automated Neuron Explanations
 - Integrated Hessians
