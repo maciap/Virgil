@@ -2,12 +2,35 @@
   "toolkits": [
     {
       "name": "Integrated Gradients (IG)",
-      "task_input": ["classification", "generation"],
-      "access_arch": { "access": ["black_box", "white_box"], "arch": ["all"] },
+      "task_input": [
+        "classification",
+        "generation"
+      ],
+      "access_arch": {
+        "access": [
+          "black_box",
+          "white_box"
+        ],
+        "arch": [
+          "all"
+        ]
+      },
       "plugin_routing": [
-        { "task": "classification", "arch": "all", "plugin_id": "captum_ig_classifier" },
-        { "task": "generation", "arch": "decoder", "plugin_id": "inseq_decoder_ig" },
-        { "task": "generation", "arch": "encdec", "plugin_id": "inseq_encdec_ig" }
+        {
+          "task": "classification",
+          "arch": "all",
+          "plugin_id": "captum_ig_classifier"
+        },
+        {
+          "task": "generation",
+          "arch": "decoder",
+          "plugin_id": "inseq_decoder_ig"
+        },
+        {
+          "task": "generation",
+          "arch": "encdec",
+          "plugin_id": "inseq_encdec_ig"
+        }
       ],
       "target_scope": "local",
       "accessibility": "non experts",
@@ -89,15 +112,29 @@
       "typical_cost": "medium",
       "implementation": "https://github.com/meta-pytorch/captum"
     },
-
     {
       "name": "Layer Integrated Gradients",
-      "task_input": ["classification", "generation"],
-      "access_arch": { "access": ["black_box", "white_box"], "arch": ["all"] },
+      "task_input": [
+        "classification",
+        "generation"
+      ],
+      "access_arch": {
+        "access": [
+          "black_box",
+          "white_box"
+        ],
+        "arch": [
+          "all"
+        ]
+      },
       "target_scope": "local",
       "accessibility": "mid experts",
       "plugin_routing": [
-        { "task": "classification", "arch": "all", "plugin_id": "captum_layer_ig_classifier" }
+        {
+          "task": "classification",
+          "arch": "all",
+          "plugin_id": "captum_layer_ig_classifier"
+        }
       ],
       "description": {
         "overview": "Layer Integrated Gradients is a variation of Integrated Gradients that computes importance scores for the inputs or outputs of a specific layer, rather than for the original input features. In contrast, Integrated Gradients assigns an importance score to each input feature by approximating the integral of the gradients of the model’s output with respect to those inputs along a path from chosen reference inputs to the actual inputs.",
@@ -106,11 +143,14 @@
           "Enable analysis of intermediate representations in addition to providing local attribution scores"
         ]
       },
-      "strengths": [  "Like Integrated Gradients, provides theoretically grounded attributions satisfying axioms",
+      "strengths": [
+        "Like Integrated Gradients, provides theoretically grounded attributions satisfying axioms",
         "Enables interpretability of intermediate representations rather than input features",
         "More stable than raw gradient-based methods due to path integration",
-        "Can be combined with token-level for finer-grained inspection"],
-      "limitations": [ "Like Integrated Gradients, sensitive to the choice of baseline/reference input" ,
+        "Can be combined with token-level for finer-grained inspection"
+      ],
+      "limitations": [
+        "Like Integrated Gradients, sensitive to the choice of baseline/reference input",
         "Like Integrated Gradients, it can be computationally expensive"
       ],
       "research_applications": [
@@ -152,12 +192,34 @@
     },
     {
       "name": "Saliency",
-      "task_input": ["classification", "generation"],
-      "access_arch": { "access": ["white_box"], "arch": ["all"] },
+      "task_input": [
+        "classification",
+        "generation"
+      ],
+      "access_arch": {
+        "access": [
+          "white_box"
+        ],
+        "arch": [
+          "all"
+        ]
+      },
       "plugin_routing": [
-        { "task": "classification", "arch": "all", "plugin_id": "captum_saliency_classifier" },
-        { "task": "generation", "arch": "decoder", "plugin_id": "inseq_decoder_saliency" },
-        { "task": "generation", "arch": "encdec", "plugin_id": "inseq_encdec_saliency" }
+        {
+          "task": "classification",
+          "arch": "all",
+          "plugin_id": "captum_saliency_classifier"
+        },
+        {
+          "task": "generation",
+          "arch": "decoder",
+          "plugin_id": "inseq_decoder_saliency"
+        },
+        {
+          "task": "generation",
+          "arch": "encdec",
+          "plugin_id": "inseq_encdec_saliency"
+        }
       ],
       "target_scope": "local",
       "accessibility": "mid experts",
@@ -225,12 +287,35 @@
     },
     {
       "name": "Input×Gradient",
-      "task_input": ["classification", "generation"],
-      "access_arch": { "access": ["black_box", "white_box"], "arch": ["all"] },
+      "task_input": [
+        "classification",
+        "generation"
+      ],
+      "access_arch": {
+        "access": [
+          "black_box",
+          "white_box"
+        ],
+        "arch": [
+          "all"
+        ]
+      },
       "plugin_routing": [
-        { "task": "classification", "arch": "all", "plugin_id": "captum_inputxgradient_classifier" },
-        { "task": "generation", "arch": "decoder", "plugin_id": "inseq_decoder_input_x_gradient" },
-        { "task": "generation", "arch": "encdec", "plugin_id": "inseq_encdec_input_x_gradient" }
+        {
+          "task": "classification",
+          "arch": "all",
+          "plugin_id": "captum_inputxgradient_classifier"
+        },
+        {
+          "task": "generation",
+          "arch": "decoder",
+          "plugin_id": "inseq_decoder_input_x_gradient"
+        },
+        {
+          "task": "generation",
+          "arch": "encdec",
+          "plugin_id": "inseq_encdec_input_x_gradient"
+        }
       ],
       "target_scope": "local",
       "accessibility": "non experts",
@@ -280,18 +365,39 @@
       "typical_cost": "low",
       "implementation": "https://github.com/meta-pytorch/captum"
     },
-
     {
       "name": "DeepLift",
-      "task_input": ["classification", "generation"],
-      "access_arch": { "access": ["white_box"], "arch": ["all"] },
+      "task_input": [
+        "classification",
+        "generation"
+      ],
+      "access_arch": {
+        "access": [
+          "white_box"
+        ],
+        "arch": [
+          "all"
+        ]
+      },
       "plugin_routing": [
-        { "task": "classification", "arch": "all", "plugin_id": "captum_deeplift_classifier" },
-        { "task": "generation", "arch": "decoder", "plugin_id": "inseq_decoder_deeplift" },
-        { "task": "generation", "arch": "encdec", "plugin_id": "inseq_encdec_deeplift" }
+        {
+          "task": "classification",
+          "arch": "all",
+          "plugin_id": "captum_deeplift_classifier"
+        },
+        {
+          "task": "generation",
+          "arch": "decoder",
+          "plugin_id": "inseq_decoder_deeplift"
+        },
+        {
+          "task": "generation",
+          "arch": "encdec",
+          "plugin_id": "inseq_encdec_deeplift"
+        }
       ],
       "target_scope": "local",
-      "accessibility":"non experts",
+      "accessibility": "non experts",
       "description": {
         "overview": "DeepLIFT attributes the change in output to differences in input relative to a chosen baseline by backpropagating activation differences using specific propagation rules.",
         "main_functionalities": [
@@ -327,15 +433,37 @@
       "typical_cost": "medium",
       "implementation": "https://github.com/inseq-team/inseq"
     },
-    
     {
       "name": "GradientSHAP",
-      "task_input": ["classification", "generation"],
-      "access_arch": { "access": ["black_box", "white_box"], "arch": ["all"] },
+      "task_input": [
+        "classification",
+        "generation"
+      ],
+      "access_arch": {
+        "access": [
+          "black_box",
+          "white_box"
+        ],
+        "arch": [
+          "all"
+        ]
+      },
       "plugin_routing": [
-        { "task": "classification", "arch": "all", "plugin_id": "captum_gradientshap_classifier" },
-        { "task": "generation", "arch": "decoder", "plugin_id": "inseq_decoder_gradient_shap" },
-        { "task": "generation", "arch": "encdec", "plugin_id": "inseq_encdec_gradient_shap" }
+        {
+          "task": "classification",
+          "arch": "all",
+          "plugin_id": "captum_gradientshap_classifier"
+        },
+        {
+          "task": "generation",
+          "arch": "decoder",
+          "plugin_id": "inseq_decoder_gradient_shap"
+        },
+        {
+          "task": "generation",
+          "arch": "encdec",
+          "plugin_id": "inseq_encdec_gradient_shap"
+        }
       ],
       "target_scope": "local",
       "accessibility": "non experts",
@@ -384,12 +512,30 @@
     },
     {
       "name": "Feature Ablation",
-      "task_input": ["classification", "generation"],
+      "task_input": [
+        "classification",
+        "generation"
+      ],
       "accessibility": "non experts",
-      "access_arch": { "access": ["black_box"], "arch": ["all"] },
+      "access_arch": {
+        "access": [
+          "black_box"
+        ],
+        "arch": [
+          "all"
+        ]
+      },
       "plugin_routing": [
-        { "task": "classification", "arch": "all", "plugin_id": "captum_featureablation_classifier" },
-        { "task": "generation", "arch": "all", "plugin_id": "NA" }
+        {
+          "task": "classification",
+          "arch": "all",
+          "plugin_id": "captum_featureablation_classifier"
+        },
+        {
+          "task": "generation",
+          "arch": "all",
+          "plugin_id": "NA"
+        }
       ],
       "target_scope": "local",
       "description": {
@@ -423,11 +569,29 @@
     },
     {
       "name": "Occlusion",
-      "task_input": ["classification", "generation"],
-      "access_arch": { "access": ["black_box"], "arch": ["all"] },
+      "task_input": [
+        "classification",
+        "generation"
+      ],
+      "access_arch": {
+        "access": [
+          "black_box"
+        ],
+        "arch": [
+          "all"
+        ]
+      },
       "plugin_routing": [
-        { "task": "classification", "arch": "all", "plugin_id": "captum_occlusion_classifier" },
-        { "task": "generation", "arch": "all", "plugin_id": "NA" }
+        {
+          "task": "classification",
+          "arch": "all",
+          "plugin_id": "captum_occlusion_classifier"
+        },
+        {
+          "task": "generation",
+          "arch": "all",
+          "plugin_id": "NA"
+        }
       ],
       "target_scope": "local",
       "accessibility": "non experts",
@@ -439,7 +603,8 @@
         ]
       },
       "strengths": [
-        "Intuitive and human-friendly explanations", "Model agnostic"
+        "Intuitive and human-friendly explanations",
+        "Model agnostic"
       ],
       "limitations": [
         "Ablating tokens can create out-of-distribution inputs.",
@@ -468,12 +633,29 @@
     },
     {
       "name": "Shapley Value Sampling",
-      "task_input": ["classification", "generation"],
-      "access_arch": { "access": ["black_box"], "arch": ["all"] },
-      "plugin_routing": [
-        { "task": "classification", "arch": "all", "plugin_id": "captum_shapleyvaluesampling_classifier" }
+      "task_input": [
+        "classification",
+        "generation"
       ],
-      "target_scope": ["local", "global"],
+      "access_arch": {
+        "access": [
+          "black_box"
+        ],
+        "arch": [
+          "all"
+        ]
+      },
+      "plugin_routing": [
+        {
+          "task": "classification",
+          "arch": "all",
+          "plugin_id": "captum_shapleyvaluesampling_classifier"
+        }
+      ],
+      "target_scope": [
+        "local",
+        "global"
+      ],
       "accessibility": "non experts",
       "description": {
         "overview": "Shapley Value Sampling approximates SHAP attributions by Monte Carlo sampling of feature coalitions, averaging each feature's marginal contribution to the model's prediction across sampled subsets.",
@@ -488,7 +670,8 @@
       ],
       "limitations": [
         "Can be very expensive; stable estimates often require many samples",
-        "Perturbations/masking can create out-of-distribution inputs"  ],
+        "Perturbations/masking can create out-of-distribution inputs"
+      ],
       "research_applications": [
         {
           "used_in": "A Unified Approach to Interpreting Model Predictions",
@@ -520,8 +703,17 @@
     },
     {
       "name": "TokenSHAP",
-      "task_input": ["generation"],
-      "access_arch": {"access": ["black_box"], "arch": ["decoder"]},
+      "task_input": [
+        "generation"
+      ],
+      "access_arch": {
+        "access": [
+          "black_box"
+        ],
+        "arch": [
+          "decoder"
+        ]
+      },
       "target_scope": "local",
       "accessibility": "non experts",
       "description": {
@@ -535,7 +727,8 @@
         "Tailored to autoregressive LLMs (explains next-token or sequence probabilities)",
         "Human friendly explanations"
       ],
-      "limitations": ["Computationally expensive",
+      "limitations": [
+        "Computationally expensive",
         "Results depend on masking/perturbation strategy, which may create out-of-distribution inputs",
         "Shapley values approximation may be unstable if enough Monte Carlo samples are not drawn"
       ],
@@ -554,21 +747,45 @@
     },
     {
       "name": "Kernel SHAP",
-      "task_input": ["classification", "generation"],
-      "access_arch": {"access": ["black_box", "white_box"], "arch": ["all"]},
-      "plugin_routing": [
-        { "task": "classification", "arch": "all", "plugin_id": "captum_kernelshap_classifier" }
+      "task_input": [
+        "classification",
+        "generation"
+      ],
+      "access_arch": {
+        "access": [
+          "black_box",
+          "white_box"
         ],
-      "target_scope": ["local", "global"],
-      "accessibility":"non experts",
+        "arch": [
+          "all"
+        ]
+      },
+      "plugin_routing": [
+        {
+          "task": "classification",
+          "arch": "all",
+          "plugin_id": "captum_kernelshap_classifier"
+        }
+      ],
+      "target_scope": [
+        "local",
+        "global"
+      ],
+      "accessibility": "non experts",
       "description": {
         "overview": "Kernel SHAP is a method that relies on a weighted linear regression to compute attributions. Attributions correspond to both Shapley values from game theory and coefficients from a local linear regression.",
         "main_functionalities": [
           "Compute local Shapley-based attributions"
         ]
       },
-      "strengths": ["Theoretically grounded in game theory", "Widely used across many domains"],
-      "limitations": ["Computationally expensive",   "Results depend on masking/perturbation strategy, which may create out-of-distribution inputs", "Can be sensitive to design choices such as the choice of background"
+      "strengths": [
+        "Theoretically grounded in game theory",
+        "Widely used across many domains"
+      ],
+      "limitations": [
+        "Computationally expensive",
+        "Results depend on masking/perturbation strategy, which may create out-of-distribution inputs",
+        "Can be sensitive to design choices such as the choice of background"
       ],
       "research_applications": [
         {
@@ -601,22 +818,38 @@
     },
     {
       "name": "Sobol",
-      "task_input": ["generation","classification"],
-      "access_arch": {"access": ["black_box"], "arch": ["all"]},
+      "task_input": [
+        "generation",
+        "classification"
+      ],
+      "access_arch": {
+        "access": [
+          "black_box"
+        ],
+        "arch": [
+          "all"
+        ]
+      },
       "target_scope": "global",
-      "accessibility":"non experts",
+      "accessibility": "non experts",
       "description": {
         "overview": "Based on the theoretical framework of sensitivity analysis via Sobol indices, they measure both individual (first-order) and interaction (higher-order) effects of features on model outputs.",
         "main_functionalities": [
           "Compute token-level attribution scores"
         ]
       },
-      "strengths": ["Theoretically grounded in sensitivity analysis", 
-        "Accounts for interaction effects beyond univariate attributions", "Model agnostic", "Human friendly explanations"],
-      "limitations": ["Not tailored to natural language"],
+      "strengths": [
+        "Theoretically grounded in sensitivity analysis",
+        "Accounts for interaction effects beyond univariate attributions",
+        "Model agnostic",
+        "Human friendly explanations"
+      ],
+      "limitations": [
+        "Not tailored to natural language"
+      ],
       "research_applications": [
         {
-          "used_in":  "Look at the Variance! Efficient Black-box Explanations with Sobol-based Sensitivity Analysis",
+          "used_in": "Look at the Variance! Efficient Black-box Explanations with Sobol-based Sensitivity Analysis",
           "type": "paper",
           "year": 2021,
           "source": "NeurIPS",
@@ -637,10 +870,23 @@
     },
     {
       "name": "Leave-One-Out (LOO) / Erasure",
-      "task_input": ["generation"],
-      "access_arch": {"access": ["white_box"], "arch": ["decoder"]},
+      "task_input": [
+        "generation"
+      ],
+      "access_arch": {
+        "access": [
+          "white_box"
+        ],
+        "arch": [
+          "decoder"
+        ]
+      },
       "plugin_routing": [
-        { "task": "generation", "arch": "decoder", "plugin_id": "captum_loo_generation" }
+        {
+          "task": "generation",
+          "arch": "decoder",
+          "plugin_id": "captum_loo_generation"
+        }
       ],
       "target_scope": "local",
       "accessibility": "non experts",
@@ -675,22 +921,36 @@
     },
     {
       "name": "SmoothGrad",
-      "task_input": ["generation","classification"],
-      "access_arch": {"access": ["white_box"], "arch": ["all"]},
+      "task_input": [
+        "generation",
+        "classification"
+      ],
+      "access_arch": {
+        "access": [
+          "white_box"
+        ],
+        "arch": [
+          "all"
+        ]
+      },
       "target_scope": "local",
-      "accessibility":"non experts",
+      "accessibility": "non experts",
       "description": {
         "overview": "Instead of using raw gradients to compute attributions, which can be unstable, SmoothGrad approximates a smoothing of the raw gradients based on a Gaussian kernel.",
         "main_functionalities": [
           "Compute token-level attribution scores"
         ]
       },
-      "strengths": ["More stable than attribution tools based on raw gradients",
+      "strengths": [
+        "More stable than attribution tools based on raw gradients",
         "Reduces visual artifacts and sharp discontinuities in attributions, leading to explanations that are easier to interpret",
-        "Can be viewed as a general procedure which computes an attribution map by averaging over multiple attribution maps of an arbitrary gradient-based attribution method with multiple noised input"],
-      "limitations": ["More computationally demanding than attribution tools based on raw gradients, requiring multiple forward passes",
+        "Can be viewed as a general procedure which computes an attribution map by averaging over multiple attribution maps of an arbitrary gradient-based attribution method with multiple noised input"
+      ],
+      "limitations": [
+        "More computationally demanding than attribution tools based on raw gradients, requiring multiple forward passes",
         "Obtaining proper results requires carefully selecting the variance of the Gaussian noise",
-        "Not tailored to natural language"],
+        "Not tailored to natural language"
+      ],
       "research_applications": [
         {
           "used_in": "SmoothGrad: removing noise by adding noise",
@@ -730,13 +990,26 @@
     },
     {
       "name": "LIME",
-      "task_input": ["classification"],
-      "access_arch": {"access": ["black_box"], "arch": ["all"]},
+      "task_input": [
+        "classification"
+      ],
+      "access_arch": {
+        "access": [
+          "black_box"
+        ],
+        "arch": [
+          "all"
+        ]
+      },
       "plugin_routing": [
-        { "task": "classification", "arch": "all", "plugin_id": "captum_lime_classifier" }
+        {
+          "task": "classification",
+          "arch": "all",
+          "plugin_id": "captum_lime_classifier"
+        }
       ],
       "target_scope": "local",
-      "accessibility":"non experts",
+      "accessibility": "non experts",
       "description": {
         "overview": "LIME (Local Interpretable Model-agnostic Explanations) fits a simple surrogate model around a specific instance by sampling perturbations. The surrogate weights on features explain the local prediction.",
         "main_functionalities": [
@@ -801,8 +1074,17 @@
       "name": "Anchors",
       "plugin_id": "alibi_anchors_text",
       "accessibility": "mid experts",
-      "task_input": ["classification"],
-      "access_arch": {"access": ["black_box"], "arch": ["all"]},
+      "task_input": [
+        "classification"
+      ],
+      "access_arch": {
+        "access": [
+          "black_box"
+        ],
+        "arch": [
+          "all"
+        ]
+      },
       "target_scope": "local",
       "description": {
         "overview": "Anchors identifies a set of words or conditions (an 'anchor') that fix predictions locally.",
@@ -851,10 +1133,19 @@
     {
       "name": "Direct Logit Attribution",
       "plugin_id": "direct_logit_attribution",
-      "task_input": ["generation"],
-      "access_arch": {"access": ["white_box"], "arch": ["decoder"]},
+      "task_input": [
+        "generation"
+      ],
+      "access_arch": {
+        "access": [
+          "white_box"
+        ],
+        "arch": [
+          "decoder"
+        ]
+      },
       "target_scope": "local",
-      "accessibility":"mid experts",
+      "accessibility": "mid experts",
       "description": {
         "overview": "Direct Logit Attribution (DLA) projects the contribution of each model component to the logit space contribution onto a target token logit. Positive contributions push the logit up (toward the token), negatives push it down.",
         "main_functionalities": [
@@ -911,8 +1202,17 @@
     {
       "name": "Logit Lens",
       "plugin_id": "logit_lens",
-      "task_input": ["generation"],
-      "access_arch": {"access": ["white_box"], "arch": ["decoder"]},
+      "task_input": [
+        "generation"
+      ],
+      "access_arch": {
+        "access": [
+          "white_box"
+        ],
+        "arch": [
+          "decoder"
+        ]
+      },
       "target_scope": "local",
       "accessibility": "mid experts",
       "description": {
@@ -963,8 +1263,18 @@
     {
       "name": "Probing",
       "plugin_id": "probing_binary_examples",
-      "task_input": ["generation", "classification"],
-      "access_arch": {"access": ["white_box"], "arch": ["all"]},
+      "task_input": [
+        "generation",
+        "classification"
+      ],
+      "access_arch": {
+        "access": [
+          "white_box"
+        ],
+        "arch": [
+          "all"
+        ]
+      },
       "target_scope": "global",
       "description": {
         "overview": "Probing assesses what information is encoded in a model’s internal representations by training simple, and often linear, classifiers (or probes) on internal representations.",
@@ -1006,10 +1316,20 @@
     },
     {
       "name": "Layer-wise Relevance Propagation (LRP) and AttnLRP",
-      "task_input": ["classification", "generation"],
-      "access_arch": {"access": ["white_box"], "arch": ["all"]},
+      "task_input": [
+        "classification",
+        "generation"
+      ],
+      "access_arch": {
+        "access": [
+          "white_box"
+        ],
+        "arch": [
+          "all"
+        ]
+      },
       "target_scope": "local",
-      "accessibility":"mid experts",
+      "accessibility": "mid experts",
       "description": {
         "overview": "LRP redistributes the prediction score backward through the network to the inputs, assigning relevance scores via fixed propagation rules. In propagation, it ensures relevance conservation (inputs sum to output). AttnLRP is a variant designed to properly handle the attention mechanism.",
         "main_functionalities": [
@@ -1064,10 +1384,20 @@
     {
       "name": "Attention Rollout",
       "plugin_id": "attention_rollout",
-      "task_input": ["classification", "generation"],
-      "access_arch": {"access": ["white_box"], "arch": ["all"]},
+      "task_input": [
+        "classification",
+        "generation"
+      ],
+      "access_arch": {
+        "access": [
+          "white_box"
+        ],
+        "arch": [
+          "all"
+        ]
+      },
       "target_scope": "local",
-      "accessibility":"mid experts",
+      "accessibility": "mid experts",
       "description": {
         "overview": "Attention Rollout accounts for the full flow of information through a transformer by recursively multiplying attention matrices across layers. This produces a single aggregated attention score for any pair of tokens, capturing indirect dependencies that single-layer attention weights miss.",
         "main_functionalities": [
@@ -1108,8 +1438,18 @@
     {
       "name": "Attention Flow",
       "plugin_id": "attention_flow",
-      "task_input": ["classification", "generation"],
-      "access_arch": {"access": ["white_box"], "arch": ["all"]},
+      "task_input": [
+        "classification",
+        "generation"
+      ],
+      "access_arch": {
+        "access": [
+          "white_box"
+        ],
+        "arch": [
+          "all"
+        ]
+      },
       "target_scope": "local",
       "accessibility": "mid experts",
       "description": {
@@ -1144,8 +1484,17 @@
     },
     {
       "name": "Aggregation of Layer-wise Token-to-token Interactions (ALTI)",
-      "task_input": ["classification"],
-      "access_arch": {"access": ["white_box"], "arch": ["all"]},
+      "task_input": [
+        "classification"
+      ],
+      "access_arch": {
+        "access": [
+          "white_box"
+        ],
+        "arch": [
+          "all"
+        ]
+      },
       "target_scope": "local",
       "accessibility": "non experts",
       "description": {
@@ -1179,9 +1528,18 @@
     },
     {
       "name": "LIT Counterfactual Generator",
-      "task_input": ["classification"],
-      "accessibility" :"non experts",
-      "access_arch": {"access": ["white_box"], "arch": ["all"]},
+      "task_input": [
+        "classification"
+      ],
+      "accessibility": "non experts",
+      "access_arch": {
+        "access": [
+          "white_box"
+        ],
+        "arch": [
+          "all"
+        ]
+      },
       "target_scope": "local",
       "description": {
         "overview": "The tool supports counterfactual generation techniques to provide behavioral analysis through systematic input manipulation. The idea is to create modified versions of the original input by substituting, removing, or adding tokens and then observing how the model's predictions change in response to these perturbations.  In particular, new inputs can be generated either manually through edits, or with a range of automatic counterfactual generators, such as backtranslation, nearest-neighbor retrieval, word substitutions, or adversarial attacks like HotFlip.",
@@ -1190,10 +1548,14 @@
           "Show the differences needed to alter the predictions of the model"
         ]
       },
-      "strengths": ["Explanations are intuitive",
-        "The method is model agnostic"],
-      "limitations": ["The unit (or subset of input) that can be targeted to generate a counterfactual is not obvious",
-        "Different approaches to counterfactual generation can be more or less effective"],
+      "strengths": [
+        "Explanations are intuitive",
+        "The method is model agnostic"
+      ],
+      "limitations": [
+        "The unit (or subset of input) that can be targeted to generate a counterfactual is not obvious",
+        "Different approaches to counterfactual generation can be more or less effective"
+      ],
       "research_applications": [
         {
           "used_in": "The Language Interpretability Tool: Extensible, Interactive Visualizations and Analysis for {NLP} Models",
@@ -1209,11 +1571,24 @@
     },
     {
       "name": "Polyjuice",
-      "task_input": ["classification"],
+      "task_input": [
+        "classification"
+      ],
       "accessibility": "non experts",
-      "access_arch": {"access": ["black_box"], "arch": ["all"]},
+      "access_arch": {
+        "access": [
+          "black_box"
+        ],
+        "arch": [
+          "all"
+        ]
+      },
       "plugin_routing": [
-        { "task": "classification", "arch": "all", "plugin_id": "polyjuice_counterfactual_classifier" }
+        {
+          "task": "classification",
+          "arch": "all",
+          "plugin_id": "polyjuice_counterfactual_classifier"
+        }
       ],
       "target_scope": "local",
       "description": {
@@ -1223,19 +1598,23 @@
           "Show the differences needed to alter the predictions of the model"
         ]
       },
-      "strengths": ["Generates fluent counterfactual inputs that tend to be diverse and close to the actual inputs",
+      "strengths": [
+        "Generates fluent counterfactual inputs that tend to be diverse and close to the actual inputs",
         "The method is model agnostic",
-        "Explanations are intuitive"],
-      "limitations": ["The unit (or subset of input) that can be targeted to generate a counterfactual is not obvious",
+        "Explanations are intuitive"
+      ],
+      "limitations": [
+        "The unit (or subset of input) that can be targeted to generate a counterfactual is not obvious",
         "Not classifier-aware: counterfactuals are generated without guidance from the target classifier decision boundary",
-        "The control codes used to guide generation and fine-tuning may be subject to biases"],
+        "The control codes used to guide generation and fine-tuning may be subject to biases"
+      ],
       "research_applications": [
         {
           "used_in": "Polyjuice: Generating Counterfactuals for Explaining, Evaluating, and Improving Models",
           "type": "paper",
           "year": 2021,
           "source": "Proceedings of the 59th Annual Meeting of the Association for Computational Linguistics and the 11th International Joint Conference on Natural Language Processing (Volume 1: Long Papers)",
-          "url":  "https://aclanthology.org/2021.acl-long.523.pdf",
+          "url": "https://aclanthology.org/2021.acl-long.523.pdf",
           "note": "Introduces Polyjuice."
         }
       ],
@@ -1244,8 +1623,18 @@
     },
     {
       "name": "Activation Patching",
-      "task_input": ["generation", "classification"],
-      "access_arch": {"access": ["white_box"], "arch": ["all"]},
+      "task_input": [
+        "generation",
+        "classification"
+      ],
+      "access_arch": {
+        "access": [
+          "white_box"
+        ],
+        "arch": [
+          "all"
+        ]
+      },
       "target_scope": "global",
       "accessibility": "experts",
       "description": {
@@ -1287,8 +1676,18 @@
     },
     {
       "name": "Path Patching",
-      "task_input": ["generation", "classification"],
-      "access_arch": {"access": ["white_box"], "arch": ["all"]},
+      "task_input": [
+        "generation",
+        "classification"
+      ],
+      "access_arch": {
+        "access": [
+          "white_box"
+        ],
+        "arch": [
+          "all"
+        ]
+      },
       "target_scope": "global",
       "accessibility": "experts",
       "description": {
@@ -1298,11 +1697,14 @@
           "Localize important and unimportant computational subgraphs"
         ]
       },
-      "strengths": ["Allows to draw strong causal conclusions",
+      "strengths": [
+        "Allows to draw strong causal conclusions",
         "Computational paths are not always easy-to-interpret for humans",
         "Allows to study which transformer components affect each other directly, or via mediation by another component",
-        "More expressive than standard activation patching"],
-      "limitations": ["Requires manual work, e.g., to creation of a dataset of corrupted inputs to collect activations from the “corrupted” run",
+        "More expressive than standard activation patching"
+      ],
+      "limitations": [
+        "Requires manual work, e.g., to creation of a dataset of corrupted inputs to collect activations from the “corrupted” run",
         "Patching interventions are computationally expensive, requiring multiple passes",
         "Results are affected by design choices such as the creation of corrupted inputs or the choice of the metric used to assess patching impact"
       ],
@@ -1338,8 +1740,17 @@
     {
       "name": "Attribution Patching (AtP) and AtP*",
       "accessibility": "experts",
-      "task_input": ["generation"],
-      "access_arch": {"access": ["white_box"], "arch": ["decoder"]},
+      "task_input": [
+        "generation"
+      ],
+      "access_arch": {
+        "access": [
+          "white_box"
+        ],
+        "arch": [
+          "decoder"
+        ]
+      },
       "target_scope": "global",
       "description": {
         "overview": "Attribution Patching (AtP) is a fast, gradient-based first-order approximation to activation patching: it estimates the effect of patching an activation by computing the inner product between the activation difference (clean−corrupted) and the gradient of a behavior metric with respect to that activation. AtP* is a refined variant designed to reduce the approximation quality of AtP in attention-saturated and cancellation-heavy settings while preserving scalability.",
@@ -1376,13 +1787,25 @@
         }
       ],
       "typical_cost": "high",
-      "implementation":"https://colab.research.google.com/github/neelnanda-io/TransformerLens/blob/main/demos/Attribution_Patching_Demo.ipynb"
+      "implementation": "https://colab.research.google.com/github/neelnanda-io/TransformerLens/blob/main/demos/Attribution_Patching_Demo.ipynb"
     },
     {
       "name": "Edge Attribution Patching with Integrated Gradients (EAP-IG)",
-      "task_input": ["generation"],
-      "access_arch": { "access": ["white_box"], "arch": ["decoder"] },
-      "target_scope": ["local", "global"],
+      "task_input": [
+        "generation"
+      ],
+      "access_arch": {
+        "access": [
+          "white_box"
+        ],
+        "arch": [
+          "decoder"
+        ]
+      },
+      "target_scope": [
+        "local",
+        "global"
+      ],
       "accessibility": "experts",
       "description": {
         "overview": "EAP-IG is a gradient-based circuit-discovery method that scores the causal importance of every edge (connection between attention heads and MLPs) in a transformer's computational graph using a small, fixed number of forward and backward passes. It extends Edge Attribution Patching (EAP) by averaging the loss gradient over several points along a straight-line interpolation between a clean and a corrupted input's activations (as in Integrated Gradients), instead of evaluating the gradient only at the clean input.",
@@ -1468,12 +1891,24 @@
         }
       ],
       "typical_cost": "medium",
-      "implementation": ["https://github.com/hannamw/eap-ig-faithfulness", "https://github.com/hannamw/eap-ig"]
+      "implementation": [
+        "https://github.com/hannamw/eap-ig-faithfulness",
+        "https://github.com/hannamw/eap-ig"
+      ]
     },
     {
       "name": "Minimal Contrastive Editing (MICE)",
-      "task_input": ["classification"],
-      "access_arch": {"access": ["black_box"], "arch": ["all"]},
+      "task_input": [
+        "classification"
+      ],
+      "access_arch": {
+        "access": [
+          "black_box"
+        ],
+        "arch": [
+          "all"
+        ]
+      },
       "target_scope": "local",
       "accessibility": "non experts",
       "description": {
@@ -1486,7 +1921,7 @@
         "Produces intuitive explanations by identifying limited edits to the input that alter the output"
       ],
       "limitations": [
-        "Can be very computationally expensive, requiring fine-tuning and multiple passes"  ,
+        "Can be very computationally expensive, requiring fine-tuning and multiple passes",
         "Quality of explanations depends on the editing model used to generate candidate changes",
         "Edits may produce slightly unnatural or semantically altered sentences"
       ],
@@ -1505,8 +1940,17 @@
     },
     {
       "name": "MLP Update Decomposition",
-      "task_input": ["generation"],
-      "access_arch": {"access": ["white_box"], "arch": ["decoder"]},
+      "task_input": [
+        "generation"
+      ],
+      "access_arch": {
+        "access": [
+          "white_box"
+        ],
+        "arch": [
+          "decoder"
+        ]
+      },
       "target_scope": "local",
       "description": {
         "overview": "This method decomposes a Transformer MLP (feed-forward) layer as updates that pertain to single paramter vectors. Each vector is then projected to the vocabulary space and interpreted as promoting specific concepts.",
@@ -1514,11 +1958,14 @@
           "Decompose the MLP update into components which can be interpreted"
         ]
       },
-      "strengths": ["Valuable to gain fine-grained insight on the mechanisms implemented in the MLP, which is a core yet poorly-understood component of the transformer.",
+      "strengths": [
+        "Valuable to gain fine-grained insight on the mechanisms implemented in the MLP, which is a core yet poorly-understood component of the transformer.",
         "Vectors in the decomposition of the MLP update are often interpretable.",
         "Allows steering generation towards a direction of interest"
       ],
-      "limitations": ["Possible non-linear interactions between MLP weight vectors that may generate new meanings are ignored."],
+      "limitations": [
+        "Possible non-linear interactions between MLP weight vectors that may generate new meanings are ignored."
+      ],
       "research_applications": [
         {
           "used_in": "Transformer Feed-Forward Layers Build Predictions by Promoting Concepts in the Vocabulary Space",
@@ -1542,12 +1989,34 @@
     },
     {
       "name": "Training Data Influence (TracIn)",
-      "task_input": ["classification", "generation"],
-      "access_arch": { "access": ["white_box"], "arch": ["all"] },
+      "task_input": [
+        "classification",
+        "generation"
+      ],
+      "access_arch": {
+        "access": [
+          "white_box"
+        ],
+        "arch": [
+          "all"
+        ]
+      },
       "plugin_routing": [
-        { "task": "classification", "arch": "all", "plugin_id": "tracin_influence_classifier" },
-        { "task": "generation", "arch": "decoder", "plugin_id": "tracin_influence_decoder" },
-        { "task": "generation", "arch": "encdec", "plugin_id": "tracin_influence_encdec" }
+        {
+          "task": "classification",
+          "arch": "all",
+          "plugin_id": "tracin_influence_classifier"
+        },
+        {
+          "task": "generation",
+          "arch": "decoder",
+          "plugin_id": "tracin_influence_decoder"
+        },
+        {
+          "task": "generation",
+          "arch": "encdec",
+          "plugin_id": "tracin_influence_encdec"
+        }
       ],
       "target_scope": "local",
       "accessibility": "mid experts",
@@ -1597,9 +2066,19 @@
     {
       "name": "Attention Visualization (BertViz)",
       "plugin_id": "bertviz_attention",
-      "accessibility":"mid experts",
-      "task_input": ["classification", "generation"],
-      "access_arch": {"access": ["white_box"], "arch": ["all"]},
+      "accessibility": "mid experts",
+      "task_input": [
+        "classification",
+        "generation"
+      ],
+      "access_arch": {
+        "access": [
+          "white_box"
+        ],
+        "arch": [
+          "all"
+        ]
+      },
       "target_scope": "local",
       "description": {
         "overview": "BertViz is a tool for visualizing self-attention in transformers at multiple scales. It provides views of individual heads, all heads, or neuron-level interactions.",
@@ -1608,8 +2087,14 @@
           "Provide multiple interactive views (head-level, model-level)"
         ]
       },
-      "strengths": ["Easy to access", "Intuitive visualizations", "Can focus on a specific attention head or provide a complete view of all attention heads in the model" ],
-      "limitations": ["Attention is known not to provide faithful explananations (see \"Attention is not Explanation\" in Further Readings section)"],
+      "strengths": [
+        "Easy to access",
+        "Intuitive visualizations",
+        "Can focus on a specific attention head or provide a complete view of all attention heads in the model"
+      ],
+      "limitations": [
+        "Attention is known not to provide faithful explananations (see \"Attention is not Explanation\" in Further Readings section)"
+      ],
       "research_applications": [
         {
           "used_in": "A Multiscale Visualization of Attention in the Transformer Model",
@@ -1625,8 +2110,17 @@
     },
     {
       "name": "exBERT",
-      "task_input": ["generation"],
-      "access_arch": {"access": ["white_box"], "arch": ["all"]},
+      "task_input": [
+        "generation"
+      ],
+      "access_arch": {
+        "access": [
+          "white_box"
+        ],
+        "arch": [
+          "all"
+        ]
+      },
       "target_scope": "local",
       "accessibility": "mid experts",
       "description": {
@@ -1640,8 +2134,10 @@
         "Useful to quickly test hypotheses on the internal representation of a specific token in a specific context",
         "The tool can be easily accessed online at https://exbert.vizhub.ai/client/exBERT.html"
       ],
-      "limitations": ["Attention is known not to provide faithful explanations (see \"Attention is not Explanation\" in Further Readings section)",
-      "exBERT only provides statistics for a single token, considering a small number of neighbours, yielding no insights on global behaviors"],
+      "limitations": [
+        "Attention is known not to provide faithful explanations (see \"Attention is not Explanation\" in Further Readings section)",
+        "exBERT only provides statistics for a single token, considering a small number of neighbours, yielding no insights on global behaviors"
+      ],
       "research_applications": [
         {
           "used_in": "exBERT: A Visual Analysis Tool to Explore Learned Representations in Transformer Models",
@@ -1666,9 +2162,18 @@
     {
       "name": "Sparse Autoencoders",
       "plugin_id": "sae_feature_explorer",
-      "task_input": ["generation"],
+      "task_input": [
+        "generation"
+      ],
       "accessibility": "experts",
-      "access_arch": {"access": ["white_box"], "arch": ["all"]},
+      "access_arch": {
+        "access": [
+          "white_box"
+        ],
+        "arch": [
+          "all"
+        ]
+      },
       "target_scope": "global",
       "description": {
         "overview": "Sparse Autoencoders (SAEs) train a larger, sparse latent space to reconstruct model interal representations (activations) with the goal of disentangling highly-polysemantic features into more monosemantic features. Each sparse unit aims to capture a semantically meaningful concept.",
@@ -1726,8 +2231,18 @@
     },
     {
       "name": "Transcoders",
-      "task_input": ["generation", "classification"],
-      "access_arch": { "access": ["white_box"], "arch": ["all"] },
+      "task_input": [
+        "generation",
+        "classification"
+      ],
+      "access_arch": {
+        "access": [
+          "white_box"
+        ],
+        "arch": [
+          "all"
+        ]
+      },
       "target_scope": "global",
       "accessibility": "experts",
       "description": {
@@ -1762,8 +2277,17 @@
     {
       "name": "Information Flow Routes",
       "plugin_id": "meta_transparency_graph",
-      "task_input": ["generation"],
-      "access_arch": {"access": ["white_box"], "arch": ["decoder"]},
+      "task_input": [
+        "generation"
+      ],
+      "access_arch": {
+        "access": [
+          "white_box"
+        ],
+        "arch": [
+          "decoder"
+        ]
+      },
       "target_scope": "global",
       "accessibility": "experts",
       "description": {
@@ -1806,8 +2330,17 @@
     },
     {
       "name": "Automatic Circuit DisCovery (ACDC)",
-      "task_input": ["generation"],
-      "access_arch": {"access": ["white_box"], "arch": ["decoder"]},
+      "task_input": [
+        "generation"
+      ],
+      "access_arch": {
+        "access": [
+          "white_box"
+        ],
+        "arch": [
+          "decoder"
+        ]
+      },
       "target_scope": "global",
       "accessibility": "experts",
       "description": {
@@ -1839,8 +2372,17 @@
     },
     {
       "name": "Edge Pruning",
-      "task_input": ["generation"],
-      "access_arch": { "access": ["white_box"], "arch": ["decoder"] },
+      "task_input": [
+        "generation"
+      ],
+      "access_arch": {
+        "access": [
+          "white_box"
+        ],
+        "arch": [
+          "decoder"
+        ]
+      },
       "target_scope": "global",
       "accessibility": "experts",
       "description": {
@@ -1898,8 +2440,17 @@
     },
     {
       "name": "ModCirc",
-      "task_input": ["classification"],
-      "access_arch": { "access": ["white_box"], "arch": ["decoder"] },
+      "task_input": [
+        "classification"
+      ],
+      "access_arch": {
+        "access": [
+          "white_box"
+        ],
+        "arch": [
+          "decoder"
+        ]
+      },
       "target_scope": "global",
       "accessibility": "mid experts",
       "description": {
@@ -1949,8 +2500,17 @@
     },
     {
       "name": "IBCircuit",
-      "task_input": ["generation"],
-      "access_arch": { "access": ["white_box"], "arch": ["decoder"] },
+      "task_input": [
+        "generation"
+      ],
+      "access_arch": {
+        "access": [
+          "white_box"
+        ],
+        "arch": [
+          "decoder"
+        ]
+      },
       "target_scope": "global",
       "accessibility": "experts",
       "description": {
@@ -1999,11 +2559,29 @@
     },
     {
       "name": "Discretized Integrated Gradients",
-      "task_input": ["classification", "generation"],
-      "access_arch": { "access": ["white_box"], "arch": ["all"] },
+      "task_input": [
+        "classification",
+        "generation"
+      ],
+      "access_arch": {
+        "access": [
+          "white_box"
+        ],
+        "arch": [
+          "all"
+        ]
+      },
       "plugin_routing": [
-        { "task": "generation", "arch": "decoder", "plugin_id": "inseq_decoder_discretized_ig" },
-        { "task": "generation", "arch": "encdec", "plugin_id": "inseq_encdec_discretized_ig" }
+        {
+          "task": "generation",
+          "arch": "decoder",
+          "plugin_id": "inseq_decoder_discretized_ig"
+        },
+        {
+          "task": "generation",
+          "arch": "encdec",
+          "plugin_id": "inseq_encdec_discretized_ig"
+        }
       ],
       "target_scope": "local",
       "accessibility": "non experts",
@@ -2038,11 +2616,18 @@
     {
       "name": "PCA",
       "plugin_id": "embedding_pca_layers",
-      "task_input": ["generation", "classification"],
+      "task_input": [
+        "generation",
+        "classification"
+      ],
       "accessibility": "mid experts",
       "access_arch": {
-        "access": ["white_box"],
-        "arch": ["all"]
+        "access": [
+          "white_box"
+        ],
+        "arch": [
+          "all"
+        ]
       },
       "target_scope": "global",
       "description": {
@@ -2098,10 +2683,17 @@
       "accessibility": "non experts",
       "target_scope": "global",
       "notes": "Representation similarity across layers using linear CKA.",
-      "task_input": [ "classification", "generation"],
+      "task_input": [
+        "classification",
+        "generation"
+      ],
       "access_arch": {
-        "access": ["white_box"],
-        "arch": ["all"]
+        "access": [
+          "white_box"
+        ],
+        "arch": [
+          "all"
+        ]
       },
       "description": {
         "overview": "Linear CKA (Centered Kernel Alignment) is a similarity measure that quantifies how similarly two sets of latent representations (e.g., neural network layer activations) encode information by comparing their centered linear kernels in a way that is invariant to isotropic scaling and orthogonal transformations.",
@@ -2147,12 +2739,26 @@
     },
     {
       "name": "Non-negative Matrix Factorization (NMF)",
-      "task_input": ["classification", "generation"],
-      "access_arch": { "access": "white_box", "arch": "all" },
+      "task_input": [
+        "classification",
+        "generation"
+      ],
+      "access_arch": {
+        "access": "white_box",
+        "arch": "all"
+      },
       "target_scope": "global",
       "plugin_routing": [
-        { "task": "classification", "arch": "all", "plugin_id": "ecco_nmf" },
-        { "task": "generation", "arch": "all", "plugin_id": "ecco_nmf" }
+        {
+          "task": "classification",
+          "arch": "all",
+          "plugin_id": "ecco_nmf"
+        },
+        {
+          "task": "generation",
+          "arch": "all",
+          "plugin_id": "ecco_nmf"
+        }
       ],
       "accessibility": "experts",
       "description": {
@@ -2201,10 +2807,23 @@
     },
     {
       "name": "Token Ranking Comparison",
-      "task_input": ["generation"],
-      "access_arch": { "access": ["white_box"], "arch": ["decoder"] },
+      "task_input": [
+        "generation"
+      ],
+      "access_arch": {
+        "access": [
+          "white_box"
+        ],
+        "arch": [
+          "decoder"
+        ]
+      },
       "plugin_routing": [
-        { "task": "generation", "arch": "decoder", "plugin_id": "ecco_token_rank_compare" }
+        {
+          "task": "generation",
+          "arch": "decoder",
+          "plugin_id": "ecco_token_rank_compare"
+        }
       ],
       "target_scope": "local",
       "accessibility": "non experts",
@@ -2235,15 +2854,28 @@
     },
     {
       "name": "Similarity-Based Explanations",
-      "task_input": ["classification"],
-      "access_arch": { "access": ["white_box"], "arch": ["all"] },
+      "task_input": [
+        "classification"
+      ],
+      "access_arch": {
+        "access": [
+          "white_box"
+        ],
+        "arch": [
+          "all"
+        ]
+      },
       "plugin_routing": [
-        { "task": "classification", "arch": "all", "plugin_id": "gradient_similarity_classifier" }
+        {
+          "task": "classification",
+          "arch": "all",
+          "plugin_id": "gradient_similarity_classifier"
+        }
       ],
       "target_scope": "local",
       "accessibility": "non experts",
       "description": {
-        "overview": "Explains a prediction by retrieving the most similar training examples, where similarity takes into account the model trained for a specific task." ,
+        "overview": "Explains a prediction by retrieving the most similar training examples, where similarity takes into account the model trained for a specific task.",
         "main_functionalities": [
           "Finds top-k  inputs in training that are most similar (and optionally least similar) to a target test input"
         ]
@@ -2289,8 +2921,18 @@
       "plugin_id": "cca_layers",
       "accessibility": "non experts",
       "notes": "Representation similarity across transformer layers using Canonical Correlation Analysis (CCA).",
-      "task_input": ["classification", "generation"],
-      "access_arch": { "access": ["white_box"], "arch": ["all"] },
+      "task_input": [
+        "classification",
+        "generation"
+      ],
+      "access_arch": {
+        "access": [
+          "white_box"
+        ],
+        "arch": [
+          "all"
+        ]
+      },
       "target_scope": "global",
       "description": {
         "overview": "Canonical Correlation Analysis (CCA) is a statistical method that measures the similarity between two sets of variables by finding pairs of linear combinations—one from each set—that are maximally correlated. SVCCA is a variant that is fast and invariant to affine transforms",
@@ -2367,9 +3009,22 @@
     },
     {
       "name": "Distributed Alignment Search (DAS)",
-      "task_input": ["classification", "generation"],
-      "access_arch": { "access": ["white_box"], "arch": ["all"] },
-      "target_scope": ["local", "global"],
+      "task_input": [
+        "classification",
+        "generation"
+      ],
+      "access_arch": {
+        "access": [
+          "white_box"
+        ],
+        "arch": [
+          "all"
+        ]
+      },
+      "target_scope": [
+        "local",
+        "global"
+      ],
       "accessibility": "experts",
       "notes": "DAS trains one shared alignment (a rotation of a hidden layer) via gradient descent over a set of examples, so the alignment itself is learned at the task/dataset level (global), but the underlying causal test — an interchange intervention swapping in a source example's subspace activations — is defined and evaluated on individual base/source input pairs (local).",
       "description": {
@@ -2473,7 +3128,774 @@
         }
       ],
       "typical_cost": "medium",
-      "implementation": ["https://github.com/atticusg/InterchangeInterventions", "https://github.com/stanfordnlp/pyvene"]
+      "implementation": [
+        "https://github.com/atticusg/InterchangeInterventions",
+        "https://github.com/stanfordnlp/pyvene"
+      ]
+    },
+    {
+      "name": "Activation Steering (ActAdd / CAA)",
+      "task_input": [
+        "generation"
+      ],
+      "access_arch": {
+        "access": [
+          "white_box"
+        ],
+        "arch": [
+          "decoder"
+        ]
+      },
+      "target_scope": "local",
+      "accessibility": "mid experts",
+      "description": {
+        "overview": "Activation steering modifies a language model's internal activations at inference time using a direction associated with a behavior or concept. Activation Addition (ActAdd) constructs a steering vector from the difference between activations elicited by contrastive prompts and adds the vector to the residual stream. Contrastive Activation Addition (CAA) uses differences from multiple contrastive examples to form a more robust steering direction.",
+        "main_functionalities": [
+          "Construct a direction in activation space from contrastive prompts or examples",
+          "Intervene on intermediate activations to causally steer generated behavior",
+          "Compare model outputs before and after the activation intervention"
+        ]
+      },
+      "strengths": [
+        "ActAdd does not require optimization or a backward pass to construct the steering vector",
+        "Can produce a visible causal change in generation from a small number of contrastive examples",
+        "CAA can aggregate activation differences across multiple contrastive examples"
+      ],
+      "limitations": [
+        "Results depend on choices such as the layer, steering coefficient, and contrastive prompts or examples"
+      ],
+      "research_applications": [
+        {
+          "used_in": "Steering Language Models With Activation Engineering",
+          "type": "paper",
+          "year": 2023,
+          "source": "arXiv",
+          "url": "https://arxiv.org/abs/2308.10248",
+          "note": "Introduces Activation Addition (ActAdd), an inference-time activation engineering method based on contrastive prompt activation differences."
+        },
+        {
+          "used_in": "Steering Llama 2 via Contrastive Activation Addition",
+          "type": "paper",
+          "year": 2023,
+          "source": "arXiv",
+          "url": "https://arxiv.org/abs/2312.06681",
+          "note": "Introduces Contrastive Activation Addition (CAA), which averages contrastive activation differences across examples to obtain steering directions."
+        }
+      ],
+      "typical_cost": "low",
+      "implementation": [
+        "https://github.com/montemac/activation_additions",
+        "https://github.com/nrimsky/CAA"
+      ],
+      "plugin_id": "activation_steering"
+    },
+    {
+      "name": "Attention-Head Ablation / Knockout",
+      "task_input": [
+        "generation",
+        "classification"
+      ],
+      "access_arch": {
+        "access": [
+          "white_box"
+        ],
+        "arch": [
+          "all"
+        ]
+      },
+      "target_scope": "local",
+      "accessibility": "mid experts",
+      "description": {
+        "overview": "Attention-head ablation evaluates the contribution or necessity of an attention head by disabling its output and measuring the resulting change in model behavior or task performance.",
+        "main_functionalities": [
+          "Disable individual attention heads or groups of heads",
+          "Measure the change in model outputs or task metrics after ablation",
+          "Study redundancy and necessity of attention components"
+        ]
+      },
+      "strengths": [
+        "Provides a direct intervention on a specific model component",
+        "Can reveal substantial redundancy among attention heads"
+      ],
+      "limitations": [
+        "The measured effect is specific to the chosen ablation intervention and evaluation metric"
+      ],
+      "research_applications": [
+        {
+          "used_in": "Are Sixteen Heads Really Better than One?",
+          "type": "paper",
+          "year": 2019,
+          "source": "NeurIPS",
+          "url": "https://proceedings.neurips.cc/paper/2019/hash/2c601ad9d2ff9bc8b282670cdd54f69f-Abstract.html",
+          "note": "Systematically analyzes the effect of removing attention heads and reports substantial redundancy in multi-head attention."
+        }
+      ],
+      "typical_cost": "low",
+      "implementation": "https://github.com/TransformerLensOrg/TransformerLens",
+      "plugin_id": "attention_head_ablation"
+    },
+    {
+      "name": "Tuned Lens",
+      "task_input": [
+        "generation"
+      ],
+      "access_arch": {
+        "access": [
+          "white_box"
+        ],
+        "arch": [
+          "decoder"
+        ]
+      },
+      "target_scope": "local",
+      "accessibility": "mid experts",
+      "description": {
+        "overview": "The Tuned Lens decodes intermediate transformer hidden states into vocabulary distributions using a learned affine translator for each layer of a frozen language model. It is designed as a refinement of the Logit Lens.",
+        "main_functionalities": [
+          "Decode hidden states at each transformer layer into a distribution over the vocabulary",
+          "Track how latent next-token predictions evolve layer by layer",
+          "Compare intermediate predictions with the model's final prediction"
+        ]
+      },
+      "strengths": [
+        "Reported to be more predictive, reliable, and unbiased than the Logit Lens",
+        "Provides a layer-wise view of how model predictions are refined"
+      ],
+      "limitations": [
+        "Requires training an affine probe or translator for each transformer block"
+      ],
+      "research_applications": [
+        {
+          "used_in": "Eliciting Latent Predictions from Transformers with the Tuned Lens",
+          "type": "paper",
+          "year": 2023,
+          "source": "arXiv",
+          "url": "https://arxiv.org/abs/2303.08112",
+          "note": "Introduces the Tuned Lens and evaluates it on autoregressive language models up to 20B parameters."
+        }
+      ],
+      "typical_cost": "medium",
+      "implementation": "https://github.com/AlignmentResearch/tuned-lens",
+      "plugin_id": "tuned_lens"
+    },
+    {
+      "name": "Patchscopes",
+      "task_input": [
+        "generation"
+      ],
+      "access_arch": {
+        "access": [
+          "white_box"
+        ],
+        "arch": [
+          "all"
+        ]
+      },
+      "target_scope": "local",
+      "accessibility": "experts",
+      "description": {
+        "overview": "Patchscopes is a framework for inspecting hidden representations by taking a representation from a source computation and patching it into a target computation constructed to reveal information encoded in that representation.",
+        "main_functionalities": [
+          "Extract a hidden representation from a source prompt and layer",
+          "Patch the representation into a chosen position and layer of a target prompt",
+          "Use the target computation to decode or inspect information in the source representation"
+        ]
+      },
+      "strengths": [
+        "Unifies multiple representation-inspection techniques under a common patching framework",
+        "Can use a language model's own generation behavior to produce interpretable readouts of internal states"
+      ],
+      "limitations": [
+        "The interpretation can depend on the design of the target prompt, target layer, and target computation"
+      ],
+      "research_applications": [
+        {
+          "used_in": "Patchscopes: A Unifying Framework for Inspecting Hidden Representations of Language Models",
+          "type": "paper",
+          "year": 2024,
+          "source": "arXiv",
+          "url": "https://arxiv.org/abs/2401.06102",
+          "note": "Introduces Patchscopes as a general framework for inspecting language-model hidden representations through representation patching."
+        }
+      ],
+      "typical_cost": "low",
+      "implementation": "https://github.com/PAIR-code/interpretability",
+      "plugin_id": "patchscopes"
+    },
+    {
+      "name": "Causal Tracing",
+      "task_input": [
+        "generation"
+      ],
+      "access_arch": {
+        "access": [
+          "white_box"
+        ],
+        "arch": [
+          "decoder"
+        ]
+      },
+      "target_scope": "local",
+      "accessibility": "experts",
+      "description": {
+        "overview": "Causal tracing localizes internal states involved in a model behavior by comparing a clean run, a corrupted run that suppresses the behavior, and restoration runs in which selected clean activations are reintroduced into the corrupted computation.",
+        "main_functionalities": [
+          "Create a corrupted computation in which a target behavior is degraded",
+          "Restore selected clean hidden states or components into the corrupted run",
+          "Measure the recovery of the target output to localize causally important states"
+        ]
+      },
+      "strengths": [
+        "Uses explicit interventions to localize internal states that causally restore a behavior",
+        "Provides position-by-layer maps of where information relevant to a factual prediction is processed"
+      ],
+      "limitations": [
+        "Results depend on the corruption procedure, restoration intervention, and chosen behavioral metric"
+      ],
+      "research_applications": [
+        {
+          "used_in": "Locating and Editing Factual Associations in GPT",
+          "type": "paper",
+          "year": 2022,
+          "source": "NeurIPS",
+          "url": "https://arxiv.org/abs/2202.05262",
+          "note": "Introduces causal tracing to identify internal states involved in factual recall before applying the ROME editing method."
+        }
+      ],
+      "typical_cost": "medium",
+      "implementation": "https://github.com/kmeng01/rome"
+    },
+    {
+      "name": "Input Marginalization",
+      "task_input": [
+        "classification"
+      ],
+      "access_arch": {
+        "access": [
+          "black_box"
+        ],
+        "arch": [
+          "all"
+        ]
+      },
+      "target_scope": "local",
+      "accessibility": "mid experts",
+      "description": {
+        "overview": "Input Marginalization estimates token importance by marginalizing a token over contextually plausible replacements rather than erasing it with a fixed value. The method was proposed to reduce the out-of-distribution problem caused by token erasure.",
+        "main_functionalities": [
+          "Estimate context-dependent replacement probabilities for an input token",
+          "Marginalize the target model prediction over plausible replacements",
+          "Compute token-level importance from the change in prediction after marginalization"
+        ]
+      },
+      "strengths": [
+        "Designed to address out-of-distribution perturbations produced by zero or fixed-value token erasure"
+      ],
+      "limitations": [
+        "A later evaluation found no evidence that Input Marginalization consistently outperforms a Leave-One-Out baseline and identified failure cases for highly predictable words"
+      ],
+      "research_applications": [
+        {
+          "used_in": "Interpretation of NLP models through input marginalization",
+          "type": "paper",
+          "year": 2020,
+          "source": "EMNLP",
+          "url": "https://aclanthology.org/2020.emnlp-main.255/",
+          "note": "Introduces Input Marginalization for sentiment analysis and natural language inference."
+        },
+        {
+          "used_in": "Double Trouble: How to not Explain a Text Classifier’s Decisions Using Counterfactuals Synthesized by Masked Language Models?",
+          "type": "paper",
+          "year": 2022,
+          "source": "AACL",
+          "url": "https://aclanthology.org/2022.aacl-main.2/",
+          "note": "Re-evaluates Input Marginalization and reports limitations relative to Leave-One-Out."
+        }
+      ],
+      "typical_cost": "medium",
+      "implementation": ""
+    },
+    {
+      "name": "TCAV (Testing with Concept Activation Vectors)",
+      "task_input": [
+        "classification"
+      ],
+      "access_arch": {
+        "access": [
+          "white_box"
+        ],
+        "arch": [
+          "all"
+        ]
+      },
+      "target_scope": "global",
+      "accessibility": "mid experts",
+      "description": {
+        "overview": "TCAV evaluates model sensitivity to a human-defined concept by learning a Concept Activation Vector (CAV) from examples of that concept and measuring directional derivatives of the model output along the concept direction.",
+        "main_functionalities": [
+          "Learn a concept direction from user-provided concept examples and comparison examples",
+          "Measure directional sensitivity of a target output to the learned concept direction",
+          "Aggregate concept sensitivity into a quantitative TCAV score"
+        ]
+      },
+      "strengths": [
+        "Provides explanations in terms of human-defined concepts rather than individual input features",
+        "Supports statistical testing across multiple concept and random-control sets"
+      ],
+      "limitations": [
+        "Results depend on the examples used to define the concept and the comparison or random-control sets"
+      ],
+      "research_applications": [
+        {
+          "used_in": "Interpretability Beyond Feature Attribution: Quantitative Testing with Concept Activation Vectors (TCAV)",
+          "type": "paper",
+          "year": 2018,
+          "source": "ICML",
+          "url": "https://proceedings.mlr.press/v80/kim18d.html",
+          "note": "Introduces TCAV for quantitative concept-based interpretation."
+        }
+      ],
+      "typical_cost": "medium",
+      "implementation": "https://captum.ai/api/concept.html",
+      "plugin_id": "tcav_classifier"
+    },
+    {
+      "name": "Knowledge Neurons",
+      "task_input": [
+        "generation"
+      ],
+      "access_arch": {
+        "access": [
+          "white_box"
+        ],
+        "arch": [
+          "all"
+        ]
+      },
+      "target_scope": "local",
+      "accessibility": "experts",
+      "description": {
+        "overview": "Knowledge Neurons identifies feed-forward network neurons associated with factual knowledge by attributing a model's factual prediction to internal neuron activations and aggregating evidence across prompts expressing the same fact.",
+        "main_functionalities": [
+          "Compute attribution scores for internal feed-forward neurons with respect to a factual prediction",
+          "Identify neurons that consistently contribute across prompts expressing the same knowledge",
+          "Validate identified neurons through activation interventions"
+        ]
+      },
+      "strengths": [
+        "Targets internal feed-forward neurons rather than only input tokens",
+        "Uses multiple prompts for the same fact to identify consistently associated neurons"
+      ],
+      "limitations": [
+        "The identified neurons are tied to the tested factual relations and prompting setup"
+      ],
+      "research_applications": [
+        {
+          "used_in": "Knowledge Neurons in Pretrained Transformers",
+          "type": "paper",
+          "year": 2022,
+          "source": "ACL",
+          "url": "https://aclanthology.org/2022.acl-long.581/",
+          "note": "Introduces Knowledge Neurons for locating factual knowledge in pretrained transformers."
+        }
+      ],
+      "typical_cost": "high",
+      "implementation": "https://github.com/EleutherAI/knowledge-neurons"
+    },
+    {
+      "name": "Observable Propagation (ObProp)",
+      "task_input": [
+        "generation",
+        "classification"
+      ],
+      "access_arch": {
+        "access": [
+          "white_box"
+        ],
+        "arch": [
+          "all"
+        ]
+      },
+      "target_scope": "global",
+      "accessibility": "experts",
+      "description": {
+        "overview": "Observable Propagation (ObProp) is a method for finding linear feature vectors used by transformer language models in a task. It starts from an observable, a linear functional associated with a task, and propagates it through the model to uncover internal feature vectors.",
+        "main_functionalities": [
+          "Define an observable corresponding to a model task or output property",
+          "Propagate the observable to derive internal linear feature vectors",
+          "Compare discovered feature vectors using a coupling coefficient"
+        ]
+      },
+      "strengths": [
+        "Designed to find useful feature vectors using almost no labeled data",
+        "Can be used to investigate internal features associated with bias and task behavior"
+      ],
+      "limitations": [
+        "The framework focuses on linear observables and linear feature vectors"
+      ],
+      "research_applications": [
+        {
+          "used_in": "Observable Propagation: Uncovering Feature Vectors in Transformers",
+          "type": "paper",
+          "year": 2024,
+          "source": "ICML",
+          "url": "https://proceedings.mlr.press/v235/dunefsky24a.html",
+          "note": "Introduces ObProp and evaluates it on occupational gender bias, political party prediction, and programming-language detection."
+        }
+      ],
+      "typical_cost": "medium",
+      "implementation": ""
+    },
+    {
+      "name": "LEACE / Concept Scrubbing",
+      "task_input": [
+        "generation",
+        "classification"
+      ],
+      "access_arch": {
+        "access": [
+          "white_box"
+        ],
+        "arch": [
+          "all"
+        ]
+      },
+      "target_scope": "global",
+      "accessibility": "mid experts",
+      "description": {
+        "overview": "LEACE (LEAst-squares Concept Erasure) removes a specified concept from a representation in closed form while minimizing changes to the representation. Concept scrubbing applies concept erasure across model layers to study whether a model behavior relies on linearly decodable concept information.",
+        "main_functionalities": [
+          "Compute a closed-form transformation that erases linearly decodable concept information",
+          "Apply concept erasure to hidden representations",
+          "Scrub a concept across multiple layers and measure resulting changes in model behavior"
+        ]
+      },
+      "strengths": [
+        "Provably prevents all linear classifiers from detecting the erased concept",
+        "Uses a closed-form solution",
+        "Provides an intervention for testing reliance on linearly represented concepts"
+      ],
+      "limitations": [
+        "The guarantee concerns linear classifiers and therefore does not establish removal of all possible nonlinear concept information"
+      ],
+      "research_applications": [
+        {
+          "used_in": "LEACE: Perfect linear concept erasure in closed form",
+          "type": "paper",
+          "year": 2023,
+          "source": "arXiv",
+          "url": "https://arxiv.org/abs/2306.03819",
+          "note": "Introduces LEACE and applies a multi-layer procedure called concept scrubbing to language models."
+        }
+      ],
+      "typical_cost": "low",
+      "implementation": "https://github.com/EleutherAI/concept-erasure",
+      "plugin_id": "leace_concept_scrubbing"
+    },
+    {
+      "name": "Causal Mediation Analysis",
+      "task_input": [
+        "generation",
+        "classification"
+      ],
+      "access_arch": {
+        "access": [
+          "white_box"
+        ],
+        "arch": [
+          "all"
+        ]
+      },
+      "target_scope": "global",
+      "accessibility": "experts",
+      "description": {
+        "overview": "Causal Mediation Analysis interprets model behavior by treating internal components such as neurons or attention heads as mediators between an input intervention and an output effect. It decomposes behavior into direct and mediated causal effects.",
+        "main_functionalities": [
+          "Define an input treatment and an output outcome",
+          "Intervene on internal mediators such as neurons or attention heads",
+          "Estimate direct and indirect causal effects through model components"
+        ]
+      },
+      "strengths": [
+        "Connects internal model structure with behavior through explicit causal interventions",
+        "Can quantify how much of an observed effect is mediated by specific internal components"
+      ],
+      "limitations": [
+        "Requires defining meaningful treatments, mediators, interventions, and outcome measures"
+      ],
+      "research_applications": [
+        {
+          "used_in": "Causal Mediation Analysis for Interpreting Neural NLP: The Case of Gender Bias",
+          "type": "paper",
+          "year": 2020,
+          "source": "arXiv",
+          "url": "https://arxiv.org/abs/2004.12265",
+          "note": "Applies causal mediation analysis to neurons and attention heads in pretrained Transformer language models to study gender bias."
+        }
+      ],
+      "typical_cost": "medium",
+      "implementation": ""
+    },
+    {
+      "name": "Automated Neuron Explanations",
+      "task_input": [
+        "generation"
+      ],
+      "access_arch": {
+        "access": [
+          "white_box"
+        ],
+        "arch": [
+          "all"
+        ]
+      },
+      "target_scope": "global",
+      "accessibility": "mid experts",
+      "description": {
+        "overview": "Automated neuron explanation methods use a language model to generate natural-language hypotheses describing the behavior of internal neurons from examples of their activations, and then score those explanations by how well they predict neuron activations on new text.",
+        "main_functionalities": [
+          "Collect text examples and activation patterns for an internal neuron",
+          "Generate a natural-language explanation of the neuron's behavior",
+          "Score the explanation by using it to predict activations on additional examples"
+        ]
+      },
+      "strengths": [
+        "Scales semantic labeling beyond manual inspection of individual neurons",
+        "Includes an explicit scoring stage for evaluating generated explanations"
+      ],
+      "limitations": [
+        "The released explanations and scores are imperfect, and many neurons remain difficult to explain accurately"
+      ],
+      "research_applications": [
+        {
+          "used_in": "Language models can explain neurons in language models",
+          "type": "paper",
+          "year": 2023,
+          "source": "OpenAI",
+          "url": "https://openai.com/index/language-models-can-explain-neurons-in-language-models/",
+          "note": "Uses GPT-4 to generate and score explanations for neurons in GPT-2 and releases the resulting dataset."
+        }
+      ],
+      "typical_cost": "high",
+      "implementation": "https://github.com/openai/automated-interpretability"
+    },
+    {
+      "name": "Integrated Hessians",
+      "task_input": [
+        "classification",
+        "generation"
+      ],
+      "access_arch": {
+        "access": [
+          "white_box"
+        ],
+        "arch": [
+          "all"
+        ]
+      },
+      "target_scope": "local",
+      "accessibility": "experts",
+      "description": {
+        "overview": "Integrated Hessians extends Integrated Gradients from individual feature attribution to pairwise feature interactions by integrating second-order derivative information along a path from a baseline to the input.",
+        "main_functionalities": [
+          "Compute pairwise feature-interaction attribution scores",
+          "Produce an interaction matrix showing which feature pairs jointly influence a prediction",
+          "Extend path-based attribution from first-order importance to second-order interactions"
+        ]
+      },
+      "strengths": [
+        "Provides an axiomatic method for explaining pairwise feature interactions",
+        "Is not restricted to a specific neural-network architecture or model class"
+      ],
+      "limitations": [
+        "Focuses on pairwise interactions rather than arbitrary higher-order interactions"
+      ],
+      "research_applications": [
+        {
+          "used_in": "Explaining Explanations: Axiomatic Feature Interactions for Deep Networks",
+          "type": "paper",
+          "year": 2021,
+          "source": "Journal of Machine Learning Research",
+          "url": "https://jmlr.csail.mit.edu/papers/volume22/20-1223/20-1223.pdf",
+          "note": "Introduces Integrated Hessians as an extension of Integrated Gradients for pairwise feature interactions."
+        }
+      ],
+      "typical_cost": "high",
+      "implementation": "https://github.com/suinleelab/path_explain"
+    },
+    {
+      "name": "Future Lens",
+      "task_input": [
+        "generation"
+      ],
+      "access_arch": {
+        "access": [
+          "white_box"
+        ],
+        "arch": [
+          "decoder"
+        ]
+      },
+      "target_scope": "local",
+      "accessibility": "experts",
+      "description": {
+        "overview": "Future Lens analyzes whether a single hidden state contains information about tokens that will be generated several positions later. The method uses linear approximation and causal intervention techniques to decode or test future-token information from intermediate states.",
+        "main_functionalities": [
+          "Predict future hidden states or token distributions from a single current hidden state",
+          "Test future-token information with causal transplantation of hidden states across contexts",
+          "Visualize information about tokens multiple steps ahead"
+        ]
+      },
+      "strengths": [
+        "Extends intermediate-state decoding beyond the immediate next-token prediction",
+        "Combines predictive readouts with causal intervention experiments"
+      ],
+      "limitations": [
+        "The reported experiments are centered on GPT-J-6B and require fitted mappings or prompts for some readout variants"
+      ],
+      "research_applications": [
+        {
+          "used_in": "Future Lens: Anticipating Subsequent Tokens from a Single Hidden State",
+          "type": "paper",
+          "year": 2023,
+          "source": "CoNLL",
+          "url": "https://aclanthology.org/2023.conll-1.37/",
+          "note": "Introduces Future Lens and studies future-token information in hidden states of GPT-J-6B."
+        }
+      ],
+      "typical_cost": "medium",
+      "implementation": ""
+    },
+    {
+      "name": "Information Bottleneck Attribution",
+      "task_input": [
+        "classification"
+      ],
+      "access_arch": {
+        "access": [
+          "white_box"
+        ],
+        "arch": [
+          "all"
+        ]
+      },
+      "target_scope": "local",
+      "accessibility": "experts",
+      "description": {
+        "overview": "Information Bottleneck Attribution inserts a learned information bottleneck into transformer representations and optimizes it to retain information needed for a prediction while suppressing less relevant information, yielding feature attributions and layer-wise insight into information flow.",
+        "main_functionalities": [
+          "Insert an information bottleneck into transformer representations",
+          "Optimize the bottleneck to preserve prediction-relevant information",
+          "Derive feature-level attributions and inspect how information changes across layers"
+        ]
+      },
+      "strengths": [
+        "Provides both feature attribution and analysis of information flow through transformer layers",
+        "Reported to outperform two competing attribution methods in degradation tests on four datasets"
+      ],
+      "limitations": [],
+      "research_applications": [
+        {
+          "used_in": "Inserting Information Bottlenecks for Attribution in Transformers",
+          "type": "paper",
+          "year": 2020,
+          "source": "Findings of EMNLP",
+          "url": "https://aclanthology.org/2020.findings-emnlp.343/",
+          "note": "Introduces information-bottleneck attribution for transformer models using BERT as the main example."
+        }
+      ],
+      "typical_cost": "medium",
+      "implementation": ""
+    },
+    {
+      "name": "TRAK",
+      "task_input": [
+        "classification",
+        "generation"
+      ],
+      "access_arch": {
+        "access": [
+          "white_box"
+        ],
+        "arch": [
+          "all"
+        ]
+      },
+      "target_scope": "local",
+      "accessibility": "experts",
+      "description": {
+        "overview": "TRAK (Tracing with the Randomly-projected After Kernel) is a training-data attribution method that assigns influence scores from training examples to model predictions using gradient-derived features and random projections.",
+        "main_functionalities": [
+          "Trace a model prediction back to influential training examples",
+          "Construct scalable gradient-based features using random projections",
+          "Compute data-attribution scores for large differentiable models"
+        ]
+      },
+      "strengths": [
+        "Designed to be both effective and computationally tractable at large scale",
+        "Can match methods that require training thousands of models while using only a handful of trained models",
+        "Demonstrated on language models including BERT and mT5"
+      ],
+      "limitations": [
+        "Requires access to training data and gradient information, and the method uses multiple trained models in its attribution pipeline"
+      ],
+      "research_applications": [
+        {
+          "used_in": "TRAK: Attributing Model Behavior at Scale",
+          "type": "paper",
+          "year": 2023,
+          "source": "ICML",
+          "url": "https://proceedings.mlr.press/v202/park23c.html",
+          "note": "Introduces TRAK for scalable training-data attribution and evaluates it across vision, vision-language, and language models."
+        }
+      ],
+      "typical_cost": "high",
+      "implementation": "https://github.com/MadryLab/trak"
+    },
+    {
+      "name": "Influence Functions",
+      "task_input": [
+        "classification",
+        "generation"
+      ],
+      "access_arch": {
+        "access": [
+          "white_box"
+        ],
+        "arch": [
+          "all"
+        ]
+      },
+      "target_scope": "local",
+      "accessibility": "experts",
+      "description": {
+        "overview": "Influence Functions estimate how a model prediction or test loss would change if a particular training example were infinitesimally upweighted or removed, using gradients and inverse-Hessian-vector products instead of retraining the model from scratch for each example.",
+        "main_functionalities": [
+          "Estimate the influence of individual training examples on a test prediction or loss",
+          "Approximate the effect of upweighting or removing training examples",
+          "Identify training examples responsible for model errors or behavior"
+        ]
+      },
+      "strengths": [
+        "Provides a principled approximation to leave-one-out retraining effects without retraining once per training example",
+        "Can be used to trace predictions and errors back to influential training data"
+      ],
+      "limitations": [
+        "Requires gradient and second-order information and relies on approximating inverse-Hessian-vector products",
+        "The classical formulation is challenging for large, non-convex neural networks"
+      ],
+      "research_applications": [
+        {
+          "used_in": "Understanding Black-box Predictions via Influence Functions",
+          "type": "paper",
+          "year": 2017,
+          "source": "ICML",
+          "url": "https://proceedings.mlr.press/v70/koh17a.html",
+          "note": "Introduces the modern use of influence functions for tracing model predictions back to training examples."
+        }
+      ],
+      "typical_cost": "high",
+      "implementation": "https://github.com/kohpangwei/influence-release"
     }
   ]
 }

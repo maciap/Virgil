@@ -62,10 +62,16 @@ from toolkits.captum_loo import CaptumLOOGenerationAttribution
 import plotly.express as px
 import plotly.graph_objects as go
 from toolkits.linear_cka import LinearCKALayers
-from toolkits.cca_layers import CCALayers  
+from toolkits.cca_layers import CCALayers
 import html as _html
 
 from toolkits.probing import ProbingBinaryExamples
+from toolkits.activation_steering import ActivationSteeringPlugin
+from toolkits.attention_head_ablation import AttentionHeadAblationPlugin
+from toolkits.patchscopes import PatchscopesPlugin
+from toolkits.tcav_classifier import TCAVClassifierPlugin
+from toolkits.tuned_lens_plugin import TunedLensPlugin
+from toolkits.leace_scrubbing import LeaceConceptScrubbingPlugin
 
 from Navigator_utils import (
     _parse_node,
@@ -214,6 +220,12 @@ def get_plugins():
     plugin41 = EccoTokenRankingCompare()
     plugin42 = PolyjuiceCounterfactualClassifier()
     plugin43 = CaptumLOOGenerationAttribution()
+    plugin44 = ActivationSteeringPlugin()
+    plugin45 = AttentionHeadAblationPlugin()
+    plugin46 = PatchscopesPlugin()
+    plugin47 = TCAVClassifierPlugin()
+    plugin48 = TunedLensPlugin()
+    plugin49 = LeaceConceptScrubbingPlugin()
 
 
     return {
@@ -259,7 +271,13 @@ def get_plugins():
         plugin40.id : plugin40,
         plugin41.id : plugin41,
         plugin42.id : plugin42,
-        plugin43.id : plugin43
+        plugin43.id : plugin43,
+        plugin44.id : plugin44,
+        plugin45.id : plugin45,
+        plugin46.id : plugin46,
+        plugin47.id : plugin47,
+        plugin48.id : plugin48,
+        plugin49.id : plugin49,
 }
 PLUGINS = get_plugins()
 UI_TO_INTERNAL = {
@@ -1482,8 +1500,217 @@ def _render_outputs(outputs: Dict[str, Any], selected_item: Dict[str, Any] | Non
 
         render_downloads(outputs, selected_item=selected_item)
 
+    elif plugin_tag == "activation_steering":
+        st.subheader("Result")
+        with st.expander("ℹ️ How to read Activation Steering (ActAdd / CAA)", expanded=True):
+            st.write(
+                "- We build a **steering direction** from the difference between the residual-stream "
+                "activation of a *positive* prompt and a *negative* prompt, at a chosen layer.\n"
+                "- We then add `coefficient × direction` to that layer's residual stream at **every position** "
+                "while generating from your prompt, and compare it to unsteered (greedy) generation.\n"
+                "- A coefficient that is too large tends to degrade fluency (the model can start repeating itself) — "
+                "this is a known trade-off of activation steering, not a bug."
+            )
 
-# UI 
+        st.write(f"**Model:** {outputs.get('model', 'NA')}")
+        st.write(f"**Layer:** {outputs.get('layer_index', 'NA')} · **Coefficient:** {outputs.get('coefficient', 'NA')}")
+        st.write(f"**Positive prompt:** {outputs.get('positive_prompt', 'NA')}")
+        st.write(f"**Negative prompt:** {outputs.get('negative_prompt', 'NA')}")
+        st.caption(f"Steering direction norm: {outputs.get('direction_norm', 0.0):.2f}")
+
+        c1, c2 = st.columns(2, gap="large")
+        with c1:
+            st.markdown("#### Baseline generation")
+            st.write(outputs.get("baseline_text", ""))
+        with c2:
+            st.markdown("#### Steered generation")
+            st.write(outputs.get("steered_text", ""))
+
+        render_downloads(outputs, selected_item=selected_item)
+
+    elif plugin_tag == "attention_head_ablation":
+        st.subheader("Result")
+        with st.expander("ℹ️ How to read Attention-Head Ablation / Knockout", expanded=True):
+            st.write(
+                "- We zero out one **attention head's** contribution (within its layer) before it is "
+                "projected back into the residual stream, then compare the model's next-token prediction "
+                "before and after.\n"
+                "- A large change (in the top tokens, the logit difference, or the KL divergence) means "
+                "that head matters a lot for this specific prompt; little change suggests redundancy."
+            )
+
+        st.write(f"**Model:** {outputs.get('model', 'NA')}")
+        st.write(f"**Prompt:** {outputs.get('prompt', 'NA')}")
+        st.write(
+            f"**Ablated:** layer {outputs.get('layer_index', 'NA')}, "
+            f"head {outputs.get('head_index', 'NA')} (of {outputs.get('n_heads', 'NA')})"
+        )
+        c1, c2 = st.columns(2)
+        with c1:
+            st.metric("Total |logit diff|", f"{outputs.get('total_abs_logit_diff', 0.0):.2f}")
+        with c2:
+            st.metric("KL(ablated ‖ baseline)", f"{outputs.get('kl_divergence', 0.0):.4f}")
+
+        c1, c2 = st.columns(2, gap="large")
+        with c1:
+            st.markdown("#### Baseline top tokens")
+            st.dataframe(pd.DataFrame(outputs.get("baseline_top", [])), use_container_width=True)
+        with c2:
+            st.markdown("#### After ablation")
+            st.dataframe(pd.DataFrame(outputs.get("ablated_top", [])), use_container_width=True)
+
+        render_downloads(outputs, selected_item=selected_item)
+
+    elif plugin_tag == "patchscopes":
+        st.subheader("Result")
+        with st.expander("ℹ️ How to read Patchscopes", expanded=True):
+            st.write(
+                "- We take the hidden representation at a chosen **layer and position** of the *source* prompt, "
+                "and patch it into the **last position** of the *target* prompt at a chosen layer, letting the "
+                "rest of the model process it from there.\n"
+                "- If the target prompt is a 'decoding' template, its next-token prediction after patching "
+                "reveals something about what the source representation encodes.\n"
+                "- Results depend heavily on the choice of layer, position, and target-prompt template — this is "
+                "a known property of Patchscopes, not a bug; try different layers if the patched result looks unrelated."
+            )
+
+        st.write(f"**Model:** {outputs.get('model', 'NA')}")
+        st.write(f"**Source:** \"{outputs.get('source_prompt', 'NA')}\" · position {outputs.get('source_position', 'NA')} "
+                 f"(token `{outputs.get('source_token', 'NA')}`) · layer {outputs.get('source_layer', 'NA')}")
+        st.write(f"**Target:** \"{outputs.get('target_prompt', 'NA')}\" · patched at layer {outputs.get('target_layer', 'NA')}")
+
+        c1, c2 = st.columns(2, gap="large")
+        with c1:
+            st.markdown("#### Baseline (unpatched) top tokens")
+            st.dataframe(pd.DataFrame(outputs.get("baseline_top", [])), use_container_width=True)
+        with c2:
+            st.markdown("#### Patched top tokens")
+            st.dataframe(pd.DataFrame(outputs.get("patched_top", [])), use_container_width=True)
+
+        render_downloads(outputs, selected_item=selected_item)
+
+    elif plugin_tag == "tcav_classifier":
+        st.subheader("Result")
+        with st.expander("ℹ️ How to read TCAV (Testing with Concept Activation Vectors)", expanded=True):
+            st.write(
+                "- We train a linear probe to separate **concept** examples from **random** examples using "
+                "pooled activations at a chosen layer; its direction is the Concept Activation Vector (CAV).\n"
+                "- For each test example, we compute the **directional derivative**: the gradient of the target "
+                "class logit with respect to the layer activation, dotted with the CAV. A positive value means "
+                "the concept locally pushes the prediction toward that class.\n"
+                "- The **TCAV score** is the fraction of test examples with a positive directional derivative. "
+                "This is a simplified, single-model illustration of TCAV — the original method tests statistical "
+                "significance against many random concept sets, which this toy version does not do."
+            )
+
+        st.write(f"**Model:** {outputs.get('model', 'NA')}")
+        st.write(f"**Layer:** {outputs.get('layer_index', 'NA')} · "
+                 f"**Concept examples:** {outputs.get('n_concept', 'NA')} · "
+                 f"**Random examples:** {outputs.get('n_random', 'NA')}")
+
+        c1, c2 = st.columns(2)
+        with c1:
+            st.metric("CAV probe train accuracy", f"{outputs.get('probe_train_accuracy', 0.0):.2f}")
+        with c2:
+            st.metric("TCAV score", f"{outputs.get('tcav_score', 0.0):.2f}")
+
+        st.markdown("#### Per-example directional derivatives")
+        st.dataframe(pd.DataFrame(outputs.get("rows", [])), use_container_width=True)
+
+        render_downloads(outputs, selected_item=selected_item)
+
+    elif plugin_tag == "tuned_lens" and outputs.get("layers"):
+        st.subheader("Result")
+        with st.expander("ℹ️ How to read Tuned Lens", expanded=True):
+            st.write(
+                "- Like Logit Lens, Tuned Lens decodes each layer's hidden state into a distribution over the "
+                "vocabulary — but instead of reusing the model's own final layer norm + unembedding directly, "
+                "each layer has its own small **learned affine translator** (pretrained by the `tuned-lens` "
+                "project) that is trained to make that layer's prediction match the model's real final output.\n"
+                "- This is reported to be more predictive and less biased than the plain Logit Lens."
+            )
+
+        st.write(f"**Model:** {outputs.get('model', 'NA')}")
+        st.write(f"**Text length (tokens):** {len(outputs.get('tokens', []))}")
+        st.write(f"**Position inspected:** {outputs.get('position', 'NA')} (0-based index)")
+
+        toks = outputs.get("tokens", [])
+        if toks:
+            preview = " ".join([f"{i}:{t}" for i, t in enumerate(toks)])
+            st.caption("Tokenization (index:token)")
+            st.code(preview)
+
+        layers = outputs["layers"]
+        n_layers = len(layers)
+        top_k_tl = int(outputs.get("top_k", 10))
+
+        layer_idx = st.slider("Layer (block index)", 0, n_layers - 1, n_layers - 1, key=f"tuned_lens_slider_{id(outputs)}")
+        layer_obj = layers[layer_idx]
+
+        st.markdown(f"### Top-{top_k_tl} tokens at layer {layer_idx}")
+        df = pd.DataFrame(layer_obj["top"])
+        st.dataframe(df, use_container_width=True)
+
+        fig = plt.figure()
+        plt.bar(range(len(df)), df["score"].tolist())
+        plt.xticks(range(len(df)), df["token"].tolist(), rotation=45, ha="right")
+        plt.ylabel("Score (prob)")
+        plt.title(f"Layer {layer_idx}: Top-{top_k_tl} tokens (Tuned Lens)")
+        plt.tight_layout()
+        st.pyplot(fig)
+
+        tracked = outputs.get("tracked_token")
+        tracked_probs = outputs.get("tracked_probs")
+        if tracked and tracked_probs:
+            st.markdown("### Consistency across layers (tracked token)")
+            st.write(f"Tracked token = **{tracked.get('token','NA')}** (from final layer top-1).")
+            fig2 = plt.figure()
+            plt.plot(list(range(len(tracked_probs))), tracked_probs)
+            plt.xlabel("Layer")
+            plt.ylabel("Probability")
+            plt.title("Probability of the final-layer top token across layers (Tuned Lens)")
+            plt.tight_layout()
+            st.pyplot(fig2)
+
+        render_downloads(outputs, selected_item=selected_item)
+
+    elif plugin_tag == "leace_concept_scrubbing":
+        st.subheader("Result")
+        with st.expander("ℹ️ How to read LEACE / Concept Scrubbing", expanded=True):
+            st.write(
+                "- We pool activations at a chosen layer for two labeled groups of text, then fit a linear "
+                "probe (logistic regression) to see how well the concept (group membership) can be decoded.\n"
+                "- We then fit a **LEACE eraser** (closed-form least-squares concept erasure) on the same "
+                "activations and apply it, and fit a fresh probe on the erased activations.\n"
+                "- LEACE provably prevents any *linear* classifier from detecting the erased concept — so the "
+                "'after' accuracy should drop close to chance (50% for two balanced groups)."
+            )
+
+        st.write(f"**Model:** {outputs.get('model', 'NA')} · **Layer:** {outputs.get('layer_index', 'NA')}")
+        st.caption(
+            f"Group A: {outputs.get('n_group_a', 'NA')} examples · Group B: {outputs.get('n_group_b', 'NA')} examples"
+        )
+
+        c1, c2 = st.columns(2)
+        with c1:
+            st.metric("Probe accuracy BEFORE erasure", f"{outputs.get('probe_accuracy_before', 0.0):.2f}")
+        with c2:
+            st.metric("Probe accuracy AFTER erasure", f"{outputs.get('probe_accuracy_after', 0.0):.2f}")
+
+        fig = plt.figure()
+        plt.bar(["Before erasure", "After erasure"],
+                [outputs.get("probe_accuracy_before", 0.0), outputs.get("probe_accuracy_after", 0.0)])
+        plt.axhline(0.5, linestyle="--", linewidth=1)
+        plt.ylabel("Probe accuracy")
+        plt.ylim(0, 1)
+        plt.title("Concept probe accuracy before vs. after LEACE erasure")
+        plt.tight_layout()
+        st.pyplot(fig)
+
+        render_downloads(outputs, selected_item=selected_item)
+
+
+# UI
 st.set_page_config(page_title="Language Model Explainability Navigator 🧭", layout="wide")
 
 # ---- Session state (important fixes) ----
