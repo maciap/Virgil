@@ -807,7 +807,7 @@ def _render_outputs(outputs: Dict[str, Any], selected_item: Dict[str, Any] | Non
                 "- We project each token internal representation into PCA space.\n"
                 "- **Single basis**: PCA is fit once (default: last layer) and reused → results are comparable across layers.\n"
                 "- **Per-layer basis**: PCA is fit separately per layer → shows within-layer structure but results are not directly comparable.\n"
-                "- Tokens are labeled by their tokenizer output; subword tokens may look like 'Ġword' (GPT-2) or '##ing' (BERT).\n"
+                "- Tokens are labeled by their tokenizer output; a leading GPT-2 space marker ('Ġ') is shown as a plain space, and BERT-style subwords may still look like '##ing'.\n"
                 "- In 3D, labels can be occluded; hover always shows token strings."
             )
 

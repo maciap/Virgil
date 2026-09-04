@@ -20,6 +20,16 @@ except Exception as e:
     PCA = None
 
 
+def _pretty_token(tok: str) -> str:
+    if tok in ("[CLS]", "[SEP]", "[PAD]", "[MASK]"):
+        return tok
+    if tok.startswith("Ġ"):
+        tok = " " + tok[1:]
+    if tok.startswith("▁"):
+        tok = " " + tok[1:]
+    return tok
+
+
 # ---------- Minimal UI schema ----------
 @dataclass
 class FieldSpec:
@@ -325,7 +335,7 @@ class EmbeddingPCALayers(ToolkitPlugin):
             for i, (t, tid) in enumerate(zip(kept_tokens, kept_token_ids)):
                 r = {
                     "i": int(i),
-                    "token": str(t),
+                    "token": _pretty_token(str(t)),
                     "token_id": int(tid),
                     "pc1": float(Z[i, 0]),
                     "pc2": float(Z[i, 1]),
@@ -357,7 +367,7 @@ class EmbeddingPCALayers(ToolkitPlugin):
             "device": self.device,
             "arch_detected": bundle.get("arch", "NA"),
             "text": text,
-            "tokens": tokens,  # original tokens (incl specials)
+            "tokens": [_pretty_token(t) for t in tokens],  # prettified tokens (incl specials)
             "params": {
                 "max_length": max_length,
                 "basis_mode": basis_mode,
